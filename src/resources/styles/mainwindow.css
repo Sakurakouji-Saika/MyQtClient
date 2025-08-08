@@ -1,0 +1,118 @@
+#centralwidget{
+    /* background: qlineargradient(
+        x1: 0, y1: 0.1, 
+        x2: 0.5, y2: 1.1,  
+        stop: 0.3 #D5F3FF,
+        stop: 1 #FCFEFF
+    ); 
+    */
+    background-color: #F2F2F2;
+}
+
+#label{
+    min-height: 40px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+#widget{
+    background-color: #fff;
+}
+
+#splitter{
+    width: 3px;
+}
+
+#groupBox{
+    border: none;
+}
+
+QToolButton {
+    border: none;
+    min-height: 40px;
+    max-height: 40px;
+    border-radius: 5px;
+}
+
+QToolButton:hover {
+    background-color: rgba(128, 128, 128, 20);
+}
+
+QToolButton:checked {
+    background-color: rgba(128, 128, 128, 50);
+}
+
+#searchLineEdit{
+    border: none;
+    background-color: #F5F5F5;
+    border-radius: 5px;
+    font-family: "Microsoft YaHei";
+    font-size: 12px;
+    padding: 0px 15px;
+}
+
+#searchBtn{
+    max-width: 30px;
+    max-height: 30px;
+    min-width: 30px;
+    min-height: 30px;
+    background-color: #F5F5F5;
+}
+
+#searchBtn:hover {
+    background-color: #dbdbdb;
+}
+
+#pageNav{
+    border: none;
+}
+
+
+
+/* 默认状态：透明背景，灰色图标 */
+MainWindow#MainWindow QPushButton#closeBtn {
+    border: none;
+    background: transparent;
+    /* 如果你用 QPushButton::setIcon() 了，这里不用 qproperty-icon */
+}
+
+/* 鼠标悬停：红色背景，白色图标 */
+MainWindow#MainWindow QPushButton#closeBtn:hover {
+    background: #E81123;
+}
+
+/* 鼠标按下：深红背景（图标仍然白色） */
+MainWindow#MainWindow QPushButton#closeBtn:pressed {
+    background: #C50F1F;
+    /* icon 大小不变 */
+}
+
+
+
+/* 主窗口最大化按钮样式 */
+MainWindow#MainWindow QPushButton#MaxBtn {
+    border: none;
+    background: transparent;
+}
+
+MainWindow#MainWindow QPushButton#MaxBtn:hover {
+    background: #dddddd;
+}
+
+MainWindow#MainWindow QPushButton#MaxBtn:pressed {
+    background: #acacac;
+}
+
+/* 主窗口最小化按钮样式 */
+MainWindow#MainWindow QPushButton#MinBtn {
+    border: none;
+    background: transparent;
+}
+
+MainWindow#MainWindow QPushButton#MinBtn:hover {
+    background: #dddddd;
+}
+
+MainWindow#MainWindow QPushButton#MinBtn:pressed {
+    background: #acacac;
+}

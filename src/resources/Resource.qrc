@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>svg/Close.svg</file>
+        <file>svg/CloseOff.svg</file>
+        <file>svg/Setting.svg</file>
+        <file>picture/Default_avatar.png</file>
+        <file>picture/favicon.ico</file>
+        <file>picture/avatar/1.jpg</file>
+        <file>picture/avatar/2.jpg</file>
+        <file>styles/loginPage.css</file>
+        <file>styles/mainwindow.css</file>
+        <file>svg/More.svg</file>
+        <file>svg/nav_contact_active_24.svg</file>
+        <file>svg/nav_contact_normal_24.svg</file>
+        <file>svg/nav_message_active_24.svg</file>
+        <file>svg/nav_message_normal_24.svg</file>
+        <file>svg/folder_24.svg</file>
+        <file>svg/qq_wallet_24.svg</file>
+        <file>svg/Add.svg</file>
+        <file>svg/add_24.svg</file>
+        <file>svg/minimize_24.svg</file>
+        <file>svg/max_24.svg</file>
+        <file>svg/Max.svg</file>
+        <file>svg/minimize_16.svg</file>
+        <file>config/app.ini</file>
+        <file>svg/chevron_down_new_16.svg</file>
+        <file>svg/chevron_right_new_16.svg</file>
+        <file>styles/friendlistwidget.css</file>
+        <file>styles/qqcellline.css</file>
+        <file>styles/qqcelltitle.css</file>
+    </qresource>
+</RCC>

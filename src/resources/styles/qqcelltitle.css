@@ -1,0 +1,9 @@
+QQCellTitle {
+    /* background */
+    background-color: white;
+    /* 控制高度 */
+    min-height: 30px;
+    max-height: 30px;
+    padding: 8px;
+    font-family: "Microsoft YaHei";
+}

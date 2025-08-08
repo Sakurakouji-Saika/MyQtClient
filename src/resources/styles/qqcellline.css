@@ -1,0 +1,54 @@
+#labHeadeImg{
+    /* border: 1px solid #F3F3F3; */
+    border-radius: 20;
+    
+}
+
+
+#QQCellLine
+{
+    background-color: white;
+    min-height: 70px;
+    max-height: 70px;
+}
+
+
+/* 当 selected 属性为 true 时，应用高亮样式 */
+#QQCellLine[selected="false"] {
+    background-color: white;
+
+}
+
+/* 如果需要还原左边框宽度、样式，最好也在这里写全 */
+#QQCellLine[selected="true"] {
+  background-color: #0099FF;
+
+}
+
+
+#QQCellLine:hover {
+  background-color: #F5F5F5; /* 鼠标经过时变成灰色 */
+}
+
+#QQCellLine[selected="true"]:hover {
+    /* 选中且 hover 时的样式，例如加深蓝色 */
+    background-color: #a0cfff;
+}
+
+
+#labFriendName{
+    font-family: "Microsoft YaHei";
+    margin-left: 3px;
+}
+
+
+
+#labStatus{
+    font-family: "Microsoft YaHei";
+    color:rgb(99, 99, 99);
+    margin-left: 3px;
+}
+
+#labHeadeImg{
+
+}

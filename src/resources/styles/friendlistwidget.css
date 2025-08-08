@@ -1,0 +1,25 @@
+/* ===== 垂直滚动条 ===== */
+QScrollBar:vertical {
+    border: none;
+    background: white;
+    width: 6px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical {
+    background: #cccccc;
+    min-height: 30px;
+    border-radius: 3px;
+}
+
+QScrollBar::add-line:vertical, 
+QScrollBar::sub-line:vertical {
+    height: 0px;             /* 隐藏上下箭头按钮 */
+}
+
+QScrollBar::add-page:vertical, 
+QScrollBar::sub-page:vertical {
+    background: transparent; /* 轨道剩余部分透明 */
+    
+}
+

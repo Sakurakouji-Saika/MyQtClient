@@ -1,0 +1,291 @@
+QWidget#LoginPage #stackedWidget {
+    background: qlineargradient(
+        x1: 0, y1: 0.9,   /* 起点：下方 */
+        x2: 0.4, y2: 0,   /* 终点：上方 */
+        stop: 0.3 #FFF0F6,
+        stop: 1 #F0FEFE
+    );
+}
+
+QWidget#LoginPage QLabel#profilePicture {
+    border: 1px solid #F3F3F3;
+    border-radius: 43px;   /* 半径 = 86/2 */
+    min-width: 86px; max-width: 86px;
+    min-height: 86px; max-height: 86px;
+}
+
+QWidget#LoginPage QLineEdit#userEdit{
+    padding-left: 40px;
+    padding-right: 40px;
+    font-size: 15px;
+    border-radius: 10px;
+    font-family: "Microsoft YaHei";
+}
+
+QWidget#LoginPage QLineEdit#passwordEdit{
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: 4px;    /* 故意太高 */
+    font-family: "Microsoft YaHei";
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+QWidget#LoginPage #loginBtn{
+    background-color: #9ED6FF;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #D7F2FF;
+    font-weight: bold;        /* 字体加粗 */
+    font-family: "Microsoft YaHei";
+}
+
+
+QWidget#LoginPage #line {
+    /* 去掉一切边框或背景阴影 */
+    border: none;
+    background-color: #c4c4c4;   /* 灰色 */
+
+    /* 垂直线要固定宽度 1px */
+    min-width: 1px;
+    max-width: 1px;
+
+    /* 如果你想控制高度，也可以加： */
+    min-height: 16px; max-height: 16px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+
+QWidget#LoginPage QPushButton#registerBtn {
+    border: none;
+    color:#3580E7;
+    font-size: 12px;
+    font-family: "Microsoft YaHei";
+}
+
+QWidget#LoginPage QPushButton#forgotPasswordBtn {
+    border: none;
+    color:#3580E7;
+    font-size: 12px;
+    font-family: "Microsoft YaHei";
+}
+
+
+
+
+
+/* 默认状态：透明背景，灰色图标 */
+QWidget#LoginPage QPushButton#closeBtn {
+    border: none;
+    background: transparent;
+    /* 如果你用 QPushButton::setIcon() 了，这里不用 qproperty-icon */
+}
+
+/* 鼠标悬停：红色背景，白色图标 */
+QWidget#LoginPage QPushButton#closeBtn:hover {
+    background: #E81123;
+}
+
+/* 鼠标按下：深红背景（图标仍然白色） */
+QWidget#LoginPage QPushButton#closeBtn:pressed {
+    background: #C50F1F;
+    /* icon 大小不变 */
+}
+
+/* 默认状态：透明背景，灰色图标 */
+QWidget#LoginPage QPushButton#setupBtn {
+    border: none;
+    background: transparent;
+    /* 如果你用 QPushButton::setIcon() 了，这里不用 qproperty-icon */
+    qproperty-icon: url(:/svg/Setting.svg);
+    qproperty-iconSize: 16px 16px;  /* 调整为图标实际尺寸 */
+}
+
+
+
+
+
+
+
+
+
+
+
+/* 默认状态：透明背景，灰色图标 */
+QWidget#LoginPage QPushButton#closeBtn_2 {
+    border: none;
+    background: transparent;
+}
+
+/* 鼠标悬停：红色背景，白色图标 */
+QWidget#LoginPage QPushButton#closeBtn_2:hover {
+    background: #E81123;
+}
+
+/* 鼠标按下：深红背景（图标仍然白色） */
+QWidget#LoginPage QPushButton#closeBtn_2:pressed {
+    background: #C50F1F;
+}
+
+/* 默认状态：透明背景，灰色图标 */
+QWidget#LoginPage QPushButton#setupBtn_2 {
+    border: none;
+    background: transparent;
+    qproperty-icon: url(:/svg/Setting.svg);
+    qproperty-iconSize: 16px 16px;  /* 调整为图标实际尺寸 */
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 把整个按钮背景设为透明，文字保持原样 */
+QWidget#LoginPage QRadioButton#agreeBtn {
+    background: transparent;
+    font-family: "Microsoft YaHei";
+    margin-top: 15px;
+    color: #494949;
+}
+
+/* 定义小圆点（indicator）的大小和默认样式 */
+QWidget#LoginPage QRadioButton#agreeBtn::indicator {
+    width: 13px;               /* 根据需要调整直径 */
+    height: 13px;
+    border: 1px solid #494949; /* 未选中状态边框色 */
+    border-radius: 7px;        /* indicator 高度/2 */
+    background: transparent;   /* 未选中时透明背景 */
+}
+
+/* 选中状态下，边框和填充都变为蓝色 */
+QWidget#LoginPage QRadioButton#agreeBtn::indicator:checked {
+    border: 1px solid #3399FF;
+    background: #3399FF;
+}
+
+
+
+QWidget#LoginPage QLabel#Page_Title_Label{
+    font-family: "Microsoft YaHei";
+    font-size: 16px;
+    margin-bottom: 10px;
+    qproperty-alignment: 'AlignCenter';
+}
+
+QWidget#LoginPage QLabel#IP_Title_Label, QLabel#File_Title_Label, QLabel#Msg_Title_Label {
+    font-family: "Microsoft YaHei";
+    font-size: 13px;
+    margin-left: 12px;
+    color: rgb(48, 48, 48);
+}
+
+
+QWidget#LoginPage QLineEdit#Msg_Port_Line, QLineEdit#File_Prot_Line{
+
+    padding:5px 15px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin:2px 20px;
+    font-size: 12px;
+    font-family: "Microsoft YaHei";
+    border-radius: 8px;
+    border: 1px solid #e2e2e2;
+
+}
+
+
+QWidget#LoginPage #line_2{
+    margin:2px 20px;
+    color: #e2e2e2;
+}
+
+
+/* 把整个按钮背景设为透明，文字保持原样 */
+QWidget#LoginPage QRadioButton#chkRememberPassword {
+    background: transparent;
+    font-family: "Microsoft YaHei";
+    margin-top: 15px;
+    color: #494949;
+    margin-left: 20px;
+}
+
+/* 定义小圆点（indicator）的大小和默认样式 */
+QWidget#LoginPage QRadioButton#chkRememberPassword::indicator {
+    width: 13px;               /* 根据需要调整直径 */
+    height: 13px;
+    border: 1px solid #494949; /* 未选中状态边框色 */
+    border-radius: 7px;        /* indicator 高度/2 */
+    background: transparent;   /* 未选中时透明背景 */
+}
+
+/* 选中状态下，边框和填充都变为蓝色 */
+QWidget#LoginPage QRadioButton#chkRememberPassword::indicator:checked {
+    border: 1px solid #3399FF;
+    background: #3399FF;
+}
+
+QWidget#LoginPage QPushButton#config_Ok_Btn{
+    min-height: 30px;
+    min-width: 80px;
+    background-color: #0099FF;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-family: "Microsoft YaHei";
+}
+QWidget#LoginPage QPushButton#config_Ok_Btn:hover{
+    background-color: #008DEB;
+}
+
+QWidget#LoginPage QPushButton#config_cancel_Btn{
+    min-height: 30px;
+    min-width: 80px;
+    border: 1px solid #858585;
+    border-radius: 5px;
+    font-family: "Microsoft YaHei";
+}
+
+QWidget#LoginPage QPushButton#config_cancel_Btn:hover{
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+
+
+
+
+QWidget#LoginPage #IP_Input{
+    border-radius: 8px;
+    border: none;
+    background-color: #fff;
+    min-height: 30px;
+    font-family: "Microsoft YaHei";
+    border-radius: 8px;
+    border: 1px solid #e2e2e2;
+
+    margin: 0px 20px;
+}
+
+QWidget#LoginPage #IP_Input QLineEdit{
+    border: none;
+    font-family: "Microsoft YaHei";
+    font-size: 12px;
+}
+
+QWidget#LoginPage #IP_Input QLabel{
+    /* border: none; */
+    font-family: "Microsoft YaHei";
+    font-size: 12px;
+}
+
+
