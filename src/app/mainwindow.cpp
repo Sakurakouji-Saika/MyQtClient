@@ -98,8 +98,13 @@ void MainWindow::initStackedWidgetPages()
 
 
     // 使用 QOverload<int>::of 正确连接信号
+#if QT_VERSION >= QT_VERSION_CHECK(5, 12, 12)
     connect(btnGroup, QOverload<int>::of(&QButtonGroup::idClicked),
             ui->friendSelectorStack, &QStackedWidget::setCurrentIndex);
+#else
+    connect(btnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+            ui->friendSelectorStack, &QStackedWidget::setCurrentIndex);
+#endif
 
 
     ui->friendSelectorStack->addWidget(chatList);

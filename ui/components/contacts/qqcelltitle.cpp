@@ -14,11 +14,6 @@ QQCellTitle::QQCellTitle(const QString &groupName, QWidget *parent)
     // 打开样式背景支持
     this->setAttribute(Qt::WA_StyledBackground, true);
 
-
-
-    // ui->label->setFixedSize(16, 16); // 根据实际图标尺寸调整
-    // ui->label->setScaledContents(true);
-
     // ui->horizontalLayout->setAlignment(Qt::AlignVCenter);
 
     // 验证资源文件是否存在
@@ -30,8 +25,7 @@ QQCellTitle::QQCellTitle(const QString &groupName, QWidget *parent)
 
     ui->labGroupName->setText(groupName);
 
-    // 设置固定高度
-    // setFixedHeight(QQ_CELL_TITLE_HEIGHT);
+
 
     // 安装事件过滤器
     installEventFilter(this);

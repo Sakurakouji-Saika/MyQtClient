@@ -3,7 +3,7 @@
 #include "ISMKEKEPX5/moc_widget.cpp"
 #include "VSCBVMNR7M/moc_StyleLoader.cpp"
 #include "VSCBVMNR7M/moc_clientsocket.cpp"
-#include "RZ4CM6YYJ6/moc_hoverbutton.cpp"
+#include "RZ4CM6YYJ6/moc_HoverButton.cpp"
 #include "DYVTDQNROT/moc_friendlistwidget.cpp"
 #include "DYVTDQNROT/moc_qqcellline.cpp"
 #include "DYVTDQNROT/moc_qqcelltitle.cpp"

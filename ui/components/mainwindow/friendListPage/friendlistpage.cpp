@@ -22,9 +22,9 @@ friendListPage::friendListPage(QWidget *parent)
     lay->addWidget(friendList);
 
     // 3. 保证铺满
-    friendList->setSizePolicy(
-        QSizePolicy::Expanding, QSizePolicy::Expanding);
-    ui->placeHolderWidget->setContentsMargins(0,0,0,0);
+    // friendList->setSizePolicy(
+    //     QSizePolicy::Expanding, QSizePolicy::Expanding);
+    // ui->placeHolderWidget->setContentsMargins(0,0,0,0);
 
     // 2. 添加分组数据：tuple<组名, 总人数, 在线人数>
     friendList->setGroups({

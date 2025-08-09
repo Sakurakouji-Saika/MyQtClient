@@ -1,6 +1,8 @@
 #ifndef HOVERBUTTON_H
 #define HOVERBUTTON_H
 
+
+#include <QEvent>
 #include <QObject>
 #include <QPushButton>
 
