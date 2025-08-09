@@ -77,8 +77,8 @@ void QQCellTitle::setOpenState(bool open)
     // 可以在这里添加箭头图标变化等
 
     if(m_isOpen){
-        ui->label->setPixmap(QPixmap("://svg/chevron_down_new_16.svg"));
+        ui->label2->setPixmap(QPixmap("://svg/chevron_down_new_16.svg"));
     }else{
-        ui->label->setPixmap(QPixmap("://svg/chevron_right_new_16.svg"));
+        ui->label2->setPixmap(QPixmap("://svg/chevron_right_new_16.svg"));
     }
 }

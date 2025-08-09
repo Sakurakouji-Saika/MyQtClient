@@ -1,14 +1,16 @@
 #include "friendlistpage.h"
 #include "ui_friendlistpage.h"
 
-
+#include "friendlistpage.h"
+#include "ui_friendlistpage.h"
+#include "../../contacts/friendlistwidget.h"  // 请确保头文件路径正确
+#include "../../contacts/friendinfo.h"        // FriendInfo 定义的头文件
 
 friendListPage::friendListPage(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::friendListPage)
 {
     ui->setupUi(this);
-
     // 1. 动态创建
     FriendListWidget *friendList = new FriendListWidget(this);
 
@@ -85,10 +87,7 @@ friendListPage::friendListPage(QWidget *parent)
                          // 如果你想在展开时再动态加载：
                          // if (open) { 调用后台接口，然后 friendList->setFriendsForGroup(grp, list); }
                      });
-
-
 }
-
 friendListPage::~friendListPage()
 {
     delete ui;

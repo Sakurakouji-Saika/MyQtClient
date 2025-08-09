@@ -14,6 +14,11 @@ FriendListWidget::FriendListWidget(QWidget *parent)
     // 1. 创建真正的内容容器
     QWidget *container = new QWidget(this);
 
+
+    // 在 setWidget(container); 之后
+
+
+
     // 2. 在容器上创建主布局
     m_mainLayout = new QVBoxLayout(container);
     m_mainLayout->setSpacing(0);
@@ -62,6 +67,8 @@ void FriendListWidget::setGroups(const QList<std::tuple<QString,int,int>>& group
         container->setLayout(vlay);
         container->setVisible(false);
         m_mainLayout->addWidget(container);
+
+
 
         m_groups.insert(name, { title, container, vlay });
 

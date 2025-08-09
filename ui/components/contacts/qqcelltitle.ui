@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>300</width>
-    <height>32</height>
+    <width>384</width>
+    <height>57</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -19,10 +19,7 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <property name="styleSheet">
-   <string notr="true">background-color: rgb(170, 0, 255);</string>
-  </property>
-  <layout class="QHBoxLayout" name="horizontalLayout" stretch="5,8,1">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="spacing">
     <number>0</number>
    </property>
@@ -39,58 +36,38 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QLabel" name="label">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>10</height>
-      </size>
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="2,6,2">
+     <property name="spacing">
+      <number>6</number>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>10</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 0, 0);</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-     <property name="pixmap">
-      <pixmap resource="../../../src/resources/Resource.qrc">:/svg/chevron_right_new_16.svg</pixmap>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="openExternalLinks">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="labGroupName">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(85, 255, 0);</string>
-     </property>
-     <property name="text">
-      <string>我的好友</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QLabel" name="labGroupNumber">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(85, 255, 255);</string>
-     </property>
-     <property name="text">
-      <string>0/0</string>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="label2">
+       <property name="text">
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../../../src/resources/Resource.qrc">:/svg/chevron_right_new_16.svg</pixmap>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labGroupName">
+       <property name="text">
+        <string>我的好友</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="labGroupNumber">
+       <property name="text">
+        <string>0/0</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

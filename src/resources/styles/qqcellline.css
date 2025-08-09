@@ -39,6 +39,7 @@
 #labFriendName{
     font-family: "Microsoft YaHei";
     margin-left: 3px;
+    background: transparent;
 }
 
 
@@ -47,8 +48,6 @@
     font-family: "Microsoft YaHei";
     color:rgb(99, 99, 99);
     margin-left: 3px;
+    background: transparent;
 }
 
-#labHeadeImg{
-
-}

@@ -16,6 +16,11 @@ QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLi
     setMouseTracking(true);
 
 
+
+
+
+
+
     // 打开样式背景支持
     this->setAttribute(Qt::WA_StyledBackground, true);
 
@@ -33,9 +38,9 @@ QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLi
     ui->labFriendName->setText(name);
 
     if(isOnLine){
-        ui->labStatus->setText(QString("[在线 🟢]"));
+        ui->labStatus->setText(QString("[ 在线 🟢 ]"));
     }else{
-        ui->labStatus->setText(QString("[离线]"));
+        ui->labStatus->setText(QString("[ 离线 ]"));
     }
 }
 
