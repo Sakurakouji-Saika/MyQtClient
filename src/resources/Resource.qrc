@@ -28,5 +28,8 @@
         <file>styles/friendlistwidget.css</file>
         <file>styles/qqcellline.css</file>
         <file>styles/qqcelltitle.css</file>
+        <file>styles/chatListPage.css</file>
+        <file>svg/image_24.svg</file>
+        <file>svg/open_file_24.svg</file>
     </qresource>
 </RCC>

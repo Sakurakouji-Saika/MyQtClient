@@ -5,9 +5,8 @@
 #include <QApplication>
 #include "utils/appconfig.h"
 #include "app/mainwindow.h"
-#include "../ui/components/contacts/FriendInfo.h"
-#include "../ui/components/contacts/friendlistwidget.h"
 
+#include "../ui/components/chatListPage/chatlist_main.h"
 
 
 void my_version(){
@@ -43,10 +42,11 @@ int main(int argc, char *argv[])
     // Widget w;
     // w.show();
 
-    MainWindow m;
-    m.show();
+    // MainWindow m;
+    // m.show();
 
-
+    chatList_Main clm;
+    clm.show();
 
 
 

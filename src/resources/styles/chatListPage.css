@@ -1,0 +1,66 @@
+chatList_Main{
+    background-color: #F2F2F2;
+}
+
+/* 这里是滚动容器 */
+#scrollArea{
+    background-color: transparent;
+    border: none;
+}
+
+/* 这里的滚动容器的qwidget */
+#scrollAreaWidgetContents{
+    /* background-color: transparent; */
+
+    background-color: antiquewhite;
+}
+
+/* 这里是2个导入文件 和 导入图片的框 */
+#groupBox{
+    border: none;
+}
+
+/* 这里是对话标题 */
+#labelContactNickname{
+    font-size: 18px;
+    font-weight: bold;
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    color: #353535;
+}
+
+/* 这里是发送对话的对话框 */
+#plainTextEdit{
+    border: none;
+    background-color: transparent;
+        font-size: 16px;
+
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    color: #353535;
+}
+
+#btn_file,
+#btn_img{
+    min-height: 26px;
+    min-width: 26px;
+    max-width: 26px;
+    max-height: 26px;
+    background-color: transparent;
+    /* background-color: aqua; */
+}
+
+#btn_pushMsg{
+
+    min-height: 28px;
+    min-width: 83px;
+    max-width: 83px;
+    max-height: 28px;
+
+    background-color: #0BB8F3;
+    border-radius: 3px;
+
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    
+    color: rgba(0, 0, 138, 0.404);
+}
+
+

@@ -2,8 +2,8 @@
 #define FRIENDLISTPAGE_H
 
 #include <QWidget>
-#include "../../ui/components/contacts/FriendInfo.h"
-#include "../../ui/components/contacts/friendlistwidget.h"
+#include "../../ui/components/friendListPage/FriendInfo.h"
+#include "../../ui/components/friendListPage/friendlistwidget.h"
 #include <qDebug>
 
 namespace Ui {

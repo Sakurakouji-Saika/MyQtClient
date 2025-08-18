@@ -3,8 +3,8 @@
 
 #include "friendlistpage.h"
 #include "ui_friendlistpage.h"
-#include "../../contacts/friendlistwidget.h"  // 请确保头文件路径正确
-#include "../../contacts/friendinfo.h"        // FriendInfo 定义的头文件
+#include "../../friendListPage/friendlistwidget.h"  // 请确保头文件路径正确
+#include "../../friendListPage/friendinfo.h"        // FriendInfo 定义的头文件
 
 friendListPage::friendListPage(QWidget *parent)
     : QWidget(parent)

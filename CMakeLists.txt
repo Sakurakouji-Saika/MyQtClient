@@ -61,12 +61,14 @@ else()
             src/utils/appconfig.h src/utils/appconfig.cpp
             src/utils/comapi/global.h src/utils/comapi/iteminfo.cpp src/utils/comapi/iteminfo.h src/utils/comapi/myapp.cpp src/utils/comapi/myapp.h src/utils/comapi/qqcell.cpp src/utils/comapi/qqcell.h src/utils/comapi/unit.h
 
-            ui/components/contacts/qqcelltitle.h ui/components/contacts/qqcelltitle.cpp ui/components/contacts/qqcelltitle.ui
-            ui/components/contacts/qqcellline.h ui/components/contacts/qqcellline.cpp ui/components/contacts/qqcellline.ui
+            ui/components/friendListPage/qqcelltitle.h ui/components/friendListPage/qqcelltitle.cpp ui/components/friendListPage/qqcelltitle.ui
+            ui/components/friendListPage/qqcellline.h ui/components/friendListPage/qqcellline.cpp ui/components/friendListPage/qqcellline.ui
 
-            ui/components/contacts/friendlistwidget.h ui/components/contacts/friendlistwidget.cpp
-            ui/components/contacts/FriendInfo.h
+            ui/components/friendListPage/friendlistwidget.h ui/components/friendListPage/friendlistwidget.cpp
+            ui/components/friendListPage/FriendInfo.h
             src/utils/utils.h
+            ui/components/chatListPage/chatlist_main.h ui/components/chatListPage/chatlist_main.cpp ui/components/chatListPage/chatlist_main.ui
+            ui/components/chatListPage/chatlist_line_left.h ui/components/chatListPage/chatlist_line_left.cpp ui/components/chatListPage/chatlist_line_left.ui
 
 
         )
