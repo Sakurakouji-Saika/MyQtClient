@@ -1,7 +1,10 @@
 #include "chatlist_main.h"
 #include "ui_chatlist_main.h"
 #include "../../src/utils/StyleLoader.h"
-#include "chatlist_line_left.h"
+
+#include <QVBoxLayout>
+#include "chat-widget/chatwidget.h"
+
 
 
 chatList_Main::chatList_Main(QWidget *parent)
@@ -17,34 +20,20 @@ chatList_Main::chatList_Main(QWidget *parent)
     // 加载样式
     StyleLoader::loadWidgetStyle(this,qssPath);
 
-    chatlist_Line_left *clll = new chatlist_Line_left(this);
-
-    clll->setParent(ui->scrollAreaWidgetContents);
-
-    // 2. 确保内容区有 QVBoxLayout
-    QVBoxLayout *vlayout = qobject_cast<QVBoxLayout*>(ui->scrollAreaWidgetContents->layout());
-    if (!vlayout) {
-        vlayout = new QVBoxLayout(ui->scrollAreaWidgetContents);
-        vlayout->setContentsMargins(6,6,6,6);
-        vlayout->setSpacing(8);
-        // 若希望消息靠上，添加 stretch
-        vlayout->addStretch();
+    // ---------- 把 ChatWidget 放到 scrollArea ----------
+    // 先把 Designer 放进去的占位 widget 取出来并删除（可选但推荐）
+    QWidget *old = ui->scrollArea->takeWidget();
+    if (old) {
+        old->deleteLater();
     }
 
-    // 3. 让子控件横向扩展填满宽度
-    clll->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    // 创建你的 ChatWidget（父对象交给 scrollArea）
+    ChatWidget *chat = new ChatWidget;
+    // 可以根据需要设置滚动区域是否自动调整子 widget 的大小
+    ui->scrollArea->setWidgetResizable(true);
+    ui->scrollArea->setWidget(chat);
+    // ---------- end ----------
 
-    // 4. 插入到 stretch 之前（如果有 stretch）
-    int insertIndex = vlayout->count();
-    if (insertIndex > 0 && vlayout->itemAt(insertIndex - 1)->spacerItem()) {
-        insertIndex = insertIndex - 1;
-    }
-    vlayout->insertWidget(insertIndex, clll);
-
-    // 5. 刷新并滚到底
-    ui->scrollAreaWidgetContents->adjustSize();
-    QScrollBar *vbar = ui->scrollArea->verticalScrollBar();
-    // vbar->setValue(vbar->maximum());
 
 }
 

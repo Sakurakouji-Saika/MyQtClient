@@ -68,7 +68,9 @@ else()
             ui/components/friendListPage/FriendInfo.h
             src/utils/utils.h
             ui/components/chatListPage/chatlist_main.h ui/components/chatListPage/chatlist_main.cpp ui/components/chatListPage/chatlist_main.ui
-            ui/components/chatListPage/chatlist_line_left.h ui/components/chatListPage/chatlist_line_left.cpp ui/components/chatListPage/chatlist_line_left.ui
+            ui/components/chatListPage/chat-widget/chatbubble.h ui/components/chatListPage/chat-widget/chatbubble.cpp
+            ui/components/chatListPage/chat-widget/chatwidget.h ui/components/chatListPage/chat-widget/chatwidget.cpp
+
 
 
         )
