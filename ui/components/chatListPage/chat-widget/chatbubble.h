@@ -29,6 +29,8 @@ private:
     int m_lastWidth;
     enum class Mode { Unknown, SingleLine, Wrap };
     Mode m_mode;
+    QHash<int, QSize> m_sizeCache; // key: bucketed availWidth，value: (textWidth, height)
+    Qt::Alignment m_lastAppliedAlignment = Qt::AlignLeft;
 };
 
 class LeftBubble : public ChatBubbleBase {

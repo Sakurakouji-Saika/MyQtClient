@@ -4,6 +4,8 @@
 #include <QHBoxLayout>
 #include <QTextOption>
 #include <QFontMetrics>
+#include <QTextCursor>
+#include <QTextBlockFormat>
 
 ChatBubbleBase::ChatBubbleBase(const QString &text, QWidget *parent)
     : QWidget(parent), m_lastWidth(-1), m_mode(Mode::Unknown), m_avatar(nullptr)
@@ -49,72 +51,84 @@ ChatBubbleBase::~ChatBubbleBase() = default;
 void ChatBubbleBase::updateBubbleWidth(int parentWidth) {
     if (parentWidth <= 0) return;
 
-    const int gap = 36; // 左右额外留白（整体布局的安全边距）
+    const int gap = parentWidth * 0.1; // 左右额外留白（整体布局的安全边距）
     const int bubblePaddingLR = 12 + 12; // 气泡内边距（和上面 bubbleLayout 一致）
-    const int minBubbleW = 60; // 最小气泡宽度
+    const int minBubbleW = 30; // 最小气泡宽度
 
     int availWidth = parentWidth - gap;
     if (availWidth < minBubbleW) availWidth = minBubbleW;
 
-    QFontMetrics fm(m_textBrowser->font());
+    // 使用文档默认字体来测量，确保与 QTextBrowser 显示一致
+    QFont docFont = m_textBrowser->document()->defaultFont();
+    QFontMetrics fm(docFont);
+
     QString text = m_textBrowser->toPlainText();
+    // 去掉可能的回车字符，仅按 '\n' 分行
+    text.replace('\r', QString());
+    QStringList lines = text.split('\n', QString::KeepEmptyParts);
 
-    // 计算文本固有宽度（单行测量）
-    int textWidth = fm.horizontalAdvance(text);
+    // 计算每一行的像素宽度，取最大值
+    int maxLineWidth = 0;
+    for (const QString &line : lines) {
+        int w = fm.horizontalAdvance(line);
+        if (w > maxLineWidth) maxLineWidth = w;
+    }
 
-    // 判断是否需要换行模式
-    bool shouldWrap = (textWidth + bubblePaddingLR) > availWidth;
+    // 当文本为空（或只有空行）时，确保有最小宽度
+    if (maxLineWidth <= 0) maxLineWidth = fm.horizontalAdvance(QString(" ")); // 至少一个空格宽度
 
-    // 决定模式
-    Mode newMode = shouldWrap ? Mode::Wrap : Mode::SingleLine;
+    // 期望宽度（包含气泡内侧左右 padding）
+    int desiredWidth = maxLineWidth + bubblePaddingLR;
+    if (desiredWidth < minBubbleW) desiredWidth = minBubbleW;
 
-    // 计算目标宽度
+    // 如果最长行超过可用宽度，则进入换行模式并使用可用宽度
+    bool needWrapToAvail = (desiredWidth > availWidth);
+
     int targetWidth;
-    if (newMode == Mode::SingleLine) {
-        // 单行模式：文本宽度 + 内边距
-        targetWidth = textWidth + bubblePaddingLR;
-        if (targetWidth < minBubbleW) targetWidth = minBubbleW;
-    } else {
-        // 换行模式：使用可用宽度
+    if (needWrapToAvail) {
         targetWidth = availWidth;
-    }
-
-    // 只有当模式改变或宽度变化较大时才更新
-    bool needChange = false;
-    if (newMode != m_mode) {
-        needChange = true;
-    } else if (qAbs(targetWidth - m_lastWidth) > 10) { // 10px变化阈值
-        needChange = true;
-    }
-
-    if (!needChange) return;
-
-    // 应用变更
-    if (newMode == Mode::SingleLine) {
-        // 单行模式
-        m_bubble->setMinimumWidth(0);
-        m_bubble->setMaximumWidth(QWIDGETSIZE_MAX);
-        m_bubble->setFixedWidth(targetWidth);
-        // 设置文本浏览器使用固定宽度
-        m_textBrowser->setFixedWidth(targetWidth - bubblePaddingLR);
-        m_mode = Mode::SingleLine;
-    } else {
-        // 换行模式
-        m_bubble->setMinimumWidth(targetWidth);
-        m_bubble->setMaximumWidth(targetWidth);
-        // 设置文本浏览器使用固定宽度
-        m_textBrowser->setFixedWidth(targetWidth - bubblePaddingLR);
         m_mode = Mode::Wrap;
+    } else {
+        targetWidth = desiredWidth;
+        m_mode = Mode::SingleLine; // 语义上：按最长行宽显示（虽有多行，但不强制整行换成可用宽度）
     }
 
-    m_lastWidth = targetWidth;
+    // 只有当宽度变化明显时才更新（避免频繁刷新）
+    if (m_lastWidth <= 0 || qAbs(targetWidth - m_lastWidth) > 4 || m_mode != m_mode) {
+        // 应用宽度到气泡和文本控件
+        if (needWrapToAvail) {
+            m_bubble->setMinimumWidth(targetWidth);
+            m_bubble->setMaximumWidth(targetWidth);
+        } else {
+            m_bubble->setMinimumWidth(0);
+            m_bubble->setMaximumWidth(QWIDGETSIZE_MAX);
+            m_bubble->setFixedWidth(targetWidth);
+        }
 
-    // 强制文本浏览器重新计算尺寸
+        m_textBrowser->setFixedWidth(targetWidth - bubblePaddingLR);
+        m_lastWidth = targetWidth;
+    }
+
+    // 把当前 alignment 应用到文档中每个 block，确保每一行都对齐一致
+    {
+        Qt::Alignment align = m_textBrowser->alignment();
+        QTextCursor cursor(m_textBrowser->document());
+        cursor.beginEditBlock();
+        cursor.select(QTextCursor::Document);
+        QTextBlockFormat bf;
+        if (align & Qt::AlignRight) bf.setAlignment(Qt::AlignRight);
+        else if (align & Qt::AlignHCenter) bf.setAlignment(Qt::AlignHCenter);
+        else bf.setAlignment(Qt::AlignLeft);
+        cursor.mergeBlockFormat(bf);
+        cursor.clearSelection();
+        cursor.endEditBlock();
+    }
+
+    // 强制文档使用文本控件当前宽度来计算布局高度
     m_textBrowser->document()->setTextWidth(m_textBrowser->width());
     int idealHeight = int(m_textBrowser->document()->size().height() + 0.5);
     m_textBrowser->setFixedHeight(idealHeight);
 
-    // 如果需要，avatar 的高度也可以根据气泡高度垂直居中（由布局处理）
     updateGeometry();
     m_bubble->updateGeometry();
 }
@@ -150,7 +164,7 @@ void LeftBubble::setupAlignment() {
 RightBubble::RightBubble(const QString &text, QWidget *parent)
     : ChatBubbleBase(text, parent)
 {
-    m_textBrowser->setAlignment(Qt::AlignRight);
+    m_textBrowser->setAlignment(Qt::AlignLeft);
     m_bubble->setObjectName("bubbleRight");
     m_bubble->setStyleSheet("#bubbleRight{ background:#daf8c6; border-radius:10px; }");
 
