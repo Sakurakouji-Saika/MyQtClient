@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QTextOption>
+#include <QString>
 #include <QFontMetrics>
 #include <QTextCursor>
 #include <QTextBlockFormat>

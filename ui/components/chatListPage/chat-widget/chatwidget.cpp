@@ -123,35 +123,21 @@ void ChatWidget::resizeEvent(QResizeEvent *e) {
 }
 
 void ChatWidget::updateAllBubbleWidths() {
-    int viewportW = m_scroll->viewport()->width();
-    if (qAbs(viewportW - m_lastViewportWidth) <= 1) return;
-    m_lastViewportWidth = viewportW;
-
-    // 计算 viewport 在 messagesWidget 中的可见矩形
-    QPoint vpTopLeft = m_scroll->viewport()->mapTo(m_messagesWidget, QPoint(0,0));
-    QRect visibleRect(vpTopLeft, m_scroll->viewport()->size());
-
-    // 给上下缓冲（预先布局看起来更平滑）
-    const int buffer = 200;
-    visibleRect.adjust(0, -buffer, 0, buffer);
-
-    const int avatarAreaWidth = 56;
-
-    for (int i = 0; i < m_messagesLayout->count(); ++i) {
-        QLayoutItem *it = m_messagesLayout->itemAt(i);
-        if (!it) continue;
-        QWidget *w = it->widget();
-        if (!w) continue;
-
-        // 只处理可见或接近可见的 widget
-        if (!w->geometry().intersects(visibleRect)) continue;
-
-        ChatBubbleBase *b = qobject_cast<ChatBubbleBase*>(w);
-        if (b) {
-            int avail = viewportW - avatarAreaWidth;
-            if (avail < 50) avail = 50;
-            b->updateBubbleWidth(avail);
-        }
-    }
+   int viewportW = m_scroll->viewport()->width();
+   if (qAbs(viewportW - m_lastViewportWidth) <= 1) return;
+   m_lastViewportWidth = viewportW;
+   const int avatarAreaWidth = 56; // 与 addMessage 中保持一致
+   for (int i = 0; i < m_messagesLayout->count(); ++i) {
+       QLayoutItem *it = m_messagesLayout->itemAt(i);
+       if (!it) continue;
+       QWidget *w = it->widget();
+       if (!w) continue;
+       ChatBubbleBase *b = qobject_cast<ChatBubbleBase*>(w);
+       if (b) {
+           int avail = viewportW - avatarAreaWidth;
+           if (avail < 50) avail = 50;
+           b->updateBubbleWidth(avail);
+       }
+   }
 }
 
