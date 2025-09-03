@@ -1,18 +1,13 @@
 #ifndef CHATWIDGET_H
 #define CHATWIDGET_H
 
-
-#pragma once
-
 #include <QWidget>
 #include <QTimer>
-#include "chatbubble.h"
+#include "chatmodel.h"
+#include "chatdelegate.h"
 
-class QScrollArea;
-class QVBoxLayout;
+class QListView;
 class QLineEdit;
-class QScrollBar;
-class ChatBubbleBase;
 
 class ChatWidget : public QWidget {
     Q_OBJECT
@@ -24,16 +19,16 @@ protected:
     void resizeEvent(QResizeEvent *e) override;
 
 private slots:
-    void updateAllBubbleWidths();
+    void updateDelegateWidth();
+    void scrollToBottom();
 
 private:
-    QScrollArea *m_scroll;
-    QWidget *m_messagesWidget;
-    QVBoxLayout *m_messagesLayout;
+    QListView *m_listView;
+    ChatModel *m_model;
+    ChatDelegate *m_delegate;
     QLineEdit *m_input;
     int m_lastViewportWidth;
     QTimer *m_updateTimer;
 };
-
 
 #endif // CHATWIDGET_H

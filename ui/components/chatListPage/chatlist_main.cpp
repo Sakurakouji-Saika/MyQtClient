@@ -33,6 +33,8 @@ chatList_Main::chatList_Main(QWidget *parent)
     chat->addMessage("Moe 可爱捏！",true);
     ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setWidget(chat);
+
+    old->setContentsMargins(0,0,0,0);
     // ---------- end ----------
 
     connect(ui->btn_pushMsg,&QToolButton::clicked,this,[this,chat]{
