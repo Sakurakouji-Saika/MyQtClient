@@ -13,7 +13,7 @@ class ChatWidget : public QWidget {
     Q_OBJECT
 public:
     explicit ChatWidget(QWidget *parent = nullptr);
-    void addMessage(const QString &text, bool isSelf);
+    void addMessage(bool isSelf,QString avatar_url,const QString &text);
 
 protected:
     void resizeEvent(QResizeEvent *e) override;

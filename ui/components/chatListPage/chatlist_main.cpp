@@ -30,7 +30,7 @@ chatList_Main::chatList_Main(QWidget *parent)
     // 创建你的 ChatWidget（父对象交给 scrollArea）
     ChatWidget *chat = new ChatWidget;
     // 可以根据需要设置滚动区域是否自动调整子 widget 的大小
-    chat->addMessage("Moe 可爱捏！",true);
+    chat->addMessage(false,"://picture/avatar/1.jpg","Moe 可爱捏！");
     ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setWidget(chat);
 
@@ -40,7 +40,7 @@ chatList_Main::chatList_Main(QWidget *parent)
     connect(ui->btn_pushMsg,&QToolButton::clicked,this,[this,chat]{
         QString t = ui->plainTextEdit->toPlainText().trimmed();
         if(!t.isEmpty()){
-            chat->addMessage(t,true);
+            chat->addMessage(true,"://picture/avatar/1.jpg",t);
             ui->plainTextEdit->clear();
         }
     });

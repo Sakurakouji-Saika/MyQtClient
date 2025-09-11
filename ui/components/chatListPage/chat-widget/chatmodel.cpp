@@ -16,18 +16,23 @@ QVariant ChatModel::data(const QModelIndex &index, int role) const {
 
     const MessageData &message = m_messages.at(index.row());
 
-    if (role == Qt::DisplayRole || role == Qt::UserRole) {
+    switch (role) {
+    case TextRole:
         return message.text;
-    } else if (role == Qt::UserRole + 1) {
+    case IsSelfRole:
         return message.isSelf;
+    case avatarUrlRole:
+        return message.avatar_url;
+    default:
+        return QVariant();
     }
 
     return QVariant();
 }
 
-void ChatModel::addMessage(const QString &text, bool isSelf) {
+void ChatModel::addMessage(const QString &text, bool isSelf,QString avatar_url) {
     beginInsertRows(QModelIndex(), m_messages.size(), m_messages.size());
-    m_messages.append({text, isSelf});
+    m_messages.append({text, isSelf,avatar_url});
     endInsertRows();
 }
 

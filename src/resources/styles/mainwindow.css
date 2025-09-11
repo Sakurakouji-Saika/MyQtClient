@@ -1,4 +1,4 @@
-#centralwidget{
+MainWindow#MainWindow #centralwidget{
     /* background: qlineargradient(
         x1: 0, y1: 0.1, 
         x2: 0.5, y2: 1.1,  
@@ -9,40 +9,40 @@
     background-color: #F2F2F2;
 }
 
-#label{
+MainWindow#MainWindow #label{
     min-height: 40px;
     margin-top: 10px;
     margin-bottom: 20px;
 }
 
-#widget{
+MainWindow#MainWindow #widget{
     background-color: #fff;
 }
 
-#splitter{
-    width: 3px;
+MainWindow#MainWindow #splitter{
+    width: 1px;
 }
 
-#groupBox{
+MainWindow#MainWindow #groupBox{
     border: none;
 }
 
-QToolButton {
+MainWindow#MainWindow QToolButton {
     border: none;
     min-height: 40px;
     max-height: 40px;
     border-radius: 5px;
 }
 
-QToolButton:hover {
+MainWindow#MainWindow QToolButton:hover {
     background-color: rgba(128, 128, 128, 20);
 }
 
-QToolButton:checked {
+MainWindow#MainWindow QToolButton:checked {
     background-color: rgba(128, 128, 128, 50);
 }
 
-#searchLineEdit{
+MainWindow#MainWindow #searchLineEdit{
     border: none;
     background-color: #F5F5F5;
     border-radius: 5px;
@@ -51,7 +51,7 @@ QToolButton:checked {
     padding: 0px 15px;
 }
 
-#searchBtn{
+MainWindow#MainWindow #searchBtn{
     max-width: 30px;
     max-height: 30px;
     min-width: 30px;
@@ -59,11 +59,11 @@ QToolButton:checked {
     background-color: #F5F5F5;
 }
 
-#searchBtn:hover {
+MainWindow#MainWindow #searchBtn:hover {
     background-color: #dbdbdb;
 }
 
-#pageNav{
+MainWindow#MainWindow #pageNav{
     border: none;
 }
 

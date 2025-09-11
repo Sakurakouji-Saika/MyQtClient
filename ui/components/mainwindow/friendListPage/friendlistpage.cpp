@@ -39,36 +39,36 @@ friendListPage::friendListPage(QWidget *parent)
     //    真实项目中可以在 groupToggled 信号里异步加载
     QList<FriendInfo> friendsMy;  // “我的好友”
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
 
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
     friendsMy.append({ "u002", "Bob",   "://picture/avatar/2.jpg",   false });
-    friendsMy.append({ "u003", "Cici",  "://picture/avatar/2.jpg",  true });
+    friendsMy.append({ "u003", "Cici",  "://picture/avatar/1.jpg",  true });
     friendList->setFriendsForGroup("我的好友", friendsMy);
 
     QList<FriendInfo> friendsColleagues;  // “同事”
     friendsColleagues.append({ "u101", "David", "://picture/avatar/2.jpg", false });
-    friendsColleagues.append({ "u102", "Emma",  "://picture/avatar/2.jpg",  true });
+    friendsColleagues.append({ "u102", "Emma",  "://picture/avatar/1.jpg",  true });
     friendList->setFriendsForGroup("同事", friendsColleagues);
 
     QList<FriendInfo> friendsFamily;  // “家人”
@@ -77,8 +77,23 @@ friendListPage::friendListPage(QWidget *parent)
 
     // 4. 连接信号示例（可选）
     QObject::connect(friendList, &FriendListWidget::friendClicked,
-                     [](const FriendInfo &fi){
-                         qDebug() << "你点击了：" << fi.name << "(ID:" << fi.id << ")";
+                     [this](const FriendInfo &fi){
+                        qDebug() << "你点击了：" << fi.name << "(ID:" << fi.id << ")";
+
+                        emit signals_open_profile_page(fi);
+
+                        // if(m_profile_main != nullptr){
+                        //     delete m_profile_main;
+                        // }
+
+                        // m_profile_main = new ProfilePage_Main(this);
+                        // m_profile_main->addInfo(fi);
+                        // m_profile_main->show();
+
+                        // connect(m_profile_main,&ProfilePage_Main::open_friend_chat_page,[]{
+                        //     qDebug() << "12312312312";
+                        // });
+
                      });
 
     QObject::connect(friendList, &FriendListWidget::groupToggled,

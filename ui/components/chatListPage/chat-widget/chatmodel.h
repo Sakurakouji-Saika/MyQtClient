@@ -7,6 +7,15 @@
 struct MessageData {
     QString text;
     bool isSelf;
+    QString avatar_url;
+};
+
+
+enum ChatRoles {
+    TextRole = Qt::UserRole,       // 消息文本
+    IsSelfRole,                     // 是否自己发的
+    avatarUrlRole                   // 头像地址
+
 };
 
 class ChatModel : public QAbstractListModel {
@@ -17,7 +26,7 @@ public:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
-    void addMessage(const QString &text, bool isSelf);
+    void addMessage(const QString &text, bool isSelf,QString avatar_url);
     void clear();
 
 private:

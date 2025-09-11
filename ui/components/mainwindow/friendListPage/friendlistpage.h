@@ -18,12 +18,19 @@ public:
     explicit friendListPage(QWidget *parent = nullptr);
     ~friendListPage();
 
+
+
+signals:
+    void signals_open_profile_page(const FriendInfo &fi);
+
 private:
 
     FriendListWidget *m_friendListWidget; // 好友列表控件
 
 
+
     Ui::friendListPage *ui;
+
 };
 
 #endif // FRIENDLISTPAGE_H

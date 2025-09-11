@@ -9,6 +9,8 @@
 #include "../utils/clientsocket.h"
 #include "../../ui/components/mainwindow/chatListPage/chatlistpage.h"
 #include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
+#include "../../ui/components/ProfilePage/profilepage_main.h"
+#include "../../ui/components/chatListPage/chatlist_main.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,7 +31,6 @@ public:
     void SetSocket(ClientSocket *tcpSocket, const QString &name);
 
 private slots:
-    void on_contactsButton_clicked();
 
     void SltTrayIcoClicked(QSystemTrayIcon::ActivationReason reason);
     void SltTrayIconMenuClicked(QAction *action);
@@ -45,8 +46,12 @@ private:
     Ui::MainWindow *ui;
 
     QSystemTrayIcon *systemTrayIcon;
-    chatListPage * chatList;
-    friendListPage * friendList;
+    chatListPage * chatList;            // 已经打开的聊天页面
+    friendListPage * friendList;        // 好友列表页
+
+    ProfilePage_Main *m_profile_main_page;      // 个人介绍主页
+    QWidget *m_blankPage;                       // 空白页
+    chatList_Main *m_chatlist_page;             // 聊天页面
 
     // socket通信类
     ClientSocket    *m_tcpSocket;

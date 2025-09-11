@@ -6,7 +6,6 @@
 #include <QButtonGroup>
 
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -43,6 +42,40 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     InitSysTrayIcon();
+
+
+
+
+
+    //``````````````````````````````````````````````````````````
+    m_blankPage = new QWidget(this);
+    ui->chatDetailStack->addWidget(m_blankPage); // index 0
+
+
+    m_profile_main_page = new ProfilePage_Main(this);
+    ui->chatDetailStack->addWidget(m_profile_main_page); // index 1
+
+    m_chatlist_page = new chatList_Main(this);
+    ui->chatDetailStack->addWidget(m_chatlist_page); // index 2
+
+    // 初始显示空白页
+    ui->chatDetailStack->setCurrentIndex(0);
+
+
+
+
+    connect(friendList,&friendListPage::signals_open_profile_page,[this](const FriendInfo &fi){
+        ui->chatDetailStack->setCurrentIndex(1);
+        m_profile_main_page->addInfo(fi);
+        ui->centralwidget->setStyleSheet("#centralwidget { background-color: white; }");
+    });
+
+    connect(m_profile_main_page,&ProfilePage_Main::open_friend_chat_page,[this](const FriendInfo &fi){
+        ui->chatDetailStack->setCurrentIndex(2);
+        ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
+
+    });
+
 }
 
 MainWindow::~MainWindow()
@@ -130,10 +163,6 @@ void MainWindow::loadStyleCloseBtn()
 }
 
 
-void MainWindow::on_contactsButton_clicked()
-{
-
-}
 
 
 

@@ -72,6 +72,7 @@ else()
             ui/components/chatListPage/chat-widget/chatwidget.h ui/components/chatListPage/chat-widget/chatwidget.cpp
             ui/components/chatListPage/chat-widget/chatmodel.h ui/components/chatListPage/chat-widget/chatmodel.cpp
             ui/components/chatListPage/chat-widget/chatdelegate.h ui/components/chatListPage/chat-widget/chatdelegate.cpp
+            ui/components/ProfilePage/profilepage_main.h ui/components/ProfilePage/profilepage_main.cpp ui/components/ProfilePage/profilepage_main.ui
 
 
 

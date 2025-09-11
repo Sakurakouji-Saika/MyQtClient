@@ -84,20 +84,20 @@ ChatWidget::ChatWidget(QWidget *parent)
 
     m_updateTimer = new QTimer(this);
     m_updateTimer->setSingleShot(true);
-    m_updateTimer->setInterval(100); // 50ms debounce
+    m_updateTimer->setInterval(500); // 50ms debounce
     connect(m_updateTimer, &QTimer::timeout, this, &ChatWidget::updateDelegateWidth);
 
     // Connect model changes to scroll to bottom
     connect(m_model, &ChatModel::rowsInserted, this, &ChatWidget::scrollToBottom);
 
     // Add example messages
-    for (int i = 0; i < 1000; ++i) {
-        addMessage("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123", false);
-        addMessage("对方消息：短文本会按文本长度显示，不会被强制换行（若能单行完整显示则不换行）。", false);
-        addMessage("我的消息：短消息也是单行显示且靠右。", true);
-        addMessage("我的消息：短消息也是单行显示且靠右。", false);
+    for (int i = 0; i < 10; ++i) {
+        addMessage(false,"D:\\Documents\\Qt\\MyClient\\src\\resources\\picture\\avatar\\3.jpg","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123");
+        addMessage(false,"D:\\Documents\\Qt\\MyClient\\src\\resources\\picture\\avatar\\4.jpg","对方消息：短文本会按文本长度显示，不会被强制换行（若能单行完整显示则不换行）。");
+        addMessage(true,"://picture/avatar/2.jpg","我的消息：短消息也是单行显示且靠右。");
+        addMessage(false,"://picture/avatar/1.jpg","我的消息：短消息也是单行显示且靠右。");
 
-        addMessage("这是一条非常长的对方消息示例，用来测试当文本宽度超过可用宽度时，气泡会被拉满并自动换行。窗口缩放时，气泡会根据 scroll 区域的可用宽度重新设置宽度，从而触发文本换行和高度自适应。", false);
+        addMessage(false,"://picture/avatar/1.jpg","这是一条非常长的对方消息示例，用来测试当文本宽度超过可用宽度时，气泡会被拉满并自动换行。窗口缩放时，气泡会根据 scroll 区域的可用宽度重新设置宽度，从而触发文本换行和高度自适应。");
     }
 
     // Initial update
@@ -107,8 +107,8 @@ ChatWidget::ChatWidget(QWidget *parent)
     });
 }
 
-void ChatWidget::addMessage(const QString &text, bool isSelf) {
-    m_model->addMessage(text, isSelf);
+void ChatWidget::addMessage(bool isSelf,QString avatar_url,const QString &text) {
+    m_model->addMessage(text, isSelf,avatar_url);
 }
 
 void ChatWidget::resizeEvent(QResizeEvent *e) {

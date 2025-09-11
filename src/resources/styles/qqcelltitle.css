@@ -1,12 +1,12 @@
 QQCellTitle {
 
     background-color: white;
-    min-height: 40px;
-    max-height: 40px;
+    min-height: 35px;
+    max-height: 35px;
     font-family: "Microsoft YaHei";
 }
 
 QQCellTitle  #label{
-        min-height: 40px;
-    max-height: 40px;
+    min-height: 35px;
+    max-height: 35px;
 }

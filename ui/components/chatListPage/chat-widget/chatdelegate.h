@@ -5,6 +5,7 @@
 #include <QTextBrowser>
 #include <QFrame>
 #include <QLabel>
+#include "chatmodel.h"
 
 class ChatDelegate : public QStyledItemDelegate {
     Q_OBJECT

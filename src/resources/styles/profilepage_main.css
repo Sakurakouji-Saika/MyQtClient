@@ -1,0 +1,59 @@
+ProfilePage_Main{
+    background-color: #fff;
+}
+
+ProfilePage_Main #btn_push_msg{
+    border: 1px solid #0099FF;
+    border-radius: 10px;
+    background-color: #0099FF;
+    color: white;
+    font-family: "Microsoft YaHei";
+}
+
+ProfilePage_Main #btn_push_msg:hover{
+    background-color: #008DEB;
+}
+
+ProfilePage_Main #btn_push_msg:pressed{
+    color: #8bd0fd;
+}
+
+
+ProfilePage_Main #btn_clear_friend{
+    border: 1px solid #dddddd;
+    border-radius: 10px;
+    background-color: #fff;
+    color: #000;
+    font-family: "Microsoft YaHei";
+}
+
+ProfilePage_Main #btn_clear_friend:hover{
+    background-color: #dbdbdb;
+}
+
+ProfilePage_Main #btn_clear_friend:pressed{
+    color: #9c9c9c;
+}
+
+ProfilePage_Main #lab_a{
+    color: #636363;
+    font-family: "Microsoft YaHei";
+}
+ProfilePage_Main #lab_b{
+    color: #686868;
+    font-family: "Microsoft YaHei";
+}
+ProfilePage_Main #lab_c{
+    color: #686868;
+    font-family: "Microsoft YaHei";
+}
+
+ProfilePage_Main #id{
+    color: #686868;
+    font-family: "Microsoft YaHei";
+}
+
+ProfilePage_Main #State{
+    color: #686868;
+    font-family: "Microsoft YaHei";
+}

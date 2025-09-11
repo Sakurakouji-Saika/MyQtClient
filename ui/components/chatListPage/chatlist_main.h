@@ -18,6 +18,7 @@ public:
     void addChatLeft();
 
 private:
+    QString m_avatar_url;
     Ui::chatList_Main *ui;
 };
 

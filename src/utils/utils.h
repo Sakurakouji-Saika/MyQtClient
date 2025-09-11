@@ -6,7 +6,7 @@
 #include <QPainterPath>
 
 // 帮助函数：先缩放再圆角
-QPixmap scaledRoundedPixmap(const QPixmap &src, const QSize &targetSize, int radius) {
+inline QPixmap scaledRoundedPixmap(const QPixmap &src, const QSize &targetSize, int radius) {
     // 1. 缩放到目标尺寸（这里用填充方式保证铺满，再裁剪到圆角）
     QPixmap scaled = src.scaled(
         targetSize,

@@ -8,6 +8,7 @@
 
 #include "../ui/components/chatListPage/chatlist_main.h"
 
+#include "../ui/components/ProfilePage/profilepage_main.h"
 
 void my_version(){
     QString qtVersion = QT_VERSION_STR;
@@ -42,13 +43,15 @@ int main(int argc, char *argv[])
     // Widget w;
     // w.show();
 
-    // MainWindow m;
-    // m.show();
+    MainWindow m;
+    m.show();
 
     chatList_Main clm;
     clm.show();
 
 
+    // ProfilePage_Main profileP;
+    // profileP.show();
 
 
 

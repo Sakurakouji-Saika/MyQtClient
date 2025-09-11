@@ -16,8 +16,9 @@ void ChatDelegate::updateWidth(int width) {
 }
 
 QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    QString text = index.data(Qt::DisplayRole).toString();
-    bool isSelf = index.data(Qt::UserRole + 1).toBool();
+    QString text = index.data(TextRole).toString();
+    bool isSelf = index.data(IsSelfRole).toBool();
+    QString avatar_url = index.data(avatarUrlRole).toString();
 
     // Use cache if available
     QString cacheKey = text + (isSelf ? "_right" : "_left");
@@ -34,7 +35,7 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     int availWidth = m_availableWidth - 2 * sideMargin - avatarWidth - avatarBubbleGap;
     if (availWidth < 30) availWidth = 30; // 最小气泡宽度
 
-    QFont font = option.font;
+    QFont font("Microsoft YaHei", option.font.pointSize());
     QFontMetrics fm(font);
 
     // Calculate text width
@@ -83,8 +84,9 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
 void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     painter->save();
 
-    QString text = index.data(Qt::DisplayRole).toString();
-    bool isSelf = index.data(Qt::UserRole + 1).toBool();
+    QString text = index.data(TextRole).toString();
+    bool isSelf = index.data(IsSelfRole).toBool();
+    QString avatar_url = index.data(avatarUrlRole).toString();
 
     QRect rect = option.rect;
     QStyleOptionViewItem opt = option;
@@ -131,21 +133,46 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
         painter->fillPath(path, Qt::white); // Left bubble color
     }
 
-    // Draw avatar
-    if (isSelf) {
-        painter->setBrush(QColor("#66bb6a"));
-    } else {
-        painter->setBrush(QColor("#bbbbbb"));
-    }
+    // ---------------------------
+    // Draw avatar as a circular image
+    // ---------------------------
+    // 注意：资源前缀使用 ":/..."
+    QPixmap avatar(avatar_url);
 
-    painter->setPen(Qt::NoPen);
-    painter->drawEllipse(avatarRect);
+    // 开启平滑缩放提示以提高绘制质量
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+
+    if (!avatar.isNull()) {
+        // 将图片缩放到比目标稍大（保持纵横比），以便居中裁剪
+        QPixmap scaled = avatar.scaled(avatarRect.size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+
+        // 计算从 scaled 中取哪一块作为 source（居中裁切）
+        int sx = (scaled.width() - avatarRect.width()) / 2;
+        int sy = (scaled.height() - avatarRect.height()) / 2;
+        QRect srcRect(sx, sy, avatarRect.width(), avatarRect.height());
+
+        // 使用圆形裁剪后绘制（保证边缘平滑）
+        painter->save();
+        QPainterPath clipPath;
+        clipPath.addEllipse(avatarRect);
+        painter->setClipPath(clipPath);
+        painter->drawPixmap(avatarRect, scaled, srcRect);
+        painter->restore();
+    } else {
+        // 图片加载失败 -> 使用原先的颜色回退（保证不会空白）
+        painter->save();
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(isSelf ? QColor("#66bb6a") : QColor("#bbbbbb"));
+        painter->drawEllipse(avatarRect);
+        painter->restore();
+    }
 
     // Draw text
     QRect textRect = bubbleRect.adjusted(12, 8, -12, -8);
 
     painter->setPen(Qt::black);
-    painter->setFont(opt.font);
+    QFont font("Microsoft YaHei", opt.font.pointSize());
+    painter->setFont(font);
 
     // 对于短文本，直接使用 QPainter 绘制，避免 QTextDocument 的问题
     QFontMetrics fm(opt.font);
@@ -168,12 +195,17 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     } else {
         // 对于长文本，使用 QTextDocument 进行换行
         QTextDocument doc;
-        doc.setDefaultFont(opt.font);
+        QFont font("Microsoft YaHei", opt.font.pointSize());
+        doc.setDefaultFont(font);
         doc.setPlainText(text);
         doc.setTextWidth(textRect.width());
 
+
+
+        painter->save();
         painter->translate(textRect.topLeft());
         doc.drawContents(painter, QRect(0, 0, textRect.width(), textRect.height()));
+        painter->restore();
     }
 
     painter->restore();
