@@ -31,5 +31,7 @@
         <file>styles/chatListPage.css</file>
         <file>svg/image_24.svg</file>
         <file>svg/open_file_24.svg</file>
+        <file>svg/Notification.svg</file>
+        <file>svg/add_group_24.svg</file>
     </qresource>
 </RCC>

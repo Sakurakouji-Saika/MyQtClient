@@ -91,7 +91,7 @@ ChatWidget::ChatWidget(QWidget *parent)
     connect(m_model, &ChatModel::rowsInserted, this, &ChatWidget::scrollToBottom);
 
     // Add example messages
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 1; ++i) {
         addMessage(false,"D:\\Documents\\Qt\\MyClient\\src\\resources\\picture\\avatar\\3.jpg","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123");
         addMessage(false,"D:\\Documents\\Qt\\MyClient\\src\\resources\\picture\\avatar\\4.jpg","对方消息：短文本会按文本长度显示，不会被强制换行（若能单行完整显示则不换行）。");
         addMessage(true,"://picture/avatar/2.jpg","我的消息：短消息也是单行显示且靠右。");

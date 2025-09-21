@@ -1,0 +1,81 @@
+
+#FNP_listWidget {
+    border: none;
+    outline: none; /* 有些平台/样式可能不支持 */
+    background-color: transparent; /* override ui setting of #F0F0F0 */ 
+}
+
+/* Ensure individual items don't show a background color */
+#FNP_listWidget::item {
+    background-color: transparent;
+}
+
+#FNP_listWidget::item:selected {
+    background-color: rgba(0,0,0,0.04);
+}
+#FNP_Title{
+    margin-left: 20px;
+    margin-bottom: 5px;
+}
+
+FNP_Line{
+
+}
+
+/* Title label inside FriendNotify page */
+FNP_Line #FNP_container{
+    background-color: white;
+    border-radius: 15PX;
+    max-width: 470px;
+    min-width: 470px;
+}
+
+FNP_Line #avatarIcon,
+FNP_Line #decisionStatus,
+FNP_Line #FNP_VL_2,
+FNP_Line #userName,
+FNP_Line #timeText,
+FNP_Line #inviteText,
+FNP_Line #messagePrefix,
+FNP_Line #qqNumber{
+    background: transparent;
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+}
+
+FNP_Line #userName{
+    color: blue;
+}
+FNP_Line #timeText,
+FNP_Line #messagePrefix,
+FNP_Line #decisionStatus,
+FNP_Line #qqNumber{
+    color: grey;
+}
+
+FNP_Line #decisionStatus{
+    max-width: 70px;
+}
+FNP_Line #messagePrefix{
+    max-width: 30px;
+}
+FNP_Line #timeText{
+    margin-left: 10px;
+}
+
+/* 把高度设为0、把 handle 隐藏、左右按钮宽度设为0 */
+QScrollBar:horizontal {
+    height: 0px;
+    background: transparent;
+    margin: 0;
+}
+QScrollBar::handle:horizontal {
+    background: transparent;
+    min-width: 0px;
+}
+QScrollBar::add-line:horizontal,
+QScrollBar::sub-line:horizontal,
+QScrollBar::add-page:horizontal,
+QScrollBar::sub-page:horizontal {
+    width: 0px;
+    background: transparent;
+}

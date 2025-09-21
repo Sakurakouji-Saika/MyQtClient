@@ -51,12 +51,16 @@ MainWindow::MainWindow(QWidget *parent)
     m_blankPage = new QWidget(this);
     ui->chatDetailStack->addWidget(m_blankPage); // index 0
 
-
     m_profile_main_page = new ProfilePage_Main(this);
     ui->chatDetailStack->addWidget(m_profile_main_page); // index 1
 
     m_chatlist_page = new chatList_Main(this);
     ui->chatDetailStack->addWidget(m_chatlist_page); // index 2
+
+    m_friendNotify = new FriendNotify_Page(this);
+    ui->chatDetailStack->addWidget(m_friendNotify); // index 3
+
+
 
     // 初始显示空白页
     ui->chatDetailStack->setCurrentIndex(0);
@@ -277,6 +281,92 @@ void MainWindow::SltTcpReply(const quint8 &type, const QJsonValue &dataVal)
 
 void MainWindow::SltTcpStatus(const quint8 &staus)
 {
+
+}
+
+
+
+void MainWindow::on_searchBtn_clicked()
+{
+
+    QMenu menu(this); // 栈对象，不会泄漏
+
+
+
+    QAction *act1 = menu.addAction("添加好友");
+    act1->setIcon(QIcon("://svg/add_group_24.svg"));
+
+    QAction *act2 = menu.addAction("好友通知");
+    act2->setIcon(QIcon("://svg/Notification.svg"));
+
+
+    // 关闭系统阴影并去掉框架（使用 Popup 类型）
+    menu.setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    // 允许透明背景（有助于边角过渡，虽然我们用 mask 裁形）
+    menu.setAttribute(Qt::WA_TranslucentBackground);
+
+
+    // 把图标尺寸设小一点（避免图标区域过大）
+    // menu.setIcon(QSize(16, 16)); // 或 18/20，根据需要调整
+
+    menu.setStyleSheet(R"(
+    QMenu {
+        background-color: white;
+        border: 1px solid #cfcfcf;
+        border-radius: 8px;
+        padding: 6px;
+    }
+    /* item padding: top right bottom left —— 把左边 padding 调小 */
+    QMenu::item {
+        padding: 6px 12px 6px 6px;  /* 原来是 6px 20px -> 右边缩小到 12，左边缩到 6 */
+        margin: 2px 0;
+        spacing: 4px;               /* 有些 style 支持 spacing */
+    }
+    /* 图标到文字的额外间距（视 style 支持情况而定）*/
+    QMenu::icon {
+        padding: 0px 15px 0px 0px;   /* 上 右 下 左 —— 右边为 icon 到文字的距离，设为 6 */
+        margin-left: 0px;           /* 清除可能的左侧预留 */
+    }
+    QMenu::item:selected {
+        background-color: #e6e6e6;
+        border-radius: 6px;
+    }
+)");
+
+    // 连接单个 QAction
+    connect(act1, &QAction::triggered, this, [this](){
+        qDebug() << "选项一被点击了";
+
+        if (!m_addfriend) {
+            m_addfriend = new addfrienddialog();
+            m_addfriend->setAttribute(Qt::WA_DeleteOnClose);
+
+            connect(m_addfriend, &QObject::destroyed, this, [this](){
+                m_addfriend = nullptr;
+            });
+
+        }
+        m_addfriend->show();
+        m_addfriend->raise();
+        m_addfriend->activateWindow();
+
+    });
+    connect(act2, &QAction::triggered, this, [this](){
+        qDebug() << "选项二被点击了";
+        ui->chatDetailStack->setCurrentIndex(3);
+        ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
+    });
+
+
+
+
+    // 显示菜单
+    QPoint pos = ui->searchBtn->mapToGlobal(QPoint(0, ui->searchBtn->height() + 5));
+    menu.exec(pos);
+
+    ui->searchBtn->setDown(false);   // 复位“按下”状态
+    ui->searchBtn->setChecked(false);
+    ui->searchBtn->update();
 
 }
 

@@ -73,6 +73,10 @@ else()
             ui/components/chatListPage/chat-widget/chatmodel.h ui/components/chatListPage/chat-widget/chatmodel.cpp
             ui/components/chatListPage/chat-widget/chatdelegate.h ui/components/chatListPage/chat-widget/chatdelegate.cpp
             ui/components/ProfilePage/profilepage_main.h ui/components/ProfilePage/profilepage_main.cpp ui/components/ProfilePage/profilepage_main.ui
+            ui/components/addfrienddialog/addfrienddialog.h ui/components/addfrienddialog/addfrienddialog.cpp ui/components/addfrienddialog/addfrienddialog.ui
+            ui/components/FriendNotify/friendnotify_page.h ui/components/FriendNotify/friendnotify_page.cpp ui/components/FriendNotify/friendnotify_page.ui
+            ui/components/FriendNotify/fnp_line.h ui/components/FriendNotify/fnp_line.cpp ui/components/FriendNotify/fnp_line.ui
+            ui/components/FriendNotify/FNPData.h
 
 
 

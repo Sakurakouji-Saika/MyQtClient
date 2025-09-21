@@ -6,6 +6,7 @@
 #include <QFrame>
 #include <QLabel>
 #include "chatmodel.h"
+#include <QPainterPath>
 
 class ChatDelegate : public QStyledItemDelegate {
     Q_OBJECT

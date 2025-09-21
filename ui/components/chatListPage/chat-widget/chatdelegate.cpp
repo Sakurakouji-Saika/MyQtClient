@@ -128,7 +128,7 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     path.addRoundedRect(bubbleRect, 10, 10);
 
     if (isSelf) {
-        painter->fillPath(path, QColor("#daf8c6")); // Right bubble color
+        painter->fillPath(path, QColor("#0099FF")); // Right bubble color
     } else {
         painter->fillPath(path, Qt::white); // Left bubble color
     }
@@ -170,7 +170,7 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     // Draw text
     QRect textRect = bubbleRect.adjusted(12, 8, -12, -8);
 
-    painter->setPen(Qt::black);
+    painter->setPen(isSelf ? Qt::white : Qt::black);
     QFont font("Microsoft YaHei", opt.font.pointSize());
     painter->setFont(font);
 
@@ -200,11 +200,19 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
         doc.setPlainText(text);
         doc.setTextWidth(textRect.width());
 
-
+        // 设置文本颜色（自己发送的为白色，他人发送的为黑色）
+        if (isSelf) {
+            doc.setDefaultStyleSheet("body { color: white; }");
+        } else {
+            doc.setDefaultStyleSheet("body { color: black; }");
+        }
 
         painter->save();
         painter->translate(textRect.topLeft());
-        doc.drawContents(painter, QRect(0, 0, textRect.width(), textRect.height()));
+        // 确保使用正确的文本颜色绘制
+        QAbstractTextDocumentLayout::PaintContext ctx;
+        ctx.palette.setColor(QPalette::Text, isSelf ? Qt::white : Qt::black);
+        doc.documentLayout()->draw(painter, ctx);
         painter->restore();
     }
 

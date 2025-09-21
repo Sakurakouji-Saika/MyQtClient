@@ -1,16 +1,20 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QSize>
 #include <QMenu>
 #include <QMainWindow>
 #include <hoverbutton.h>
 #include <QSystemTrayIcon>
+#include <QGraphicsDropShadowEffect>
 
 #include "../utils/clientsocket.h"
 #include "../../ui/components/mainwindow/chatListPage/chatlistpage.h"
 #include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
 #include "../../ui/components/ProfilePage/profilepage_main.h"
 #include "../../ui/components/chatListPage/chatlist_main.h"
+#include "../../ui/components/FriendNotify/friendnotify_page.h"
+#include "../../ui/components/addfrienddialog/addfrienddialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -42,6 +46,8 @@ private slots:
     void SltQuitApp();
     void on_MinBtn_clicked();
 
+    void on_searchBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -52,6 +58,8 @@ private:
     ProfilePage_Main *m_profile_main_page;      // 个人介绍主页
     QWidget *m_blankPage;                       // 空白页
     chatList_Main *m_chatlist_page;             // 聊天页面
+    FriendNotify_Page *m_friendNotify;          // 同意添加好友通知页面
+    addfrienddialog * m_addfriend = nullptr;              // 搜索添加好友页面
 
     // socket通信类
     ClientSocket    *m_tcpSocket;

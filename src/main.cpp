@@ -9,6 +9,8 @@
 #include "../ui/components/chatListPage/chatlist_main.h"
 
 #include "../ui/components/ProfilePage/profilepage_main.h"
+#include "../ui/components/FriendNotify/friendnotify_page.h"
+
 
 void my_version(){
     QString qtVersion = QT_VERSION_STR;
@@ -29,7 +31,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     StyleLoader::setDebugEnabled(true);
-    StyleLoader::setDebugResourceRoot("D:/Documents/Qt/MyClient/src/resources");
+    StyleLoader::setDebugResourceRoot("C:/Users/Moe/Desktop/MyClient/src/resources");
 
 
     my_version();
@@ -46,13 +48,18 @@ int main(int argc, char *argv[])
     MainWindow m;
     m.show();
 
-    chatList_Main clm;
-    clm.show();
+
+
+    // chatList_Main clm;
+    // clm.show();
 
 
     // ProfilePage_Main profileP;
     // profileP.show();
 
+
+    FriendNotify_Page m_page;
+    m_page.show();
 
 
     return a.exec();

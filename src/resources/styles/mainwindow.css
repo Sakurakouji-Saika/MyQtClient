@@ -1,18 +1,6 @@
 MainWindow#MainWindow #centralwidget{
-    /* background: qlineargradient(
-        x1: 0, y1: 0.1, 
-        x2: 0.5, y2: 1.1,  
-        stop: 0.3 #D5F3FF,
-        stop: 1 #FCFEFF
-    ); 
-    */
-    background-color: #F2F2F2;
-}
 
-MainWindow#MainWindow #label{
-    min-height: 40px;
-    margin-top: 10px;
-    margin-bottom: 20px;
+    background-color: #F2F2F2;
 }
 
 MainWindow#MainWindow #widget{
@@ -116,3 +104,5 @@ MainWindow#MainWindow QPushButton#MinBtn:hover {
 MainWindow#MainWindow QPushButton#MinBtn:pressed {
     background: #acacac;
 }
+
+

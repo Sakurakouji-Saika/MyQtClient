@@ -8,6 +8,7 @@
 #define IP_INPUT_SIZE 4
 class IPLineEdit : public QGroupBox
 {
+    Q_OBJECT
 public:
     IPLineEdit(QWidget *parent=0);
     ~IPLineEdit();
