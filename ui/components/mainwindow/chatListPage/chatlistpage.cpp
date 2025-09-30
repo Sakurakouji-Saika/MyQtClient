@@ -50,7 +50,10 @@ void chatListPage::populateRecentList(const QMap<QString,Recent_Data> &recentLis
         RC_Line *lineWidget = new RC_Line(ui->listWidget);
         lineWidget->setData(r);
 
-        item->setSizeHint(QSize(ui->listWidget->viewport()->width(), 70));
+    // Don't fix the width here: let QListWidget manage the item's width so the
+    // embedded widget can expand/shrink with the list (and splitter) changes.
+    // We only set the height portion of the size hint.
+    item->setSizeHint(QSize(0, 70));
         ui->listWidget->addItem(item);
         ui->listWidget->setItemWidget(item, lineWidget);
         item->setData(Qt::UserRole, r.user_id);
@@ -77,7 +80,9 @@ void chatListPage::addRecent(const Recent_Data &r, bool toTop, bool select) {
     lineWidget->setData(r);
 
     // 设定合适的 sizeHint（可以参考 widget 的 sizeHint）
-    item->setSizeHint(QSize(ui->listWidget->viewport()->width(), 70));
+    // Do not pin the width to the current viewport width. Use a zero width so
+    // QListWidget can provide the available width; we only request the row height.
+    item->setSizeHint(QSize(0, 70));
     // 或者： item->setSizeHint(lineWidget->sizeHint());
 
     // 插入到 list（此时 item 被 list 管理）
