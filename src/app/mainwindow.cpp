@@ -355,6 +355,13 @@ void MainWindow::on_searchBtn_clicked()
         qDebug() << "选项二被点击了";
         ui->chatDetailStack->setCurrentIndex(3);
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
+
+
+        // 测试：模拟收到新消息
+        Recent_Data testData("://picture/avatar/E9.jpg", "Hello from MainWindow",
+                             "1312", "TestUser", "20:00", 1);
+        chatList->receiveMessage(testData);
+
     });
 
 

@@ -1,0 +1,114 @@
+addfrienddialog{
+    background-color: white;
+    min-width: 500px;
+    max-width: 500px;
+    max-height: 190px;
+    min-height: 190px;;
+}
+addfrienddialog #add_friend_btn{
+    max-width: 80px;
+    color: white;
+    border-radius: 5px;
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    background-color: #008DEB;
+    margin-left: 10px;
+}
+
+addfrienddialog #add_friend_btn:hover{
+    background-color: #007ACC;
+}
+
+addfrienddialog #add_friend_btn:pressed{
+    background-color: #006BB3;
+    color: #b5e1ff;
+}
+
+#AF_lineEdit{
+    border: 1px solid #C0C0C0;
+    border-radius: 5px;
+    background-color: #F5F5F5;
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    padding: 0px 12px;
+    
+}
+#AF_lineEdit:hover{
+    background-color: #E8E8E8;
+}
+
+#AFD_label{
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    min-height: 20px;;
+    max-height: 20px;
+    margin-left: 30px;
+    /* background-color: aqua; */
+}
+
+
+
+#AF_userInfo{
+    background-color: #F2F2F2;
+    max-height: 100px;
+    min-height: 100px;
+
+}
+
+#AF_hear{
+    margin:0px 30px 20px;
+    min-height: 40px;
+    border: none;   
+}
+
+#AF_userInfo{
+    border: none;
+    
+
+}
+#AF_use_123{
+    margin: 0px 10px;
+    min-height: 50px;
+    max-height: 50px;
+    border: none;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px 20px;
+}
+
+#AF_use_223{
+    margin-left: 10px;
+    margin-right: 10px;
+    border: none;
+    min-height: 50px;
+
+}
+
+#Af_user_2_lab{
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    font-size: 16px;
+}
+
+#Af_user_2_lab_2{
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+
+}
+
+#Af_user_2_lab_2{
+    color: #008DEB;
+}
+
+
+#AF_use_2_btn{
+    background-color: white;
+    border: 1px solid #C0C0C0;
+    border-radius: 5px;
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+    max-width: 70px;
+    min-width: 70px;
+    max-height: 25px;
+    min-height: 25px;
+}   
+
+#AF_use_2_btn:hover{
+    background-color: #EBEBEB;
+}
+
+

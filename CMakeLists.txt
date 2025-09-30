@@ -51,7 +51,7 @@ else()
             src/utils/StyleLoader.h src/utils/StyleLoader.cpp
 
 
-            ui/components/mainwindow/chatListPage/chatlistpage.h ui/components/mainwindow/chatListPage/chatlistpage.cpp ui/components/mainwindow/chatListPage/chatlistpage.ui
+            ui/components/mainwindow/chatListPage/chatlistpage.h ui/components/mainwindow/chatListPage/chatlistpage.cpp
             ui/components/mainwindow/friendListPage/friendlistpage.h ui/components/mainwindow/friendListPage/friendlistpage.cpp ui/components/mainwindow/friendListPage/friendlistpage.ui
             ui/components/mainwindow/chatContentPage/chatcontentpage.h ui/components/mainwindow/chatContentPage/chatcontentpage.cpp ui/components/mainwindow/chatContentPage/chatcontentpage.ui
             ui/components/mainwindow/userInfoPage/userinfopage.h ui/components/mainwindow/userInfoPage/userinfopage.cpp ui/components/mainwindow/userInfoPage/userinfopage.ui
@@ -77,6 +77,10 @@ else()
             ui/components/FriendNotify/friendnotify_page.h ui/components/FriendNotify/friendnotify_page.cpp ui/components/FriendNotify/friendnotify_page.ui
             ui/components/FriendNotify/fnp_line.h ui/components/FriendNotify/fnp_line.cpp ui/components/FriendNotify/fnp_line.ui
             ui/components/FriendNotify/FNPData.h
+
+            ui/components/FriendSearchWidget/friendsearchwidget.h ui/components/FriendSearchWidget/friendsearchwidget.cpp ui/components/FriendSearchWidget/friendsearchwidget.ui
+            ui/components/mainwindow/chatListPage/recent_chats/rc_line.h ui/components/mainwindow/chatListPage/recent_chats/rc_line.cpp ui/components/mainwindow/chatListPage/recent_chats/rc_line.ui
+            ui/components/mainwindow/chatListPage/recent_data.h
 
 
 

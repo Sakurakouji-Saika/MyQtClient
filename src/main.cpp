@@ -6,11 +6,8 @@
 #include "utils/appconfig.h"
 #include "app/mainwindow.h"
 
-#include "../ui/components/chatListPage/chatlist_main.h"
 
-#include "../ui/components/ProfilePage/profilepage_main.h"
-#include "../ui/components/FriendNotify/friendnotify_page.h"
-
+#include "../ui/components/addfrienddialog/addfrienddialog.h"
 
 void my_version(){
     QString qtVersion = QT_VERSION_STR;
@@ -58,8 +55,8 @@ int main(int argc, char *argv[])
     // profileP.show();
 
 
-    FriendNotify_Page m_page;
-    m_page.show();
+    // addfrienddialog m_page;
+    // m_page.show();
 
 
     return a.exec();

@@ -69,13 +69,13 @@ chatList_Main #btn_pushMsg{
     min-width: 83px;
     max-width: 83px;
     max-height: 28px;
-
-    background-color: #0BB8F3;
+    
+    background-color: #0099FF;
     border-radius: 3px;
 
     font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
     
-    color: rgba(0, 0, 138, 0.404);
+    color: #FFFFFF;
 }
 
 

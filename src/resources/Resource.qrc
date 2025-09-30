@@ -33,5 +33,11 @@
         <file>svg/open_file_24.svg</file>
         <file>svg/Notification.svg</file>
         <file>svg/add_group_24.svg</file>
+        <file>picture/avatar/3.jpg</file>
+        <file>picture/avatar/4.jpg</file>
+        <file>picture/avatar/A.png</file>
+        <file>picture/avatar/C3.png</file>
+        <file>picture/avatar/F9.png</file>
+        <file>picture/avatar/E9.jpg</file>
     </qresource>
 </RCC>

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "../../src/utils/StyleLoader.h"
+#include "../../Src/utils/utils.h"
 
 
 namespace Ui {
@@ -16,6 +17,9 @@ class addfrienddialog : public QWidget
 public:
     explicit addfrienddialog(QWidget *parent = nullptr);
     ~addfrienddialog();
+
+private slots:
+    void on_add_friend_btn_clicked();
 
 private:
     Ui::addfrienddialog *ui;

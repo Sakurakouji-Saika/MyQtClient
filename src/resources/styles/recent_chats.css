@@ -1,0 +1,112 @@
+chatListPage #listWidget{
+    border: none;
+}
+
+#RC_Line_Box{
+    border: none;
+    
+}
+
+
+#groupBox_3{
+    border: none;
+}
+
+#RCL_UserName,
+#RCL_UnreadCount,
+#RCL_MessagePreview,
+#RCL_LastMsgTime
+{
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+}
+
+#RCL_LastMsgTime,
+#RCL_UnreadCount,
+#RCL_MessagePreview
+{
+    color: gray;
+    font-size: 11px;
+}
+
+#groupBox.unread {
+    background-color: rgb(255, 0, 0);
+    border-radius: 9px;
+}
+
+#groupBox.no-unread {
+    background-color: transparent;
+    border: none;
+}
+
+
+
+#groupBox_2{
+    border:none;
+    margin-top: 10px;
+    margin-left: 10px;;
+    margin-bottom: 15px;
+}
+
+
+#RCL_UnreadCount{
+    color: white;
+    font-weight: 400;
+    font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+
+
+}
+
+/* ===== 垂直滚动条 ===== */
+QScrollBar:vertical {
+    border: none;
+    background: white;
+    width: 6px;
+    border-radius: 3px;
+}
+
+QScrollBar::handle:vertical {
+    background: #cccccc;
+    min-height: 30px;
+    border-radius: 3px;
+}
+
+QScrollBar::add-line:vertical, 
+QScrollBar::sub-line:vertical {
+    height: 0px;             /* 隐藏上下箭头按钮 */
+}
+
+QScrollBar::add-page:vertical, 
+QScrollBar::sub-page:vertical {
+    background: transparent; /* 轨道剩余部分透明 */
+    
+}
+
+
+
+/* 强制取消 item 的焦点矩形（尽量放在 QSS 末尾以覆盖其它规则） */
+QListWidget#listWidget QAbstractItemView::item,
+QListWidget#listWidget QAbstractItemView::item:focus,
+QListWidget#listWidget QAbstractItemView::item:selected:focus,
+QListWidget#listWidget QListView::item:focus,
+QListWidget#listWidget QListWidget::item:focus {
+    outline: none;
+    border: none;
+}
+
+QListWidget::item:hover {
+  background: #F5F5F5;
+}
+
+
+QListWidget::item:selected{
+  background: rgba(70,130,180,0.20);
+  border-left: 3px solid #4a90e2; /* 左侧蓝条指示 */
+  padding-left: 11px; /* 因为加了左边框，稍微内缩 */
+  color: #ffffff;
+}
+
+
+
+
+
+
