@@ -81,7 +81,9 @@ else()
             ui/components/FriendSearchWidget/friendsearchwidget.h ui/components/FriendSearchWidget/friendsearchwidget.cpp ui/components/FriendSearchWidget/friendsearchwidget.ui
             ui/components/mainwindow/chatListPage/recent_chats/rc_line.h ui/components/mainwindow/chatListPage/recent_chats/rc_line.cpp ui/components/mainwindow/chatListPage/recent_chats/rc_line.ui
             ui/components/mainwindow/chatListPage/recent_data.h
-
+            ui/components/Change_Avatar_Page/change_avatar_page.h ui/components/Change_Avatar_Page/change_avatar_page.cpp ui/components/Change_Avatar_Page/change_avatar_page.ui
+            ui/components/Change_Avatar_Page/dragscrollarea.h
+            ui/components/Change_Avatar_Page/dragscrollarea.cpp
 
 
         )
@@ -91,6 +93,7 @@ endif()
 # 自己添加的，用于提升类的时候，路径报错的问题
 target_include_directories(MyClient PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets
+    ${CMAKE_CURRENT_SOURCE_DIR}/ui/components/Change_Avatar_Page
 )
 
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets  Qt${QT_VERSION_MAJOR}::Network)

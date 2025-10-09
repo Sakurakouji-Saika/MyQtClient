@@ -39,5 +39,9 @@
         <file>picture/avatar/C3.png</file>
         <file>picture/avatar/F9.png</file>
         <file>picture/avatar/E9.jpg</file>
+        <file>svg/102_copy.svg</file>
+        <file>svg/102_del.svg</file>
+        <file>svg/102_open.svg</file>
+        <file>svg/102_other.svg</file>
     </qresource>
 </RCC>

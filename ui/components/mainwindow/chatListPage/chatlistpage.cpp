@@ -4,6 +4,7 @@
 #include "recent_chats/rc_line.h"
 #include <QTimer>
 #include <QThread>
+#include <QMessageBox>
 
 chatListPage::chatListPage(QWidget *parent)
     : QWidget(parent)
@@ -18,6 +19,15 @@ chatListPage::chatListPage(QWidget *parent)
     // 连接 itemClicked 信号
     connect(ui->listWidget, &QListWidget::itemClicked,
             this, &chatListPage::on_listWidget_itemClicked);
+
+
+
+
+    ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+    QObject::connect(ui->listWidget, &QListWidget::customContextMenuRequested, [&](const QPoint &pos){
+        showListContextMenu(pos);
+    });
 }
 
 chatListPage::~chatListPage()
@@ -39,6 +49,63 @@ void chatListPage::test()
     m_list.insert("1010", Recent_Data("://picture/avatar/3.jpg",  "明天见",        "1010", "Jack",   "19:50", 0));
 
     populateRecentList(m_list);
+}
+
+void chatListPage::showListContextMenu(const QPoint &pos)
+{
+    qDebug() << "右键被触发";
+    QListWidgetItem* item = ui->listWidget->itemAt(pos);
+    if(!item) return;
+
+    menu = new QMenu(this);
+    // 关闭系统阴影并去掉框架（使用 Popup 类型）
+    menu->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    // 允许透明背景（有助于边角过渡，虽然我们用 mask 裁形）
+    menu->setAttribute(Qt::WA_TranslucentBackground);
+
+
+
+    menu->setStyleSheet(R"(
+
+    )");
+
+    QAction* aOpen = menu->addAction("打开聊天");
+    aOpen->setIcon(QIcon("://svg/102_open.svg"));
+
+    QAction* aDel  = menu->addAction("删除");
+    aDel->setIcon(QIcon("://svg/102_del.svg"));
+
+    QAction* aCopy  = menu->addAction("复制账号");
+    aCopy->setIcon(QIcon("://svg/102_copy.svg"));
+
+    QAction* aCustom = menu->addAction("自定义操作");
+    aCustom->setIcon(QIcon("://svg/102_other.svg"));
+
+    QAction* act = menu->exec(ui->listWidget->mapToGlobal(pos));
+
+
+
+
+    if(act == aOpen){
+        QVariant v = item->data(Qt::UserRole);
+        // 如果是 QString
+        QString userIdStr = v.toString();
+
+        QMessageBox::information(this, "Info", QString("打开: %1").arg(userIdStr));
+
+    } else if(act == aDel){
+        delete ui->listWidget->takeItem(ui->listWidget->row(item));
+    }else if(act == aCopy){
+
+        QVariant v = item->data(Qt::UserRole);
+        // 如果是 QString
+        QString userIdStr = v.toString();
+        qDebug() << "复制ID为:" << userIdStr;
+
+
+    }else if(act == aCustom){
+        qDebug() << "自定义操作:" << item->text();
+    }
 }
 
 void chatListPage::populateRecentList(const QMap<QString,Recent_Data> &recentList)

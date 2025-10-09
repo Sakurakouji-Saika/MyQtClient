@@ -20,8 +20,18 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     bool isSelf = index.data(IsSelfRole).toBool();
     QString avatar_url = index.data(avatarUrlRole).toString();
 
-    // Use cache if available
-    QString cacheKey = text + (isSelf ? "_right" : "_left");
+    // Determine a stable base width to compute available space.
+    // Prefer option.rect.width() when the view has provided a valid rect.
+    int baseWidth = option.rect.width();
+    if (baseWidth <= 50) {
+        // option.rect may be very small during initial layout; fall back to the
+        // last known available width from the container.
+        baseWidth = m_availableWidth;
+    }
+
+    // Use cache keyed by content AND the base width so cached sizes are
+    // valid for the specific width they were computed for.
+    QString cacheKey = QString::number(baseWidth) + "|" + text + (isSelf ? "_right" : "_left");
     if (m_sizeCache.contains(cacheKey)) {
         return m_sizeCache.value(cacheKey);
     }
@@ -31,8 +41,8 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     const int avatarWidth = 40; // 头像宽度
     const int avatarBubbleGap = 8; // 头像与气泡间距
 
-    // 可用宽度 = 总宽度 - 左右边距 - 头像宽度 - 头像气泡间距
-    int availWidth = m_availableWidth - 2 * sideMargin - avatarWidth - avatarBubbleGap;
+    // 可用宽度 = 基准宽度 - 左右边距 - 头像宽度 - 头像气泡间距
+    int availWidth = baseWidth - 2 * sideMargin - avatarWidth - avatarBubbleGap;
     if (availWidth < 30) availWidth = 30; // 最小气泡宽度
 
     QFont font("Microsoft YaHei", option.font.pointSize());
@@ -73,7 +83,7 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     int bubbleHeight = textHeight + 16; // 8 + 8 padding
 
     // Total item height (bubble + margins)
-    int totalHeight = bubbleHeight + 6; // spacing
+    int totalHeight = bubbleHeight + 11; // spacing
 
     QSize size(targetWidth, totalHeight);
     m_sizeCache.insert(cacheKey, size);
@@ -100,7 +110,7 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
     // Calculate bubble dimensions
     QSize bubbleSize = sizeHint(option, index);
     int bubbleWidth = bubbleSize.width();
-    int bubbleHeight = bubbleSize.height() - 6; // Remove spacing
+    int bubbleHeight = bubbleSize.height() - 11; // Remove spacing
 
     // 定义边距
     const int sideMargin = 14;

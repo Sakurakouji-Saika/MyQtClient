@@ -13,6 +13,14 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
+
+
+
+    // 过滤器注册
+    ui->avatar->installEventFilter(this);
+
+
+
     // 设计两页分栏
     QList<int> sizes;
     sizes.append(250); // 第一个值 250 对应 splitter 的第一个子控件的宽度
@@ -257,6 +265,14 @@ void MainWindow::SetSocket(ClientSocket *tcpSocket, const QString &name)
     }
 }
 
+void MainWindow::Open_Edit_Avatar_Page()
+{
+    Change_Avatar_Page * m_pg = new Change_Avatar_Page();
+    m_pg->setAttribute(Qt::WA_DeleteOnClose);  // 关闭时自动 delete
+    m_pg->show();
+
+}
+
 
 void MainWindow::on_MinBtn_clicked()
 {
@@ -331,7 +347,7 @@ void MainWindow::on_searchBtn_clicked()
         background-color: #e6e6e6;
         border-radius: 6px;
     }
-)");
+    )");
 
     // 连接单个 QAction
     connect(act1, &QAction::triggered, this, [this](){
@@ -377,3 +393,16 @@ void MainWindow::on_searchBtn_clicked()
 
 }
 
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    // 过滤器 处理关于点击主页面头像 弹出 设置头像页面
+    if (watched == ui->avatar && event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        if (mouseEvent->button() == Qt::LeftButton) {
+            Open_Edit_Avatar_Page();
+            return true; // 事件已处理（仅左键）
+        }
+        // 不是左键则不处理，交给父类/其它处理器
+    }
+    return QMainWindow::eventFilter(watched, event);
+}

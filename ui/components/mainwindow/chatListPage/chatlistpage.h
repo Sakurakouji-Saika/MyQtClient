@@ -5,6 +5,9 @@
 #include "../../src/utils/StyleLoader.h"
 #include "recent_data.h"
 #include <QMap>
+#include <QMenu>
+#include <QGraphicsDropShadowEffect>
+
 #include <QListWidgetItem>
 
 namespace Ui {
@@ -20,6 +23,8 @@ public:
     ~chatListPage();
 
     void test();
+
+    void showListContextMenu(const QPoint &pos);    //显示右键菜单
     void populateRecentList(const QMap<QString,Recent_Data>& recentList);
 
     // 公共接口，MainWindow 调用它即可（线程安全/非线程安全由你选择）
@@ -33,7 +38,7 @@ private slots:
 
 private:
     Ui::chatListPage *ui;
-
+    QMenu *menu;
     QMap<QString,Recent_Data> m_list;
 };
 

@@ -12,12 +12,12 @@ ChatWidget::ChatWidget(QWidget *parent)
     : QWidget(parent), m_lastViewportWidth(-1) {
     QVBoxLayout *root = new QVBoxLayout(this);
     root->setContentsMargins(0, 0, 0, 0);
-    root->setSpacing(6);
 
     // List view for messages
     m_listView = new QListView;
     m_model = new ChatModel(this);
     m_delegate = new ChatDelegate(this);
+
 
     m_listView->setModel(m_model);
     m_listView->setItemDelegate(m_delegate);
@@ -84,7 +84,7 @@ ChatWidget::ChatWidget(QWidget *parent)
 
     m_updateTimer = new QTimer(this);
     m_updateTimer->setSingleShot(true);
-    m_updateTimer->setInterval(500); // 50ms debounce
+    m_updateTimer->setInterval(50); // 50ms debounce
     connect(m_updateTimer, &QTimer::timeout, this, &ChatWidget::updateDelegateWidth);
 
     // Connect model changes to scroll to bottom

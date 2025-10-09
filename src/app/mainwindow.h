@@ -3,6 +3,7 @@
 
 #include <QSize>
 #include <QMenu>
+#include <QMouseEvent>
 #include <QMainWindow>
 #include <hoverbutton.h>
 #include <QSystemTrayIcon>
@@ -15,6 +16,7 @@
 #include "../../ui/components/chatListPage/chatlist_main.h"
 #include "../../ui/components/FriendNotify/friendnotify_page.h"
 #include "../../ui/components/addfrienddialog/addfrienddialog.h"
+#include "../../ui/components/Change_Avatar_Page/change_avatar_page.h"
 
 namespace Ui {
 class MainWindow;
@@ -33,6 +35,9 @@ public:
     void initStackedWidgetPages();
     void loadStyleCloseBtn();
     void SetSocket(ClientSocket *tcpSocket, const QString &name);
+
+
+    void Open_Edit_Avatar_Page();
 
 private slots:
 
@@ -67,6 +72,10 @@ private:
     // 主动退出操作时不进行断线匹配
     bool            m_bQuit;
 
+
+    // QObject interface
+public:
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 };
 
 #endif // MAINWINDOW_H
