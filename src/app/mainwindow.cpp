@@ -267,9 +267,37 @@ void MainWindow::SetSocket(ClientSocket *tcpSocket, const QString &name)
 
 void MainWindow::Open_Edit_Avatar_Page()
 {
-    Change_Avatar_Page * m_pg = new Change_Avatar_Page();
-    m_pg->setAttribute(Qt::WA_DeleteOnClose);  // 关闭时自动 delete
-    m_pg->show();
+    if(m_CAvatarPG == nullptr){
+        m_CAvatarPG = new Change_Avatar_Page();
+        m_CAvatarPG->setAttribute(Qt::WA_DeleteOnClose);  // 关闭时自动 delete
+
+        // 当窗口被 delete 时，自动把指针置空，避免悬空指针
+        connect(m_CAvatarPG,&Change_Avatar_Page::destroyed,this,[this]{
+            m_CAvatarPG = nullptr;
+        });
+
+
+        // 去掉最大化按钮
+        m_CAvatarPG->setWindowFlags(
+            Qt::Window
+            | Qt::WindowTitleHint
+            | Qt::WindowSystemMenuHint
+            | Qt::WindowMinimizeButtonHint
+            | Qt::WindowCloseButtonHint
+            );
+
+
+        m_CAvatarPG->show();
+    }else{
+        // 已存在就复用：如果被最小化则还原，若被隐藏则显示，最后置顶并激活
+        if (m_CAvatarPG->isMinimized())
+            m_CAvatarPG->showNormal();
+
+        m_CAvatarPG->show();            // 确保可见
+        m_CAvatarPG->raise();           // 置于顶层
+        m_CAvatarPG->activateWindow();  // 激活窗口（获取焦点）
+    }
+
 
 }
 

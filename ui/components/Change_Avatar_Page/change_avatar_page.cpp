@@ -24,6 +24,14 @@ Change_Avatar_Page::Change_Avatar_Page(QWidget *parent)
 
     initializeUI();
     connectSignals();
+
+    StyleLoader::loadWidgetStyle(this, ":/styles/change_avatar_page.css");
+
+
+    this->setWindowFlag(Qt::WindowMaximizeButtonHint, false);
+    setWindowTitle(QString::fromUtf8("\u200B")); // 零宽空格，看起来是空的
+
+
 }
 
 Change_Avatar_Page::~Change_Avatar_Page()

@@ -15,6 +15,9 @@
 #include <qDebug>
 #include <QLabel>
 
+#include "../../src/utils/StyleLoader.h"
+#include "../../Src/utils/utils.h"
+
 
 namespace Ui {
 class Change_Avatar_Page;
@@ -53,6 +56,7 @@ private:
     void drawMaskLayer(QPainter& painter, const QRect& rect);
     QPixmap getCurrentPixmap() const;
     bool saveHeader(const QPixmap& pixmap);
+
 
     // 常量
     static constexpr int BORDER_WIDTH = 1;  //圆圈边框线

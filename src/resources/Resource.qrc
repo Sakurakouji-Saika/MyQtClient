@@ -43,5 +43,15 @@
         <file>svg/102_del.svg</file>
         <file>svg/102_open.svg</file>
         <file>svg/102_other.svg</file>
+        <file>svg/left_rotation.svg</file>
+        <file>svg/right_rotation.svg</file>
+        <file>styles/addfrienddialog.css</file>
+        <file>styles/change_avatar_page.css</file>
+        <file>styles/FriendNotify_Page.css</file>
+        <file>styles/loginPage.css.bak</file>
+        <file>styles/profilepage_main.css</file>
+        <file>styles/recent_chats.css</file>
+        <file>svg/up_Avatar.svg</file>
+        <file>picture/transparent.png</file>
     </qresource>
 </RCC>

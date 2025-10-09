@@ -1,0 +1,138 @@
+Change_Avatar_Page{
+    background-color: white;
+}
+
+#previewScrollArea,
+#previewContent,
+#labelPreview
+{
+    border: none;
+    background-color: rgb(240, 240, 240);
+}
+
+#btnRotateCCW,
+#btnRotateCW
+{
+    background-color: white;
+    border: 1px solid rgb(200, 200, 200);
+    min-width: 30px;
+    min-height: 30px;
+    border-radius: 5px;
+}
+
+#btnRotateCCW:hover,
+#btnRotateCW:hover
+{
+    background-color: rgb(201, 201, 201);
+}
+
+#btnUpload{
+    color: #515151;
+    background-color: #F0F0F0;
+    height: 38px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+#btnUpload:hover{
+    background-color: #DBDBDB;
+    color: black;
+}
+
+#btnOk{
+    background-color:#0099FF;
+    border: none;
+    width: 170px;
+    height: 30px;
+    border-radius: 5px;
+    color: white;
+}
+
+#btnOk:hover{
+    background-color:#008DEB;
+    color: #cbeaff;
+    
+}
+
+#btnCancel{
+    border: 1px solid rgb(192, 192, 192);
+    color: rgb(92, 92, 92);
+    width: 170px;
+    height: 30px;
+    border-radius: 5px;
+
+}
+
+#btnCancel:hover{
+    background-color: #F5F5F5;
+    color: black;
+}
+
+#CAP_Box{
+    max-height: 3px;
+    max-height: 3px;
+}
+
+#CAP_Box,
+#CAP_groupBox_A
+{
+    border: none;
+}
+#CAP_groupBox_A{
+    margin-top: 10px;
+}
+
+
+
+#btnRotateCW{
+    margin-left: 12px;
+}
+
+#btnRotateCCW
+{
+    margin-right: 12px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 横向轨道 */
+QSlider#sliderScale::groove:horizontal {
+    height: 6px;
+    
+    border-radius: 3px;
+    background: rgba(200,200,200,0.35); /* 轻灰背景 */
+}
+
+/* 已走过的部分（active） */
+QSlider#sliderScale::sub-page:horizontal {
+    height: 3px;
+    border-radius: 2px;
+    background: #0099FF; /* 扁平蓝 */
+}
+
+/* 未走过部分（透明更简洁） */
+QSlider#sliderScale::add-page:horizontal {
+    background: transparent;
+}
+
+/* 扁平把手：短方条/小圆角（非球形） */
+QSlider#sliderScale::handle:horizontal {
+    width: 15px;               /* 把手宽度 */
+    margin: -4px 0;            /* 垂直居中到 groove */
+    border-radius: 3px;        /* 小圆角，非圆球 */
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    background: rgba(255,255,255,1); /* 扁平白或可换色 */
+    box-shadow: none;          /* QSS 无 box-shadow，但写上也无害 */
+}
+

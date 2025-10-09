@@ -65,6 +65,7 @@ private:
     chatList_Main *m_chatlist_page;             // 聊天页面
     FriendNotify_Page *m_friendNotify;          // 同意添加好友通知页面
     addfrienddialog * m_addfriend = nullptr;              // 搜索添加好友页面
+    Change_Avatar_Page * m_CAvatarPG = nullptr;   //修改头像页面
 
     // socket通信类
     ClientSocket    *m_tcpSocket;
