@@ -39,7 +39,7 @@
    <item>
     <widget class="QPushButton" name="btnUpload">
      <property name="text">
-      <string>上传照片</string>
+      <string>  上传照片</string>
      </property>
      <property name="icon">
       <iconset resource="../../../src/resources/Resource.qrc">

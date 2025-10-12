@@ -15,13 +15,11 @@ class DragScrollArea : public QScrollArea
 public:
     DragScrollArea(QWidget* parent = nullptr);
     ~DragScrollArea() override = default;
-    QPoint GetLastDragPos();
 
 
 private:
     bool m_dragging = false;    //是否被拖动状态
     QPoint m_lastDragPos;       //最后拖动后图片的位置
-    QPoint m_lastImagePos;      //图片位置
 
 signals:
     void zoomChanged(int num);

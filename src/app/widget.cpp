@@ -286,3 +286,21 @@ void Widget::on_SignalMessage(const quint8 &type, const QJsonValue &dataVal)
 
 }
 
+
+void Widget::on_registerBtn_clicked()
+{
+
+    if (m_registrationPage== nullptr) {
+        m_registrationPage = new Registration_Page();
+        m_registrationPage->setAttribute(Qt::WA_DeleteOnClose);
+
+        connect(m_registrationPage, &Registration_Page::destroyed, this, [this](){
+            m_registrationPage = nullptr;
+        });
+
+    }
+    m_registrationPage->show();
+    m_registrationPage->raise();
+    m_registrationPage->activateWindow();
+}
+

@@ -9,10 +9,7 @@ DragScrollArea::DragScrollArea(QWidget* parent): QScrollArea(parent) {
     // 允许容器内可以自动调整大小
 }
 
-QPoint DragScrollArea::GetLastDragPos()
-{
-    return m_lastImagePos;
-}
+
 
 //  mousePressEvent::鼠标按下事件
 void DragScrollArea::mousePressEvent(QMouseEvent* event)
@@ -42,8 +39,7 @@ void DragScrollArea::mouseMoveEvent(QMouseEvent* event)
         hBar->setValue(hBar->value() - delta.x());
         vBar->setValue(vBar->value() - delta.y());
 
-        m_lastImagePos.setX(hBar->value());
-        m_lastImagePos.setY(vBar->value());
+
 
         event->accept();
         return;

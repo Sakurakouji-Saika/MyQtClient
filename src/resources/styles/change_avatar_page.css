@@ -32,6 +32,8 @@ Change_Avatar_Page{
     height: 38px;
     border-radius: 5px;
     margin-bottom: 10px;
+        font-family: "Microsoft YaHei";
+
 }
 
 #btnUpload:hover{
@@ -46,6 +48,8 @@ Change_Avatar_Page{
     height: 30px;
     border-radius: 5px;
     color: white;
+        font-family: "Microsoft YaHei";
+
 }
 
 #btnOk:hover{
@@ -60,6 +64,8 @@ Change_Avatar_Page{
     width: 170px;
     height: 30px;
     border-radius: 5px;
+    font-family: "Microsoft YaHei";
+
 
 }
 

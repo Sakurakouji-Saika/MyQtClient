@@ -25,7 +25,7 @@ FNP_Line{
 /* Title label inside FriendNotify page */
 FNP_Line #FNP_container{
     background-color: white;
-    border-radius: 15PX;
+    border-radius: 8px;
     max-width: 470px;
     min-width: 470px;
 }
@@ -43,7 +43,7 @@ FNP_Line #qqNumber{
 }
 
 FNP_Line #userName{
-    color: blue;
+    color: #006eff;
 }
 FNP_Line #timeText,
 FNP_Line #messagePrefix,

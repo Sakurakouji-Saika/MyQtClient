@@ -1,0 +1,137 @@
+Registration_Page{
+    background: qlineargradient(
+        x1: 0, y1: 0,          /* 左上角 */
+        x2: 0.1, y2: 0.4,          /* 右下角 */
+        stop: 1 #f0f4fb,        /* 下端偏蓝色 */
+        stop: 1 #f9eff7,       /* 上端偏粉色 */
+        stop: 0.5 #e6f8f9     /* 中间淡淡蓝粉过渡 */
+    );
+    
+}
+
+
+#registration_Box{
+    border: none;
+    min-width: 280px;
+    max-width: 280px;
+    margin-top: 110px;
+}
+
+#registration_title{
+    font-family: "Microsoft YaHei";
+    font-size: 27px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+#RP_name,#RP_pwd,#RP_pwd_ok{
+    border: none;
+    color: rgb(92, 92, 92);
+    width: 300px;
+    height: 30px;
+    max-height: 38px;
+    min-height: 38px;
+    border-radius: 8px;
+    padding-left: 10px;
+    font-family: "Microsoft YaHei";
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+
+#registration_Box2{
+    border: none;
+    margin-top: 20px;
+}
+
+#registration_Box2 QLabel{
+    font-family: "Microsoft YaHei";
+}
+#RP_radioButton{
+    max-width: 20px;
+}
+
+
+#RP_abel_3{
+    margin-left: 5px;
+    color: #0772d6;
+    font-weight: bold;
+
+    
+}
+
+#RP_label_5{
+    color: #0772d6;
+    font-size: bold;
+    font-weight: bold;
+}
+
+#pushButton{
+    margin-top: 5px;
+    background-color: #009CFF;
+    border: none;
+    min-height: 35px;
+    border-radius: 5px;
+    color: white;
+    font-family: "Microsoft YaHei";
+}
+
+#RP_banquan{
+    margin-top: 50px;
+    color: rgb(150, 150, 150);
+    font-size: 12px;
+    font-family: "Microsoft YaHei";
+}
+
+
+#pushButton:hover{
+    background-color: #0089df;
+    color: #ccebff;
+
+}
+
+#pushButton:pressed{
+    background-color: #0078c1;
+    color: #a6d9ff;
+}
+
+
+
+
+
+/* ===== 扁平化白底灰边 + 选中蓝圆风格 ===== */
+QRadioButton#RP_radioButton {
+
+    font-size: 13px;
+    color: #333;
+    background: transparent;
+}
+
+/* 默认指示器样式：白底 + 灰边 + 扁平 */
+QRadioButton#RP_radioButton::indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 7px;
+    border: 1px solid #bfbfbf;
+    background: white;
+}
+
+/* 悬停时边框变亮灰 */
+QRadioButton#RP_radioButton::indicator:hover {
+    border: 1px solid #8c8c8c;
+}
+
+/* 选中时：蓝色实心圆 */
+QRadioButton#RP_radioButton::indicator:checked {
+    border: 1px solid #2680eb;
+    background-color: #2680eb;
+}
+
+/* 禁用时颜色变淡 */
+QRadioButton#RP_radioButton:disabled {
+    color: #aaa;
+}
+QRadioButton#RP_radioButton::indicator:disabled {
+    border: 1px solid #dcdcdc;
+    background: #f5f5f5;
+}

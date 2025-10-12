@@ -6,7 +6,7 @@
 #include "utils/appconfig.h"
 #include "app/mainwindow.h"
 
-
+#include "../../ui/components/Registration_Page/registration_page.h"
 #include "../ui/components/addfrienddialog/addfrienddialog.h"
 
 void my_version(){
@@ -39,25 +39,16 @@ int main(int argc, char *argv[])
     AppConfig::initialize("://config/app.ini");
 
 
-    // Widget w;
-    // w.show();
+    Widget w;
+    w.show();
 
     MainWindow m;
     m.show();
 
 
 
-    // chatList_Main clm;
-    // clm.show();
-
-
-    // ProfilePage_Main profileP;
-    // profileP.show();
-
-
-    // addfrienddialog m_page;
-    // m_page.show();
-
+    Registration_Page   m_pg;
+    m_pg.show();
 
     return a.exec();
 }

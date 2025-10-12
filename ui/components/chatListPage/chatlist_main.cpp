@@ -32,12 +32,13 @@ chatList_Main::chatList_Main(QWidget *parent)
     // 可以根据需要设置滚动区域是否自动调整子 widget 的大小
 
     // Add example messages
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < 50; ++i) {
          chat->addMessage(false,"D:\\Documents\\Qt\\MyClient\\src\\resources\\picture\\avatar\\3.jpg","AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123");
          chat->addMessage(false,"D:\\Documents\\Qt\\MyClient\\src\\resources\\picture\\avatar\\4.jpg","对方消息：短文本会按文本长度显示，不会被强制换行（若能单行完整显示则不换行）。");
          chat->addMessage(true,"://picture/avatar/2.jpg","我的消息：短消息也是单行显示且靠右。");
          chat->addMessage(false,"://picture/avatar/1.jpg","我的消息：短消息也是单行显示且靠右。");
 
+         //QString::number(i) +
          chat->addMessage(false,"://picture/avatar/1.jpg","这是一条非常长的对方消息示例，用来测试当文本宽度超过可用宽度时，气泡会被拉满并自动换行。窗口缩放时，气泡会根据 scroll 区域的可用宽度重新设置宽度，从而触发文本换行和高度自适应。");
     }
 

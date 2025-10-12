@@ -64,7 +64,9 @@ private:
 
     QWidget*            m_maskWidget;           // 选择头像区域的遮罩层
     QPixmap             m_sourceHeader;         // 上传的原始头像文件
-    int                 m_rotation = 0 ;   // 当前旋转角度（单位：度）
+    int                 m_rotation = 0 ;        // 当前旋转角度（单位：度）
+    // QPointF             viewCenterOffset;       // 记录视口中心相对位置
+
 
 
 protected:

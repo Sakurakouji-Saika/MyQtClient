@@ -7,6 +7,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "../utils/clientsocket.h"
+#include "../../ui/components/Registration_Page/registration_page.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -44,15 +46,16 @@ private slots:
 
     void on_SignalMessage(const quint8 &type,const QJsonValue &dataVal);
 
+    void on_registerBtn_clicked();
+
 private:
     Ui::LoginPage *ui;
 
     ClientSocket *m_clientSocket;
 
+    Registration_Page *m_registrationPage = nullptr;  //注册变量
 
-#ifdef QT_DEBUG
-    QFileSystemWatcher  m_fileWatcher;  // <-- 成员变量
-#endif
+
 
 };
 #endif // WIDGET_H

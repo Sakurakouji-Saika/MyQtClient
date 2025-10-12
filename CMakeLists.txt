@@ -84,6 +84,7 @@ else()
             ui/components/Change_Avatar_Page/change_avatar_page.h ui/components/Change_Avatar_Page/change_avatar_page.cpp ui/components/Change_Avatar_Page/change_avatar_page.ui
             ui/components/Change_Avatar_Page/dragscrollarea.h
             ui/components/Change_Avatar_Page/dragscrollarea.cpp
+            ui/components/Registration_Page/registration_page.h ui/components/Registration_Page/registration_page.cpp ui/components/Registration_Page/registration_page.ui
 
 
         )

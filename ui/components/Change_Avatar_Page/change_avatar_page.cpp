@@ -258,6 +258,7 @@ void Change_Avatar_Page::updateScaledPixmap(double scale)
     QTimer::singleShot(0, this, [this, hTarget, vTarget]{
         ui->previewScrollArea->horizontalScrollBar()->setValue(hTarget);
         ui->previewScrollArea->verticalScrollBar()->setValue(vTarget);
+        // viewCenterOffset = QPoint(ui->previewScrollArea->horizontalScrollBar()->value(),ui->previewScrollArea->verticalScrollBar()->value());
     });
 
 }
@@ -288,17 +289,26 @@ void Change_Avatar_Page::onCancel()
     ui->labelPreview->clear();
 
     m_rotation = 0;
+    m_sourceHeader = QPixmap();;
 }
 
 bool Change_Avatar_Page::saveHeader(const QPixmap& pixmap)
 {
     const QString savePath = QCoreApplication::applicationDirPath() + "/user_header.png";
 
-    QPoint currPos = ui->previewScrollArea->GetLastDragPos();
+    QScrollBar* hBar = ui->previewScrollArea->horizontalScrollBar();
+    QScrollBar* vBar = ui->previewScrollArea->verticalScrollBar();
+    const int x = hBar->value();
+    const int y = vBar->value();
 
-    QRect rect(currPos.x(), currPos.y(), ui->previewScrollArea->width(), ui->previewScrollArea->height());
+    const int w = ui->previewScrollArea->viewport()->width();
+    const int h = ui->previewScrollArea->viewport()->height();
+
+    QRect rect(x, y, w, h);
+    // 确保 rect 在 pixmap 范围内
+    rect = rect.intersected(QRect(QPoint(0,0), pixmap.size()));
+
     QPixmap cropped = pixmap.copy(rect);
-
     return cropped.save(savePath);
 }
 
