@@ -402,8 +402,15 @@ void MainWindow::on_searchBtn_clicked()
 
 
         // 测试：模拟收到新消息
-        Recent_Data testData("://picture/avatar/E9.jpg", "Hello from MainWindow",
-                             "1312", "TestUser", "20:00", 1);
+        Recent_Data testData(
+            ":/picture/avatar/11.jpg",
+            "我喜欢你",
+            "1111",
+            "薇婷",
+            QDateTime::currentDateTime(),
+            QDateTime::currentDateTime().toMSecsSinceEpoch(),
+            3
+            );
         chatList->receiveMessage(testData);
 
     });

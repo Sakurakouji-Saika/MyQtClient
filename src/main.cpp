@@ -39,16 +39,16 @@ int main(int argc, char *argv[])
     AppConfig::initialize("://config/app.ini");
 
 
-    Widget w;
-    w.show();
+    // Widget w;
+    // w.show();
 
     MainWindow m;
     m.show();
 
 
 
-    Registration_Page   m_pg;
-    m_pg.show();
+    // Registration_Page   m_pg;
+    // m_pg.show();
 
     return a.exec();
 }

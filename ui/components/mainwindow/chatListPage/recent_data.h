@@ -2,14 +2,17 @@
 #define RECENT_DATA_H
 #include <QString>
 #include <QMetaType>
+#include <QDateTime>
+
 
 struct Recent_Data {
-    QString avatarPath;     // 头像路径（可为空，表示使用占位图）
-    QString msg;            // 当前最新消息
-    QString user_id;        // 用户ID；
-    QString userName;       // 用户名
-    QString timeText;       // 发送时间
-    int UnreadCount;    // 未读消息数量
+    QString avatarPath;         // 头像路径（可为空，表示使用占位图）
+    QString msg;                // 当前最新消息
+    QString user_id;            // 用户ID；
+    QString userName;           // 用户名
+    QDateTime msg_time;         // 发送时间
+    qint64 timestamp;           // 发送时间戳
+    int UnreadCount;            // 未读消息数量
 
     // 默认构造
     Recent_Data() = default;
@@ -20,7 +23,8 @@ struct Recent_Data {
         msg(other.msg),
         user_id(other.user_id),
         userName(other.userName),
-        timeText(other.timeText),
+        msg_time(other.msg_time),
+        timestamp(other.timestamp),
         UnreadCount(other.UnreadCount)
     {}
 
@@ -30,19 +34,35 @@ struct Recent_Data {
                 const QString& msg_ = {},
                 const QString& user_id_ = {},
                 const QString& userName_ = {},
-                const QString& timeText_ = {},
+                const QDateTime& msg_time_ = {},
+                const qint64 & timestamp_ ={},
                 const int& unreadCount_ = {})   // 加上未读参数
         : avatarPath(avatarPath_),
         msg(msg_),
         user_id(user_id_),
         userName(userName_),
-        timeText(timeText_),
+        msg_time(msg_time_),
+        timestamp(timestamp_),
         UnreadCount(unreadCount_) {}
 
 };
 
-Q_DECLARE_METATYPE(Recent_Data)
+enum Recent_Roles{
+    avatar_Role = Qt::UserRole+1,
+    msg_Role,
+    user_id_Role,
+    user_name_Role,
+    msg_time_Role,
+    timestamp_Role,
+    unread_count_Role,
+    all_data_Role
+};
 
+
+
+
+
+Q_DECLARE_METATYPE(Recent_Data)
 
 
 #endif // RECENT_DATA_H

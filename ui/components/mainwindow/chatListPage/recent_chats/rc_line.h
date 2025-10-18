@@ -2,8 +2,12 @@
 #define RC_LINE_H
 
 #include <QWidget>
+#include "../recent_time_utlis.h"
 #include "../../Src/utils/utils.h"
 #include "../recent_data.h"
+#include <QDateTime>
+#include <QDate>
+#include <QTime>
 
 namespace Ui {
 class RC_Line;
@@ -16,7 +20,10 @@ class RC_Line : public QWidget
 public:
     explicit RC_Line(QWidget *parent = nullptr);
     ~RC_Line();
-    void setData(Recent_Data m_data);
+    void setData(const Recent_Data &m_data);
+    void setData(QVariant m_var);
+    void setUnReadOnZero();
+    Recent_Data recentDataFromVariant(const QVariant &v);
 
 
 private:

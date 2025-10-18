@@ -7,8 +7,11 @@
 #include <QMap>
 #include <QMenu>
 #include <QGraphicsDropShadowEffect>
-
+#include "model.h"
+#include <QListView>
+#include <QClipboard>
 #include <QListWidgetItem>
+#include <QStandardItemModel>
 
 namespace Ui {
 class chatListPage;
@@ -23,23 +26,23 @@ public:
     ~chatListPage();
 
     void test();
+    void populateRecentList(const QMap<QString,Recent_Data> &recentList);
+    void on_showListContextMenu(const QPoint &pos);
 
-    void showListContextMenu(const QPoint &pos);    //显示右键菜单
-    void populateRecentList(const QMap<QString,Recent_Data>& recentList);
-
-    // 公共接口，MainWindow 调用它即可（线程安全/非线程安全由你选择）
     void receiveMessage(const Recent_Data &msg);
 
-private slots:
-    void on_listWidget_itemClicked(QListWidgetItem *item);
 
-    void addRecent(const Recent_Data &r, bool toTop, bool select);
+
+private slots:
+    void onListItemClicked(const QModelIndex &index);
     void onNewMessage(const Recent_Data &msg);
+
 
 private:
     Ui::chatListPage *ui;
+
+    Model *m_model;
     QMenu *menu;
-    QMap<QString,Recent_Data> m_list;
 };
 
 #endif // CHATLISTPAGE_H

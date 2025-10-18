@@ -42,6 +42,8 @@ else()
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
+        find_package(Qt5 REQUIRED COMPONENTS Core)
+
         add_executable(MyClient
             ${PROJECT_SOURCES}
             src/resources/Resource.qrc
@@ -85,6 +87,8 @@ else()
             ui/components/Change_Avatar_Page/dragscrollarea.h
             ui/components/Change_Avatar_Page/dragscrollarea.cpp
             ui/components/Registration_Page/registration_page.h ui/components/Registration_Page/registration_page.cpp ui/components/Registration_Page/registration_page.ui
+            ui/components/mainwindow/chatListPage/recent_time_utlis.h
+            ui/components/mainwindow/chatListPage/model.h ui/components/mainwindow/chatListPage/model.cpp
 
 
         )
@@ -98,6 +102,7 @@ target_include_directories(MyClient PRIVATE
 )
 
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets  Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(MyClient PRIVATE Qt5::Core)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

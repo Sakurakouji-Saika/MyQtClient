@@ -8,7 +8,6 @@ RC_Line::RC_Line(QWidget *parent)
     , ui(new Ui::RC_Line)
 {
     ui->setupUi(this);
-
 }
 
 RC_Line::~RC_Line()
@@ -16,16 +15,18 @@ RC_Line::~RC_Line()
     delete ui;
 }
 
-void RC_Line::setData(Recent_Data m_data)
+void RC_Line::setData(const Recent_Data &m_data)
 {
     // 设置头像
+
+
     QSize avatarSize;
     avatarSize.setWidth(40);
     avatarSize.setHeight(40);
     ui->RCL_Avatar->setPixmap(scaledRoundedPixmap(QPixmap(m_data.avatarPath),avatarSize,40));
 
     // 设置其他属性
-    ui->RCL_LastMsgTime->setText(m_data.timeText);
+
     ui->RCL_UserName->setText(m_data.userName);
 
     QString s = ui->RCL_MessagePreview->fontMetrics().elidedText(m_data.msg,Qt::ElideRight,ui->RCL_MessagePreview->width());
@@ -38,7 +39,6 @@ void RC_Line::setData(Recent_Data m_data)
 
     // 设置未读数
     int unread = m_data.UnreadCount;
-    qDebug() << "unread:" << unread;
 
     bool hasUnread = unread > 0;
     ui->RCL_UnreadCount->setText(hasUnread ? QString::number(unread) : "");
@@ -53,6 +53,12 @@ void RC_Line::setData(Recent_Data m_data)
 
 
 
+    // 设置现实时间
+    ui->RCL_LastMsgTime->setText(formatMessageTimeSmart(m_data.msg_time));
+
+
+
+
 
 
     // 强制刷新样式
@@ -62,4 +68,67 @@ void RC_Line::setData(Recent_Data m_data)
 
 
 
+}
+
+void RC_Line::setData(QVariant m_var)
+{
+    Recent_Data m = recentDataFromVariant(m_var);
+    setData(m);
+}
+
+void RC_Line::setUnReadOnZero()
+{
+    ui->RCL_UnreadCount->setText("");
+    ui->groupBox->setVisible(false);
+    ui->groupBox->setProperty("class", "no-unread");
+}
+
+Recent_Data RC_Line::recentDataFromVariant(const QVariant &v)
+{
+    Recent_Data rd;
+
+    if (!v.isValid())
+        return rd;
+
+    // 1) 如果 QVariant 直接包含 Recent_Data（通过 QVariant::fromValue）
+    //    需要先确保元类型 id 已存在
+    if (v.canConvert<Recent_Data>()) {
+        // 直接取出
+        rd = v.value<Recent_Data>();
+        return rd;
+    }
+
+    // 2) 如果 QVariant 是一个 map（QVariantMap / JS 对象）
+    //    支持 v.toMap()（对 QVariantMap 安全）
+    if (v.canConvert<QVariantMap>()) {
+        QVariantMap m = v.toMap();
+        // 根据你 map 的 key 名称来取值（下面用之前建议的 key）
+        rd.avatarPath  = m.value("avatarPath").toString();
+        rd.msg         = m.value("msg").toString();
+        rd.user_id     = m.value("user_id").toInt();
+        rd.userName    = m.value("userName").toString();
+        rd.msg_time    = m.value("msg_time").toDateTime();
+        rd.timestamp   = m.value("timestamp").toLongLong();
+        rd.UnreadCount = m.value("unreadCount").toInt();
+        return rd;
+    }
+
+    // 3) 若 QVariant 本身就是字符串（可能是 JSON），可考虑解析（可选）
+    // if (v.type() == QVariant::String) { ... parse JSON ... }
+
+    // 4) 其他情况：尝试按常见键转换（健壮性补充）
+    if (v.type() == QVariant::Map) { // 兼容旧 Qt
+        QVariantMap m = v.toMap();
+        rd.avatarPath  = m.value("avatarPath").toString();
+        rd.msg         = m.value("msg").toString();
+        rd.user_id     = m.value("user_id").toInt();
+        rd.userName    = m.value("userName").toString();
+        rd.msg_time    = m.value("msg_time").toDateTime();
+        rd.timestamp   = m.value("timestamp").toLongLong();
+        rd.UnreadCount = m.value("UnreadCount").toInt();
+        return rd;
+    }
+
+    // 若仍不能转换，返回默认构造的 rd（所有字段为默认）
+    return rd;
 }

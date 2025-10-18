@@ -1,4 +1,4 @@
-chatListPage #listWidget {
+chatListPage #listView {
     border: none;
 }
 
@@ -86,21 +86,21 @@ QScrollBar::sub-page:vertical {
 
 
 /* 强制取消 item 的焦点矩形（尽量放在 QSS 末尾以覆盖其它规则） */
-QListWidget#listWidget QAbstractItemView::item,
-QListWidget#listWidget QAbstractItemView::item:focus,
-QListWidget#listWidget QAbstractItemView::item:selected:focus,
-QListWidget#listWidget QListView::item:focus,
-QListWidget#listWidget QListWidget::item:focus {
+QListView#listView QAbstractItemView::item,
+QListView#listView QAbstractItemView::item:focus,
+QListView#listView QAbstractItemView::item:selected:focus,
+QListView#listView QListView::item:focus,
+QListView#listView QListView::item:focus {
     outline: none;
     border: none;
 }
 
-QListWidget::item:hover {
+QListView::item:hover {
     background: #F5F5F5;
 }
 
 
-QListWidget::item:selected {
+QListView::item:selected {
     background: rgba(70, 130, 180, 0.20);
     border-left: 3px solid #4a90e2;
     /* 左侧蓝条指示 */
