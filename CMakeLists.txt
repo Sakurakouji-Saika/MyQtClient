@@ -9,8 +9,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network Sql)
 
 # 自己添加的让他去UI文件里面找UI
 set(CMAKE_AUTOUIC_SEARCH_PATHS
@@ -42,6 +42,10 @@ else()
 # Define properties for Android with Qt 5 after find_package() calls as:
 #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
     else()
+        find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+
         find_package(Qt5 REQUIRED COMPONENTS Core)
 
         add_executable(MyClient
@@ -89,6 +93,9 @@ else()
             ui/components/Registration_Page/registration_page.h ui/components/Registration_Page/registration_page.cpp ui/components/Registration_Page/registration_page.ui
             ui/components/mainwindow/chatListPage/recent_time_utlis.h
             ui/components/mainwindow/chatListPage/model.h ui/components/mainwindow/chatListPage/model.cpp
+            src/utils/AutoHideScrollbar/autohidescrollbar.h src/utils/AutoHideScrollbar/autohidescrollbar.cpp
+            src/DataBaseManage/databasemanage.h src/DataBaseManage/databasemanage.cpp
+
 
 
         )
@@ -102,7 +109,10 @@ target_include_directories(MyClient PRIVATE
 )
 
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets  Qt${QT_VERSION_MAJOR}::Network)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Sql)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
+
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

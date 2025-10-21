@@ -38,6 +38,8 @@ chatListPage::chatListPage(QWidget *parent)
 
     connect(ui->listView, &QListView::clicked,this, &chatListPage::onListItemClicked);
 
+    // 自动隐藏导航条
+    new AutoHideScrollbar(ui->listView, 10000, ui->listView);
 
 }
 

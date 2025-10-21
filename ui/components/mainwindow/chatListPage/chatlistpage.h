@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include "../../src/utils/StyleLoader.h"
+
+#include "../../Src/utils/AutoHideScrollbar/autohidescrollbar.h"
+
 #include "recent_data.h"
 #include <QMap>
 #include <QMenu>
