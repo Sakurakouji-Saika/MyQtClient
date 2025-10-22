@@ -24,7 +24,6 @@ void my_version(){
 }
 
 
-
 void test_DBM(){
     // 1. 初始化数据库（accountId, basePath）
     QString accountId = "user_1001";
@@ -41,21 +40,22 @@ void test_DBM(){
 
 
     bool ok;
+    Add_Friend_Type m_type;
 
-    if(mgr->isFriend("friend_2002")){
-        qDebug()<< "已经是好友了";
-    }else{
-        qDebug()<< "不是是好友了";
-        ok = mgr->addFriend("friend_2001", "Alice", "/path/to/alice.jpg", 1, "小学同学");
-        qDebug() << "addFriend Alice ->" << ok;
+    m_type = mgr->checkAndAddFriend("friend_2001", "Alice", "/path/to/alice.jpg", 1, "小学同学");
+    switch(m_type){
+        case Add_Friend_Type::exist     :   qDebug() << "该好友已存在"; break;
+        case Add_Friend_Type::success   :   qDebug() << "插入好友成功"; break;
+        case Add_Friend_Type::failure   :   qDebug() << "插入好友失败"; break;
     }
 
 
-    if(mgr->isFriend("friend_2002")){
-        qDebug()<< "已经是好友了";
-    }else{
-        qDebug()<< "不是是好友了";
-        mgr->addFriend("friend_2002", "Bob", "/path/to/bob.png", 0, "同事");
+    m_type = mgr->checkAndAddFriend("friend_2002", "Bob", "/path/to/bob.png", 0, "同事");
+
+    switch(m_type){
+        case Add_Friend_Type::exist     :   qDebug() << "该好友已存在"; break;
+        case Add_Friend_Type::success   :   qDebug() << "插入好友成功"; break;
+        case Add_Friend_Type::failure   :   qDebug() << "插入好友失败"; break;
     }
 
     // 3. 添加聊天记录
@@ -74,6 +74,46 @@ void test_DBM(){
     ok = mgr->upsertRecentMessage("friend_2001", "Hi, I'm here.", ts2, 0, 0);
     qDebug() << "upsertRecentMessage ->" << ok;
 
+
+    mgr->getFriendList();
+    qDebug() << "----------------------------------";
+    mgr->getRecentMessageList();
+
+
+    ok = mgr->insertOrUpdateRecentMessage(
+                                          "user_12341",
+                                          "你好！",
+                                          QDateTime::currentSecsSinceEpoch(),
+                                          2,
+                                          1);
+    if(ok){
+        qDebug() << "insertOrUpdateRecentMessage 成功";
+    }
+
+
+    // // 6. 查询 chat_records 表
+    // {
+    //     QString connName = QString("ChatDB_%1").arg(accountId);
+    //     QSqlDatabase db = QSqlDatabase::database(connName);
+    //     QSqlQuery query(db);
+    //     if (!query.exec("SELECT msg_id, from_id, to_id, content, type, timestamp FROM chat_records ORDER BY timestamp ASC;")) {
+    //         qWarning() << "select chat_records failed:" << query.lastError().text();
+    //     } else {
+    //         qDebug() << "---- chat_records ----";
+    //         while (query.next()) {
+    //             qDebug() << "msg_id:" << query.value(0).toString()
+    //             << "from:" << query.value(1).toString()
+    //             << "to:" << query.value(2).toString()
+    //             << "content:" << query.value(3).toString()
+    //             << "type:" << query.value(4).toInt()
+    //             << "time:" << QDateTime::fromSecsSinceEpoch(query.value(5).toLongLong()).toString();
+    //         }
+    //     }
+    // }
+
+    // 7. 关闭（可选，程序结束前自动析构也会关闭）
+    mgr->instance()->close();
+    qDebug() << "done";
 
 }
 
@@ -104,8 +144,8 @@ int main(int argc, char *argv[])
     Widget w;
     w.show();
 
-    // MainWindow m;
-    // m.show();
+    MainWindow m;
+    m.show();
 
 
 

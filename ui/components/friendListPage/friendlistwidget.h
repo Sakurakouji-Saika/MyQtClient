@@ -6,7 +6,7 @@
 #include <QVBoxLayout>
 #include <QMap>
 #include "QQCellTitle.h"
-#include "FriendInfo.h"
+#include "../../Src/DataBaseManage/model/FriendInfo.h"
 #include <QScrollArea>
 #include <QVariant>
 #include <QStyle>     // 为 style()->unpolish()/polish() 提供完整定义

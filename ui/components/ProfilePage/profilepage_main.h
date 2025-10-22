@@ -2,7 +2,7 @@
 #define PROFILEPAGE_MAIN_H
 
 #include <QWidget>
-#include "../friendListPage/FriendInfo.h"
+#include "../../Src/DataBaseManage/model/FriendInfo.h"
 #include "../../Src/utils/utils.h"
 
 namespace Ui {

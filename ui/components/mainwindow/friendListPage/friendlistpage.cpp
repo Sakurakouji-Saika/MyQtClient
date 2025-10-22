@@ -4,7 +4,7 @@
 #include "friendlistpage.h"
 #include "ui_friendlistpage.h"
 #include "../../friendListPage/friendlistwidget.h"  // 请确保头文件路径正确
-#include "../../friendListPage/friendinfo.h"        // FriendInfo 定义的头文件
+#include "../../Src/DataBaseManage/model/FriendInfo.h"     // FriendInfo 定义的头文件
 
 friendListPage::friendListPage(QWidget *parent)
     : QWidget(parent)
@@ -23,14 +23,10 @@ friendListPage::friendListPage(QWidget *parent)
     }
     lay->addWidget(friendList);
 
-    // 3. 保证铺满
-    // friendList->setSizePolicy(
-    //     QSizePolicy::Expanding, QSizePolicy::Expanding);
-    // ui->placeHolderWidget->setContentsMargins(0,0,0,0);
 
     // 2. 添加分组数据：tuple<组名, 总人数, 在线人数>
     friendList->setGroups({
-        { "我的好友",  3,  2 },
+        { "我的好友",   3,  2 },
         { "同事",      2,  1 },
         { "家人",      1,  1 }
     });
@@ -38,47 +34,37 @@ friendListPage::friendListPage(QWidget *parent)
     // 3. 为每个分组添加一些“模拟”好友
     //    真实项目中可以在 groupToggled 信号里异步加载
     QList<FriendInfo> friendsMy;  // “我的好友”
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    // ✅ 显式构造（OK）
+    friendsMy.append(FriendInfo( -1, "uid_001", "Alice", "://picture/avatar/9.jpg", 1, "同事", QDateTime::currentSecsSinceEpoch()));
 
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
+    // ✅ 批量随机生成
+    for (int i = 1; i <= 5; ++i) {
+        friendsMy.append(FriendInfo(
+            i + 1,
+            QString("uid_%1").arg(i + 1),
+            QString("User%1").arg(i + 1),
+            QString("://picture/avatar/%1.jpg").arg(i + 1),
+            i % 2,
+            "备注",
+            QDateTime::currentSecsSinceEpoch() - i * 100
+            ));
+        qDebug() <<"://picture/avatar/" + QString(i) + ".jpg";
+    }
 
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/2.jpg", true });
-    friendsMy.append({ "u001", "Alice", "://picture/avatar/1.jpg", true });
-    friendsMy.append({ "u002", "Bob",   "://picture/avatar/2.jpg",   false });
-    friendsMy.append({ "u003", "Cici",  "://picture/avatar/1.jpg",  true });
     friendList->setFriendsForGroup("我的好友", friendsMy);
 
     QList<FriendInfo> friendsColleagues;  // “同事”
-    friendsColleagues.append({ "u101", "David", "://picture/avatar/2.jpg", false });
-    friendsColleagues.append({ "u102", "Emma",  "://picture/avatar/1.jpg",  true });
-    friendList->setFriendsForGroup("同事", friendsColleagues);
+
 
     QList<FriendInfo> friendsFamily;  // “家人”
-    friendsFamily.append({ "u201", "Mom",    "://picture/avatar/2.jpg",    true });
+
+
     friendList->setFriendsForGroup("家人", friendsFamily);
 
     // 4. 连接信号示例（可选）
     QObject::connect(friendList, &FriendListWidget::friendClicked,
                      [this](const FriendInfo &fi){
-                        qDebug() << "你点击了：" << fi.name << "(ID:" << fi.id << ")";
+                        qDebug() << "你点击了：" << fi.display_name << "(ID:" << fi.friend_id << ")";
 
                         emit signals_open_profile_page(fi);
 

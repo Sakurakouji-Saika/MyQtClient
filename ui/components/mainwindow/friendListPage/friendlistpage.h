@@ -2,7 +2,7 @@
 #define FRIENDLISTPAGE_H
 
 #include <QWidget>
-#include "../../ui/components/friendListPage/FriendInfo.h"
+#include "../../src/DataBaseManage/model/FriendInfo.h"
 #include "../../ui/components/friendListPage/friendlistwidget.h"
 #include <qDebug>
 

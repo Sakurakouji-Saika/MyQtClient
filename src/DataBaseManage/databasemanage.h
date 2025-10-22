@@ -4,6 +4,16 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QMutex>
+#include <QDateTime>
+#include "model/FriendInfo.h"
+#include "model/recent_messages.h"
+
+enum Add_Friend_Type{
+    failure = 0,    // 失败
+    success = 1,    // 成功
+    exist = 2       // 存在
+};
+
 
 class DataBaseManage : public QObject
 {
@@ -19,11 +29,7 @@ public:
     // 关闭数据库连接（会移除 QSqlDatabase 连接）
     void close();
 
-    // 判断是不是已经是好友了
-    bool isFriend(const QString &friendId) const;
-
-    // 基本写接口（返回是否成功）
-    bool addFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+    Add_Friend_Type checkAndAddFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
 
     // 插入聊天消息
     bool addChatMessage(const QString &msgId,const QString &fromId,const QString &toId,const QString &content,int type,qint64 timestamp);
@@ -40,6 +46,21 @@ public:
     // 获取当前连接名（调试用）
     QString connectionName() const { return m_connName; }
 
+    // 查询 friend_info 表
+    QList<FriendInfo> getFriendList() const;
+
+    // 查询 最近对话记录
+    QList<RecentMessage> getRecentMessageList() const;
+
+    // 插入最近对话
+    bool insertOrUpdateRecentMessage(
+                                const QString &peerId,
+                                const QString &lastMsg,
+                                qint64 lastTime,
+                                int unreadCount = 0,
+                                     int direction = 0);
+
+
 private:
     explicit DataBaseManage(QObject *parent = nullptr);
     ~DataBaseManage() override;
@@ -53,6 +74,14 @@ private:
 
     // 创建表（内部调用）
     bool createTables();
+
+
+    // 判断是不是已经是好友了
+    bool isFriend(const QString &friendId) const;
+
+    // 基本写接口（返回是否成功）
+    bool addFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+
 
 private:
     // inline static DataBaseManage *m_instance;

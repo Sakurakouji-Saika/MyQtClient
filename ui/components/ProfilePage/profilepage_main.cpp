@@ -21,14 +21,14 @@ ProfilePage_Main::~ProfilePage_Main()
 void ProfilePage_Main::addInfo(FriendInfo info)
 {
 
-    ui->State->setText(info.isOnline?"在线":"离线");
-    ui->name->setText(info.name);
-    ui->id->setText(info.id);
+    ui->State->setText(info.status?"在线":"离线");
+    ui->name->setText(info.display_name);
+    ui->id->setText(info.friend_id);
 
     QSize avatarSize;
     avatarSize.setWidth(90);
     avatarSize.setHeight(90);
-    ui->Avatar->setPixmap(scaledRoundedPixmap(QPixmap(info.avatarUrl),avatarSize,100));
+    ui->Avatar->setPixmap(scaledRoundedPixmap(QPixmap(info.avatar),avatarSize,100));
 
     m_info = info;
 

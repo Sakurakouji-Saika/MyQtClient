@@ -71,7 +71,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
             ui/components/friendListPage/qqcellline.h ui/components/friendListPage/qqcellline.cpp ui/components/friendListPage/qqcellline.ui
 
             ui/components/friendListPage/friendlistwidget.h ui/components/friendListPage/friendlistwidget.cpp
-            ui/components/friendListPage/FriendInfo.h
+
             src/utils/utils.h
             ui/components/chatListPage/chatlist_main.h ui/components/chatListPage/chatlist_main.cpp ui/components/chatListPage/chatlist_main.ui
 
@@ -95,6 +95,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
             ui/components/mainwindow/chatListPage/model.h ui/components/mainwindow/chatListPage/model.cpp
             src/utils/AutoHideScrollbar/autohidescrollbar.h src/utils/AutoHideScrollbar/autohidescrollbar.cpp
             src/DataBaseManage/databasemanage.h src/DataBaseManage/databasemanage.cpp
+            src/DataBaseManage/model/FriendInfo.h
+            src/DataBaseManage/model/recent_messages.h
+            src/DataBaseManage/model/ChatRecord.h
 
 
 

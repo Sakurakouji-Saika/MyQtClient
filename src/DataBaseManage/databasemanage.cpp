@@ -105,10 +105,26 @@ void DataBaseManage::close()
         QSqlDatabase::removeDatabase(conn);
         qDebug() << "DataBaseManage::关闭，移除连接:" << conn;
     }
-    m_db =QSqlDatabase();
+    m_db = QSqlDatabase();
     m_accountId.clear();
     m_dbPath.clear();
     m_connName.clear();
+}
+
+Add_Friend_Type DataBaseManage::checkAndAddFriend(const QString &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
+{
+    if(isFriend(friendId)){
+        qDebug()<< "DataBaseManage::checkAndAddFriend::[已经是好友了]:" << friendId;
+        return Add_Friend_Type::exist;
+    }else{
+        qDebug()<< "DataBaseManage::checkAndAddFriend::[不是好友]:" << friendId;
+        if(addFriend(friendId, displayName, avatar, status, remark)){
+            return Add_Friend_Type::success;
+        }else{
+            qDebug()<< "DataBaseManage::checkAndAddFriend::[插入失败]:" << friendId;
+            return Add_Friend_Type::failure;
+        }
+    }
 }
 
 bool DataBaseManage::isFriend(const QString &friendId) const
@@ -230,6 +246,98 @@ bool DataBaseManage::isOpen() const
     return m_db.isValid() && m_db.isOpen();
 }
 
+QList<FriendInfo> DataBaseManage::getFriendList() const
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return QList<FriendInfo>();
+
+    QList<FriendInfo> temp;
+
+    QSqlQuery query(m_db);
+
+    if (!query.exec("SELECT id,friend_id, display_name, avatar, status, remark, created_at FROM friend_info;")) {
+        qWarning() << "select friend_info failed:" << query.lastError().text();
+    } else {
+        qDebug() << "---- friend_info ----";
+        while (query.next()) {
+            qDebug() << "id:" << query.value(0).toString()
+            << "friend_id:" << query.value(1).toString()
+            << "name:" << query.value(2).toString()
+            << "avatar:" << query.value(3).toString()
+            << "status:" << query.value(4).toInt()
+            << "remark:" << query.value(5).toString()
+            << "created_at:" << QDateTime::fromSecsSinceEpoch(query.value(6).toLongLong()).toString();
+
+            temp.append(FriendInfo(query.value(0).toInt(),query.value(1).toString(),query.value(2).toString(),query.value(3).toString(),query.value(4).toInt(),query.value(5).toString(),query.value(6).toLongLong()));
+        }
+    }
+
+    return temp;
+}
+
+QList<RecentMessage> DataBaseManage::getRecentMessageList() const
+{
+
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return QList<RecentMessage>();
+
+
+    QList<RecentMessage> temp;
+    QSqlQuery query(m_db);
+
+
+    if (!query.exec("SELECT id, peer_id, last_msg, last_time, unread_count, direction FROM recent_messages")) {
+                qWarning() << "select chat_records failed:" << query.lastError().text();
+            } else {
+                qDebug() << "---- chat_records ----";
+                while (query.next()) {
+                    qDebug() << "msg_id:" << query.value(0).toString()
+                    << "from:" << query.value(1).toString()
+                    << "to:" << query.value(2).toString()
+                    << "content:" << query.value(3).toString()
+                    << "type:" << query.value(4).toInt()
+                    << "time:" << QDateTime::fromSecsSinceEpoch(query.value(5).toLongLong()).toString();
+                    // temp.append(RecentMessage(-1,))
+                }
+            }
+}
+
+bool DataBaseManage::insertOrUpdateRecentMessage(const QString &peerId, const QString &lastMsg, qint64 lastTime, int unreadCount, int direction)
+{
+    if (peerId.isEmpty()) return false;
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+
+    QSqlQuery query(m_db);
+    query.prepare(R"(
+        INSERT INTO recent_messages (peer_id, last_msg, last_time, unread_count, direction)
+        VALUES (:peer_id, :last_msg, :last_time, :unread_count, :direction)
+        ON CONFLICT(peer_id) DO UPDATE SET
+            last_msg = excluded.last_msg,
+            last_time = excluded.last_time,
+            unread_count = excluded.unread_count,
+            direction = excluded.direction
+    )");
+
+    query.bindValue(":peer_id", peerId);
+    query.bindValue(":last_msg", lastMsg);
+    query.bindValue(":last_time", lastTime);
+    query.bindValue(":unread_count", unreadCount);
+    query.bindValue(":direction", direction);
+
+    if (!query.exec()) {
+        qWarning() << "Failed to insert/update recent_messages:" << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+
+
 DataBaseManage::DataBaseManage(QObject *parent)
     : QObject{parent}
 {}
@@ -238,6 +346,8 @@ DataBaseManage::~DataBaseManage()
 {
     close();
 }
+
+
 
 
 bool DataBaseManage::createTables()
