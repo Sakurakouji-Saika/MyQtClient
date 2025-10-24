@@ -2,7 +2,10 @@
 #define CHATLIST_MAIN_H
 
 #include <QWidget>
-
+#include "chat-widget/chatwidget.h"
+#include "../../Src/DataBaseManage/databasemanage.h"
+#include "../../Src/DataBaseManage/model/ChatRecord.h"
+#include "../../Src/utils/appconfig.h"
 namespace Ui {
 class chatList_Main;
 }
@@ -15,10 +18,24 @@ public:
     explicit chatList_Main(QWidget *parent = nullptr);
     ~chatList_Main();
 
-    void addChatLeft();
+    void openChatPage(const QString _id);
+    void addChatLeft(bool isMy,const QString avatar,const QString msg);
+    void MsgALLClear();
+
+
+signals:
+    void SeedMsg(const ChatRecord &msg);
+
+private slots:
+    void on_btn_pushMsg_clicked();
 
 private:
-    QString m_avatar_url;
+    QString m_user_id;
+    // QString m_avatar_url;
+    QString m_user_name;
+
+private:
+    ChatWidget *chat;
     Ui::chatList_Main *ui;
 };
 

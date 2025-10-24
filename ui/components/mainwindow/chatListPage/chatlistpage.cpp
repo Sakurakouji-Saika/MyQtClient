@@ -3,6 +3,7 @@
 #include <QList>
 #include "recent_chats/rc_line.h"
 
+#include "../../Src/DataBaseManage/databasemanage.h"
 
 #include <QTimer>
 #include <QThread>
@@ -27,6 +28,9 @@ chatListPage::chatListPage(QWidget *parent)
 
     test();
 
+    // 当 model 发出 dataChanged 时，更新对应的 indexWidget（如果存在）
+    connect(m_model, &QAbstractItemModel::dataChanged, this, &chatListPage::onModelDataChanged);
+
 
     // 启用自定义右键菜单
     ui->listView->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -50,43 +54,37 @@ chatListPage::~chatListPage()
 
 void chatListPage::test()
 {
-    QMap<QString,Recent_Data> m_list;
 
-    // 压缩后的插入代码（更紧凑、易扩展）
-    QDateTime now = QDateTime::currentDateTime();
+    QList<Recent_Data> m_list_2;
 
-    // 每项格式：{ avatar, message, id, name, seconds_offset_from_now, unread_count }
-    struct Item { const char* avatar; const char* msg; const char* id; const char* name; int secs; int unread; };
+    DataBaseManage *mgr = DataBaseManage::instance();
 
-    const Item items[] = {
-        {":/picture/avatar/9.jpg", "文档已经更新完毕",            "1009", "Emma",  -259200, 55},
-        {":/picture/avatar/1.jpg", "你好，最近怎么样？",            "1001", "张三",   0,      3},
-        {":/picture/avatar/2.jpg", "会议资料已经发到你邮箱了",      "1002", "李四",  -300,    0},
-        {":/picture/avatar/3.jpg", "[图片] 看看这个设计怎么样",     "1003", "王五",  -1800,   1},
-        {":/picture/avatar/4.jpg", "周末一起吃饭吗？",             "1004", "赵六",  -7200,   0},
-        {":/picture/avatar/5.jpg", "项目进度汇报已完成",           "1005", "Alice", -14400,  5},
-        {":/picture/avatar/6.jpg", "代码审查通过了吗？",           "1006", "陈七",  -28800,  0},
-        {":/picture/avatar/7.jpg", "谢谢你的帮助！",              "1007", "新用户", -86400,  2}, // 头像路径可为空时用默认头像处理
-        {":/picture/avatar/8.jpg", "会议改到明天下午3点",          "1008", "冯八",  -172800, 0},
+    QList<RecentMessage>temp =  mgr->getRecentMessageList();
+
+
+    for(int i=0;i<temp.size();i++){
+        Recent_Data t;
+        t.UnreadCount = temp[i].unread_count;
+        t.avatarPath = mgr->getAvatarByFriendId(temp[i].peer_id);
+        qDebug() << "chatListPage::test()::t.avatarPath::" << t.avatarPath;
+        qDebug() << "chatListPage::test()::t.avatarPath::用户ID：" << temp[i].peer_id;
+        t.msg = temp[i].last_msg;
+        t.msg_time = QDateTime::fromSecsSinceEpoch(temp[i].last_time);
+        t.user_id = temp[i].peer_id;
+        t.userName = mgr->getDisplayNameByFriendId(temp[i].peer_id);
+        t.timestamp = temp[i].last_time;
+        m_list_2.append(t);
     };
 
 
-    for (const auto &it : items) {
-        QDateTime dt = now.addSecs(it.secs);
-        m_list.insert(QString::fromUtf8(it.id),
-                      Recent_Data(QString::fromUtf8(it.avatar),
-                                  QString::fromUtf8(it.msg),
-                                  QString::fromUtf8(it.id),
-                                  QString::fromUtf8(it.name),
-                                  dt,
-                                  dt.toMSecsSinceEpoch(),
-                                  it.unread));
-    }
+    populateRecentList(m_list_2);
 
-    populateRecentList(m_list);
+
+
+
 }
 
-void chatListPage::populateRecentList(const QMap<QString, Recent_Data> &recentList)
+void chatListPage::populateRecentList(const QList<Recent_Data> &recentList)
 {
     for(const Recent_Data &r:recentList){
         m_model->addItem(r);
@@ -140,7 +138,9 @@ void chatListPage::on_showListContextMenu(const QPoint &pos)
 
 
     if(act == aOpen){
-         qDebug() << "打开 item：" << index.data(user_id_Role).toString();
+        qDebug() << "打开 item：" << index.data(user_id_Role).toString();
+        emit openChatPage(index.data(user_id_Role).toString());
+
     } else if(act == aDel){
         // 删除选中项：移除 listView 中的 index widget（如果有），并从 model 与内部 map 中删除
         int row = index.row();
@@ -177,12 +177,12 @@ void chatListPage::receiveMessage(const Recent_Data &msg)
                               Q_ARG(Recent_Data, msg));
 }
 
+
+
 void chatListPage::onNewMessage(const Recent_Data &msg)
 {
 
-
     m_model->addItemFront(msg);
-
 
     // 创建对应的 RC_Line 并放在 index 0
     QModelIndex idx = m_model->index(0, 0);
@@ -191,7 +191,8 @@ void chatListPage::onNewMessage(const Recent_Data &msg)
     w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     w->setData(m_model->data(idx, all_data_Role));
     ui->listView->setIndexWidget(idx, w);
-
+    ui->listView->update();
+    ui->listView->scrollToTop();
 
 }
 
@@ -213,7 +214,33 @@ void chatListPage::onListItemClicked(const QModelIndex &index)
         w->setUnReadOnZero();
     }
 
+    emit openChatPage(index.data(user_id_Role).toString());
+}
 
+void chatListPage::onModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    if (!topLeft.isValid()) return;
+
+    int start = topLeft.row();
+    int end = bottomRight.row();
+    for (int r = start; r <= end; ++r) {
+        QModelIndex idx = m_model->index(r, 0);
+        if (!idx.isValid()) continue;
+
+        QVariant v = m_model->data(idx, all_data_Role);
+        RC_Line *w = qobject_cast<RC_Line*>(ui->listView->indexWidget(idx));
+        if (w) {
+            w->setData(v);
+        } else {
+            // 如果没有 widget，则创建并绑定，确保 UI 始终与 model 一致
+            RC_Line *nw = new RC_Line;
+            nw->setFixedHeight(72);
+            nw->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            nw->setData(v);
+            ui->listView->setIndexWidget(idx, nw);
+        }
+    }
+    ui->listView->update();
 }
 
 

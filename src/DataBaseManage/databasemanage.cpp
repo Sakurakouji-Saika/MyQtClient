@@ -277,30 +277,54 @@ QList<FriendInfo> DataBaseManage::getFriendList() const
 
 QList<RecentMessage> DataBaseManage::getRecentMessageList() const
 {
-
-
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return QList<RecentMessage>();
-
 
     QList<RecentMessage> temp;
     QSqlQuery query(m_db);
 
+    const QString sql = QStringLiteral(
+        "SELECT id, peer_id, last_msg, last_time, unread_count, direction "
+        "FROM recent_messages"
+        );
 
-    if (!query.exec("SELECT id, peer_id, last_msg, last_time, unread_count, direction FROM recent_messages")) {
-                qWarning() << "select chat_records failed:" << query.lastError().text();
-            } else {
-                qDebug() << "---- chat_records ----";
-                while (query.next()) {
-                    qDebug() << "msg_id:" << query.value(0).toString()
-                    << "from:" << query.value(1).toString()
-                    << "to:" << query.value(2).toString()
-                    << "content:" << query.value(3).toString()
-                    << "type:" << query.value(4).toInt()
-                    << "time:" << QDateTime::fromSecsSinceEpoch(query.value(5).toLongLong()).toString();
-                    // temp.append(RecentMessage(-1,))
-                }
-            }
+    if (!query.exec(sql)) {
+        qWarning() << "select recent_messages failed:" << query.lastError().text();
+        return temp;
+    }
+
+    qDebug() << "---- recent_messages ----";
+    while (query.next()) {
+        // 列：0=id, 1=peer_id, 2=last_msg, 3=last_time, 4=unread_count, 5=direction
+        RecentMessage r;
+        r.id = query.value(0).toInt();
+        r.peer_id = query.value(1).toString();
+        r.last_msg = query.value(2).toString();
+
+        // 处理时间戳：自动判断是秒级还是毫秒级
+        qint64 ts = query.value(3).toLongLong();
+        QDateTime dt = (ts > 1000000000000LL)
+                           ? QDateTime::fromMSecsSinceEpoch(ts)
+                           : QDateTime::fromSecsSinceEpoch(ts);
+        r.last_time = ts; // 保持原始时间戳（如果 RecentMessage 存为 qint64）
+        // 如果 RecentMessage 存储为 QDateTime，可以改为： r.last_time_dt = dt;
+
+        r.unread_count = query.value(4).toInt();
+        r.direction = query.value(5).toInt();
+
+        // Debug 输出（可选）
+        qDebug() << "id:" << r.id
+                 << "peer_id:" << r.peer_id
+                 << "last_msg:" << r.last_msg
+                 << "last_time(raw):" << ts
+                 << "last_time(str):" << dt.toString("yyyy-MM-dd HH:mm:ss")
+                 << "unread_count:" << r.unread_count
+                 << "direction:" << r.direction;
+
+        temp.append(r);
+    }
+
+    return temp;
 }
 
 bool DataBaseManage::insertOrUpdateRecentMessage(const QString &peerId, const QString &lastMsg, qint64 lastTime, int unreadCount, int direction)
@@ -330,6 +354,222 @@ bool DataBaseManage::insertOrUpdateRecentMessage(const QString &peerId, const QS
 
     if (!query.exec()) {
         qWarning() << "Failed to insert/update recent_messages:" << query.lastError().text();
+        return false;
+    }
+
+    return true;
+}
+
+bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
+                                                   const QString &fromId,
+                                                   const QString &toId,
+                                                   const QString &content,
+                                                   int type,
+                                                   qint64 timestamp,
+                                                   const QString &peerId,
+                                                   const QString &lastMsg,
+                                                   qint64 lastTime,
+                                                   int unreadCount,
+                                                   int direction)
+{
+    if (msgId.isEmpty() || peerId.isEmpty()) return false;
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    // 使用事务保证两条写入的一致性
+    if (!m_db.transaction()) {
+        qWarning() << "addChatMessageAndUpdateRecent: failed to start transaction:" << m_db.lastError().text();
+        return false;
+    }
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        INSERT OR REPLACE INTO chat_records (msg_id, from_id, to_id, content, type, timestamp)
+        VALUES (:mid, :from, :to, :content, :type, :ts)
+    )");
+    q.bindValue(":mid", msgId);
+    q.bindValue(":from", fromId);
+    q.bindValue(":to", toId);
+    q.bindValue(":content", content);
+    q.bindValue(":type", type);
+    q.bindValue(":ts", timestamp);
+
+    if (!q.exec()) {
+        qWarning() << "addChatMessageAndUpdateRecent: insert chat_records failed:" << q.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    // upsert recent_messages
+    QSqlQuery q2(m_db);
+    q2.prepare(R"(
+        INSERT INTO recent_messages (peer_id, last_msg, last_time, unread_count, direction)
+        VALUES (:peer, :msg, :time, :unread, :dir)
+        ON CONFLICT(peer_id) DO UPDATE SET
+            last_msg = excluded.last_msg,
+            last_time = excluded.last_time,
+            unread_count = excluded.unread_count,
+            direction = excluded.direction
+    )");
+    q2.bindValue(":peer", peerId);
+    q2.bindValue(":msg", lastMsg);
+    q2.bindValue(":time", lastTime);
+    q2.bindValue(":unread", unreadCount);
+    q2.bindValue(":dir", direction);
+
+    if (!q2.exec()) {
+        qWarning() << "addChatMessageAndUpdateRecent: upsert recent_messages failed:" << q2.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    if (!m_db.commit()) {
+        qWarning() << "addChatMessageAndUpdateRecent: commit failed:" << m_db.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    return true;
+}
+
+QString DataBaseManage::getAvatarByFriendId(const QString &friendId)
+{
+    if (friendId.isEmpty()) return QString();
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return QString();
+
+    QSqlQuery query(m_db);
+    query.prepare("SELECT avatar FROM friend_info WHERE friend_id = :friend_id");
+    query.bindValue(":friend_id", friendId);
+
+    if (!query.exec()) {
+        qWarning() << "Failed to get avatar:" << query.lastError().text();
+        return QString();
+    }
+
+    if (query.next()) {
+        return query.value(0).toString(); // avatar
+    }
+
+    return QString(); // 没找到
+}
+
+QString DataBaseManage::getDisplayNameByFriendId(const QString &friendId)
+{
+    if (friendId.isEmpty())
+        return QString();
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen())
+        return QString();
+
+    QSqlQuery query(m_db);
+    query.prepare(R"(
+        SELECT
+            CASE
+                WHEN remark IS NOT NULL AND remark <> '' THEN remark
+                ELSE display_name
+            END AS name
+        FROM friend_info
+        WHERE friend_id = :friend_id
+    )");
+    query.bindValue(":friend_id", friendId);
+
+    if (!query.exec()) {
+        qWarning() << "Failed to get display name:" << query.lastError().text();
+        return QString();
+    }
+
+    if (query.next()) {
+        return query.value("name").toString();
+    }
+
+    return QString(); // 没找到
+}
+
+QList<ChatRecord> DataBaseManage::getChatRecords(const QString &userA, const QString &userB)
+{
+    QList<ChatRecord> records;
+    QMutexLocker locker(&m_mutex);
+
+    if (!m_db.isValid() || !m_db.isOpen()) {
+        qWarning() << "Database is not open or invalid!";
+        return records;
+    }
+
+    QSqlQuery query(m_db);
+    query.prepare(R"(
+        SELECT *
+        FROM chat_records
+        WHERE (from_id = :userA AND to_id = :userB)
+           OR (from_id = :userB AND to_id = :userA)
+        ORDER BY timestamp ASC
+    )");
+    query.bindValue(":userA", userA);
+    query.bindValue(":userB", userB);
+
+    if (!query.exec()) {
+        qWarning() << "getChatRecords failed:" << query.lastError().text();
+        return records;
+    }
+
+    while (query.next()) {
+        ChatRecord rec;
+        rec.id = query.value("id").toInt();
+        rec.msgId = query.value("msg_id").toString();
+        rec.fromId = query.value("from_id").toString();
+        rec.toId = query.value("to_id").toString();
+        rec.content = query.value("content").toString();
+        rec.type = query.value("type").toInt();
+        rec.timestamp = query.value("timestamp").toLongLong();
+        rec.status = query.value("status").toInt();
+        records.append(rec);
+    }
+
+    return records;
+}
+
+bool DataBaseManage::addChatRecords(const QList<ChatRecord> &records)
+{
+    if (records.isEmpty()) return true;
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    QSqlQuery q(m_db);
+    if (!m_db.transaction()) {
+        qWarning() << "Failed to start transaction:" << m_db.lastError().text();
+        return false;
+    }
+
+    q.prepare(R"(
+        INSERT OR REPLACE INTO chat_records
+        (msg_id, from_id, to_id, content, type, timestamp, status)
+        VALUES (:mid, :from, :to, :content, :type, :ts, :status)
+    )");
+
+    for (const ChatRecord &rec : records) {
+        if (rec.msgId.isEmpty()) continue;  // 跳过无效记录
+
+        q.bindValue(":mid", rec.msgId);
+        q.bindValue(":from", rec.fromId);
+        q.bindValue(":to", rec.toId);
+        q.bindValue(":content", rec.content);
+        q.bindValue(":type", rec.type);
+        q.bindValue(":ts", rec.timestamp);
+        q.bindValue(":status", rec.status);
+
+        if (!q.exec()) {
+            qWarning() << "Insert failed:" << q.lastError().text();
+            m_db.rollback();
+            return false;
+        }
+    }
+
+    if (!m_db.commit()) {
+        qWarning() << "Commit failed:" << m_db.lastError().text();
         return false;
     }
 

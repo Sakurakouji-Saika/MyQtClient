@@ -14,6 +14,7 @@ class ChatWidget : public QWidget {
 public:
     explicit ChatWidget(QWidget *parent = nullptr);
     void addMessage(bool isSelf,QString avatar_url,const QString &text);
+    void clearAllMsg();
 
 protected:
     void resizeEvent(QResizeEvent *e) override;

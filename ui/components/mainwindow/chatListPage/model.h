@@ -6,6 +6,7 @@
 #include <QList>
 #include <QSize>
 #include "recent_data.h"
+#include "../../Src/DataBaseManage/model/ChatRecord.h"
 
 class Model : public QAbstractListModel
 {
@@ -22,6 +23,7 @@ public:
     void my_diy_sort(bool descending);
     void update_Item_At(int row, const Recent_Data &newData);
     void addItemFront(const Recent_Data &data);
+
 
 public:
     virtual int rowCount(const QModelIndex &parent  = QModelIndex()) const override;

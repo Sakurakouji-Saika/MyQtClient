@@ -7,6 +7,7 @@
 #include <QDateTime>
 #include "model/FriendInfo.h"
 #include "model/recent_messages.h"
+#include "model/ChatRecord.h"
 
 enum Add_Friend_Type{
     failure = 0,    // 失败
@@ -37,6 +38,19 @@ public:
     // 插入或更新最近会话信息（peerId 唯一）
     bool upsertRecentMessage(const QString &peerId,const QString &lastMsg,qint64 lastTime,int unreadCount,int direction);
 
+    // 原子地插入聊天消息并更新最近会话（在同一事务中执行）
+    bool addChatMessageAndUpdateRecent(const QString &msgId,
+                                       const QString &fromId,
+                                       const QString &toId,
+                                       const QString &content,
+                                       int type,
+                                       qint64 timestamp,
+                                       const QString &peerId,
+                                       const QString &lastMsg,
+                                       qint64 lastTime,
+                                       int unreadCount,
+                                       int direction);
+
     // 判断是否已初始化并打开
     bool isOpen() const;
 
@@ -52,6 +66,8 @@ public:
     // 查询 最近对话记录
     QList<RecentMessage> getRecentMessageList() const;
 
+
+
     // 插入最近对话
     bool insertOrUpdateRecentMessage(
                                 const QString &peerId,
@@ -60,6 +76,17 @@ public:
                                 int unreadCount = 0,
                                      int direction = 0);
 
+    // 查找头像
+    QString getAvatarByFriendId(const QString &friendId);
+
+    // 查找用户名
+    QString getDisplayNameByFriendId(const QString &friendId);
+
+    // 查找聊天记录
+    QList<ChatRecord> getChatRecords(const QString &userA, const QString &userB);
+
+    // 插入一条聊天记录
+    bool addChatRecords(const QList<ChatRecord> &records);
 
 private:
     explicit DataBaseManage(QObject *parent = nullptr);

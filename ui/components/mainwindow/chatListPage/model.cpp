@@ -94,6 +94,9 @@ void Model::update_Item_At(int row, const Recent_Data &newData)
 {
     if (row < 0 || row >= m_list_data.size()) return;
     m_list_data[row] = newData;
+    // 通知视图该行数据已更改
+    QModelIndex idx = index(row, 0);
+    emit dataChanged(idx, idx, { all_data_Role, msg_Role, unread_count_Role, timestamp_Role });
 }
 
 void Model::addItemFront(const Recent_Data &data)
@@ -104,6 +107,7 @@ void Model::addItemFront(const Recent_Data &data)
             m_list_data[i] = data;
             // 发出 dataChanged 通知（而不是插入）
             QModelIndex idx = index(i, 0);
+            emit dataChanged(idx, idx, { all_data_Role, msg_Role, unread_count_Role, timestamp_Role });
             return;
         }
     }
@@ -113,3 +117,4 @@ void Model::addItemFront(const Recent_Data &data)
     m_list_data.insert(0, data);
     endInsertRows();
 }
+

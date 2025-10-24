@@ -10,12 +10,16 @@ public:
     // 只读访问接口
     static const QString& host();
     static int port();
+    static QString UserID();
+    static void setUsetID(QString _id);
 
 private:
     AppConfig() = delete;
     ~AppConfig() = delete;
 
     static bool initialized_;
+    static QString m_user_id;
     static QString m_host;
     static int m_port;
+    static QString FilePath;
 };

@@ -5,6 +5,7 @@
 #include "../../src/utils/StyleLoader.h"
 
 #include "../../Src/utils/AutoHideScrollbar/autohidescrollbar.h"
+#include "../../Src/DataBaseManage/model/ChatRecord.h"
 
 #include "recent_data.h"
 #include <QMap>
@@ -29,16 +30,19 @@ public:
     ~chatListPage();
 
     void test();
-    void populateRecentList(const QMap<QString,Recent_Data> &recentList);
+    void populateRecentList(const QList<Recent_Data> &recentList);
     void on_showListContextMenu(const QPoint &pos);
 
     void receiveMessage(const Recent_Data &msg);
 
 
+signals:
+    void openChatPage(const QString &user_id); // 自定义信号
 
 private slots:
     void onListItemClicked(const QModelIndex &index);
     void onNewMessage(const Recent_Data &msg);
+    void onModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
 
 private:

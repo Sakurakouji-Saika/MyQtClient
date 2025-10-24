@@ -59,7 +59,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
             ui/components/mainwindow/chatListPage/chatlistpage.h ui/components/mainwindow/chatListPage/chatlistpage.cpp
             ui/components/mainwindow/friendListPage/friendlistpage.h ui/components/mainwindow/friendListPage/friendlistpage.cpp ui/components/mainwindow/friendListPage/friendlistpage.ui
-            ui/components/mainwindow/chatContentPage/chatcontentpage.h ui/components/mainwindow/chatContentPage/chatcontentpage.cpp ui/components/mainwindow/chatContentPage/chatcontentpage.ui
+            # ui/components/mainwindow/chatContentPage/chatcontentpage.h ui/components/mainwindow/chatContentPage/chatcontentpage.cpp ui/components/mainwindow/chatContentPage/chatcontentpage.ui
             ui/components/mainwindow/userInfoPage/userinfopage.h ui/components/mainwindow/userInfoPage/userinfopage.cpp ui/components/mainwindow/userInfoPage/userinfopage.ui
             ui/components/mainwindow/addFriendPage/addfriendpage.h ui/components/mainwindow/addFriendPage/addfriendpage.cpp ui/components/mainwindow/addFriendPage/addfriendpage.ui
             ui/components/mainwindow/placeholderPage/placeholderpage.h ui/components/mainwindow/placeholderPage/placeholderpage.cpp ui/components/mainwindow/placeholderPage/placeholderpage.ui

@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "../utils/StyleLoader.h"
+#include "../DataBaseManage/databasemanage.h"
+#include "../../ui/components/mainwindow/chatListPage/recent_data.h"
 #include <QPainter>
 #include <QPainterPath>
 #include <QButtonGroup>
@@ -83,11 +85,46 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     connect(m_profile_main_page,&ProfilePage_Main::open_friend_chat_page,[this](const FriendInfo &fi){
+        m_chatlist_page->MsgALLClear();
+        // m_chatlist_page->addChatLeft(false,"://picture/avatar/1.jpg","Moe 可爱捏！");
+
+        m_chatlist_page->openChatPage(fi.friend_id);
+
         ui->chatDetailStack->setCurrentIndex(2);
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
 
     });
 
+    connect(chatList,&chatListPage::openChatPage,[this](const QString &user_id){
+        m_chatlist_page->MsgALLClear();
+        // m_chatlist_page->addChatLeft(false,"://picture/avatar/1.jpg","Moe 可爱捏！");
+
+        m_chatlist_page->openChatPage(user_id);
+        ui->chatDetailStack->setCurrentIndex(2);
+        ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
+    });
+
+
+    // 当 chat 窗口发出 SeedMsg（例如发送/接收到新消息）时，更新左侧最近会话列表
+    connect(m_chatlist_page, &chatList_Main::SeedMsg, this, [this](const ChatRecord &_CR){
+        // 计算 peer id：如果消息来自本地用户，则 peer 是 toId，否则是 fromId
+        QString peerId = (_CR.fromId == AppConfig::UserID()) ? _CR.toId : _CR.fromId;
+
+        // 构造 Recent_Data 并填充（用于左侧最近会话 UI）
+        Recent_Data r;
+        r.user_id = peerId;
+        r.msg = _CR.content;
+        r.msg_time = QDateTime::fromSecsSinceEpoch(_CR.timestamp);
+        r.timestamp = _CR.timestamp;
+        r.avatarPath = DataBaseManage::instance()->getAvatarByFriendId(peerId);
+        r.userName = DataBaseManage::instance()->getDisplayNameByFriendId(peerId);
+        // outgoing 的情况下未读数通常为 0
+        r.UnreadCount = (_CR.fromId == AppConfig::UserID()) ? 0 : 1;
+
+        // 将消息投递到 chatList（线程安全）
+        qDebug() << "MainWindow: received SeedMsg for peer:" << peerId << " msg:" << _CR.content;
+        chatList->receiveMessage(r);
+    });
 }
 
 MainWindow::~MainWindow()
