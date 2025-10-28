@@ -90,29 +90,28 @@ void Model::my_diy_sort(bool descending)
 
 }
 
-void Model::update_Item_At(int row, const Recent_Data &newData)
-{
-    if (row < 0 || row >= m_list_data.size()) return;
-    m_list_data[row] = newData;
-    // 通知视图该行数据已更改
-    QModelIndex idx = index(row, 0);
-    emit dataChanged(idx, idx, { all_data_Role, msg_Role, unread_count_Role, timestamp_Role });
-}
+// void Model::update_Item_At(int row, const Recent_Data &newData)
+// {
+//     if (row < 0 || row >= m_list_data.size()) return;
+//     m_list_data[row] = newData;
+//     // 通知视图该行数据已更改
+//     QModelIndex idx = index(row, 0);
+//     emit dataChanged(idx, idx, { all_data_Role, msg_Role, unread_count_Role, timestamp_Role });
+// }
 
 void Model::addItemFront(const Recent_Data &data)
 {
-    // 1️⃣ 先判断是否已存在该 user_id
+
     for (int i = 0; i < m_list_data.size(); ++i) {
         if (m_list_data[i].user_id == data.user_id) {
             m_list_data[i] = data;
-            // 发出 dataChanged 通知（而不是插入）
+
             QModelIndex idx = index(i, 0);
             emit dataChanged(idx, idx, { all_data_Role, msg_Role, unread_count_Role, timestamp_Role });
             return;
         }
     }
 
-    // 2️⃣ 不存在则真正插入
     beginInsertRows(QModelIndex(), 0, 0);
     m_list_data.insert(0, data);
     endInsertRows();

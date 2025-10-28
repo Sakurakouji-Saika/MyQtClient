@@ -84,6 +84,7 @@ addfrienddialog #add_friend_btn:pressed{
 #Af_user_2_lab{
     font-family: "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
     font-size: 16px;
+    color: #008DEB;
 }
 
 #Af_user_2_lab_2{
@@ -91,9 +92,6 @@ addfrienddialog #add_friend_btn:pressed{
 
 }
 
-#Af_user_2_lab_2{
-    color: #008DEB;
-}
 
 
 #AF_use_2_btn{

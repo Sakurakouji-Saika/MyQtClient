@@ -1,72 +1,128 @@
 #include "AppConfig.h"
+#include <QCoreApplication>
 #include <QSettings>
 #include <QFileInfo>
+#include <QDir>
 #include <QDebug>
 
-bool    AppConfig::initialized_ = false;
-QString AppConfig::m_host       = QStringLiteral("127.0.0.1");
-int     AppConfig::m_port       = 60100;
-QString AppConfig::m_user_id = "user_1000";
-QString AppConfig::FilePath = "";
+// ===== 单例实例 =====
+AppConfig& AppConfig::instance() {
+    static AppConfig inst;
+    return inst;
+}
 
+// ===== 构造函数 =====
+AppConfig::AppConfig()
+    : host("127.0.0.1"),
+    port(60100),
+    userID("user_1000"),
+    initialized(false)
+{
+}
 
+// ===== 初始化 =====
 void AppConfig::initialize(const QString &iniFilePath)
 {
-
-    FilePath =iniFilePath;
-
-    if(initialized_){
-        qDebug() << "AppConfig::initialize(): 已初始化，跳过重复调用";
-        return;
-    }
-    initialized_ = true;
-    QFileInfo fi(iniFilePath);
-    if (!fi.exists()) {
-        qWarning() << "AppConfig::initialize(): 配置文件不存在:" << iniFilePath
-                   << "，将使用默认值";
+    if (initialized) {
+        qDebug() << "AppConfig 已初始化，跳过";
         return;
     }
 
-    QSettings settings(iniFilePath,QSettings::IniFormat);
-    if(settings.status() != QSettings::NoError){
-        qWarning() << "AppConfig::initialize(): 读取配置时发生错误";
+    // 程序目录
+    QString appDir  = QCoreApplication::applicationDirPath();
+
+    dataDir         = QDir(appDir).filePath("data");
+    databaseDir     = QDir(dataDir).filePath("database");
+    filesDir        = QDir(dataDir).filePath(QStringLiteral("files"));
+    imagesDir       = QDir(dataDir).filePath(QStringLiteral("images"));
+
+
+    ensureDirectories();
+
+    // 配置文件路径
+    if (!iniFilePath.isEmpty()) {
+        filePath = iniFilePath;
+    } else {
+        filePath = QDir(dataDir).filePath("config.ini");
     }
 
-    settings.beginGroup("network");
-    m_host = settings.value("host",m_host).toString();
-    m_port = settings.value("port", m_port).toInt();
-    settings.endGroup();
+    QFileInfo fi(filePath);
+    if (fi.exists() && fi.isFile()) {
+        load();
+    } else {
+        qWarning() << "配置文件不存在，将使用默认值";
+        save();
+    }
 
-    settings.beginGroup("User");
-    m_user_id = settings.value("m_user_id",m_user_id).toString();
-    settings.endGroup();
-
-
-    qDebug() << "AppConfig::initialize(): 已加载 network.host =" << m_host
-             << ", port =" << m_port;
+    initialized = true;
+    qDebug() << "AppConfig 初始化完成: host=" << host << ", port=" << port;
 }
 
-const QString &AppConfig::host()
+// ===== Getter =====
+QString AppConfig::getHost() const { return host; }
+int AppConfig::getPort() const { return port; }
+QString AppConfig::getUserID() const { return userID; }
+
+// ===== Setter =====
+void AppConfig::setHost(const QString &h) { host = h; save(); }
+void AppConfig::setPort(int p) { port = p; save(); }
+void AppConfig::setUserID(const QString &id) { userID = id; save(); }
+
+// ===== 目录访问 =====
+QString AppConfig::dataDirectory() const { return dataDir; }
+QString AppConfig::databaseDirectory() const { return databaseDir; }
+QString AppConfig::imagesDirectory() const { return imagesDir; }
+QString AppConfig::filesDirectory() const { return filesDir; }
+
+// ===== 保存配置 =====
+bool AppConfig::save() const
 {
-    return m_host;
+    if (filePath.isEmpty()) return false;
+
+    QDir().mkpath(QFileInfo(filePath).absolutePath());
+
+    QSettings s(filePath, QSettings::IniFormat);
+    s.setValue("network/host", host);
+    s.setValue("network/port", port);
+    s.setValue("user/user_id", userID);
+    s.sync();
+
+    if (s.status() != QSettings::NoError) {
+        qWarning() << "AppConfig::save(): 写入配置时发生错误";
+        return false;
+    }
+    return true;
 }
 
-int AppConfig::port()
+// ===== 读取配置 =====
+bool AppConfig::load()
 {
-    return m_port;
+    if (filePath.isEmpty()) return false;
+    QFileInfo fi(filePath);
+    if (!fi.exists()) return false;
+
+    QSettings s(filePath, QSettings::IniFormat);
+    host = s.value("network/host", host).toString();
+    port = s.value("network/port", port).toInt();
+    userID = s.value("user/user_id", userID).toString();
+
+    return true;
 }
 
-void AppConfig::setUsetID(QString _id)
+// ===== 创建目录 =====
+void AppConfig::ensureDirectories()
 {
-    m_user_id = _id;
+    QDir dir;
+    auto ensure = [&](const QString &path) {
+        if (!dir.exists(path)) {
+            if (!dir.mkpath(path)) {
+                qWarning() << "无法创建目录:" << path;
+            }
+        }
+    };
 
-    QSettings settings(FilePath,QSettings::IniFormat);
-    settings.beginGroup("User");
-    m_user_id = settings.value("m_user_id",m_host).toString();
-    settings.endGroup();
-}
-
-QString AppConfig::UserID()
-{
-    return m_user_id;
+    ensure(dataDir);
+    ensure(databaseDir);
+    ensure(imagesDir);
+    ensure(filesDir);
 }

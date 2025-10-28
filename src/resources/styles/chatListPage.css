@@ -6,6 +6,7 @@ chatList_Main{
 chatList_Main #scrollArea{
     background-color: transparent;
     border: none;
+    
 }
 
 
@@ -34,6 +35,7 @@ chatList_Main #scrollAreaWidgetContents{
     /* background-color: transparent; */
 
     background-color: #F2F2F2;
+    
 }
 
 /* 这里是2个导入文件 和 导入图片的框 */

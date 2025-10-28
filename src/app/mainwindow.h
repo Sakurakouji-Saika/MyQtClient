@@ -9,7 +9,13 @@
 #include <QSystemTrayIcon>
 #include <QGraphicsDropShadowEffect>
 
-#include "../utils/clientsocket.h"
+#include "../../Src/DataBaseManage/databasemanage.h"
+
+#include "../../Src/Network/networkadapter.h"
+#include "../utils/comapi/unit.h"
+
+
+
 #include "../../ui/components/mainwindow/chatListPage/chatlistpage.h"
 #include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
 #include "../../ui/components/ProfilePage/profilepage_main.h"
@@ -18,6 +24,9 @@
 #include "../../ui/components/addfrienddialog/addfrienddialog.h"
 #include "../../ui/components/Change_Avatar_Page/change_avatar_page.h"
 #include "../../Src/DataBaseManage/model/ChatRecord.h"
+
+
+
 
 namespace Ui {
 class MainWindow;
@@ -35,8 +44,8 @@ public:
     void initProfilePicture();
     void initStackedWidgetPages();
     void loadStyleCloseBtn();
-    void SetSocket(ClientSocket *tcpSocket, const QString &name);
 
+    void SetNetwork(NetworkAdapter *_net);
 
     void Open_Edit_Avatar_Page();
 
@@ -45,8 +54,6 @@ private slots:
     void SltTrayIcoClicked(QSystemTrayIcon::ActivationReason reason);
     void SltTrayIconMenuClicked(QAction *action);
 
-    void SltTcpReply(const quint8&type,const QJsonValue &dataVal);
-    void SltTcpStatus(const quint8&staus);
 
 
     void SltQuitApp();
@@ -54,25 +61,29 @@ private slots:
 
     void on_searchBtn_clicked();
 
+    // 测试完成记得删除
+    void on_SignalStatus(const quint8 &state);
+    void on_SignalMessage(const quint8 &type,const QJsonValue &dataVal);
+
+
 private:
     Ui::MainWindow *ui;
 
     QSystemTrayIcon *systemTrayIcon;
-    chatListPage * chatList;            // 已经打开的聊天页面
-    friendListPage * friendList;        // 好友列表页
-
+    chatListPage * chatList;                    // 已经打开的聊天页面
+    friendListPage * friendList;                // 好友列表页
     ProfilePage_Main *m_profile_main_page;      // 个人介绍主页
     QWidget *m_blankPage;                       // 空白页
     chatList_Main *m_chatlist_page;             // 聊天页面
     FriendNotify_Page *m_friendNotify;          // 同意添加好友通知页面
     addfrienddialog * m_addfriend = nullptr;    // 搜索添加好友页面
-    Change_Avatar_Page * m_CAvatarPG = nullptr; //修改头像页面
-
-    // socket通信类
-    ClientSocket    *m_tcpSocket;
+    Change_Avatar_Page * m_CAvatarPG = nullptr; // 修改头像页面
 
     // 主动退出操作时不进行断线匹配
     bool            m_bQuit;
+
+    // 网络操作
+    NetworkAdapter *m_network = nullptr;
 
 
     // QObject interface

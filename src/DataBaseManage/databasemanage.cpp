@@ -576,6 +576,32 @@ bool DataBaseManage::addChatRecords(const QList<ChatRecord> &records)
     return true;
 }
 
+int DataBaseManage::getTotalUnreadCount()
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    QSqlQuery query(m_db);
+
+    if (!m_db.transaction()) {
+        qWarning() << "Failed to start transaction:" << m_db.lastError().text();
+        return false;
+    }
+
+    if (!query.exec("SELECT SUM(unread_count) AS total_unread FROM recent_messages;")) {
+        qDebug() << "查询失败:" << query.lastError().text();
+        return 0;
+    }
+
+    int totalUnread = 0;
+    // 读取结果
+    if (query.next()) {
+        totalUnread = query.value("total_unread").toInt();  // 或 query.value(0).toInt()
+    }
+
+    return totalUnread;
+}
+
 
 
 DataBaseManage::DataBaseManage(QObject *parent)

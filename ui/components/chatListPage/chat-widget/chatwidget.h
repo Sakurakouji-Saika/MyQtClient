@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QPointer>
 #include "chatmodel.h"
 #include "chatdelegate.h"
 
@@ -25,7 +26,7 @@ private slots:
 
 private:
     QListView *m_listView;
-    ChatModel *m_model;
+    QPointer<ChatModel> m_model; // 使用 QPointer 防止悬垂指针
     ChatDelegate *m_delegate;
     QLineEdit *m_input;
     int m_lastViewportWidth;

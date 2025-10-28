@@ -24,7 +24,7 @@ public:
 
 
 signals:
-    void SeedMsg(const ChatRecord &msg);
+    void MY_SeedMsg(const ChatRecord &msg);
 
 private slots:
     void on_btn_pushMsg_clicked();

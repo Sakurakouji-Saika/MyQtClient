@@ -192,14 +192,13 @@ void chatListPage::onNewMessage(const Recent_Data &msg)
     w->setData(m_model->data(idx, all_data_Role));
     ui->listView->setIndexWidget(idx, w);
     ui->listView->update();
-    ui->listView->scrollToTop();
 
 }
 
 void chatListPage::onListItemClicked(const QModelIndex &index)
 {
     if (!index.isValid()) return;
-    QString userId = index.data(user_id_Role).toString(); // 用你自定义的 role
+    QString userId = index.data(user_id_Role).toString();
     qDebug() << "item clicked (left):" << userId;
 
 
@@ -207,7 +206,7 @@ void chatListPage::onListItemClicked(const QModelIndex &index)
     int row = index.row();
     Recent_Data _temp = m_model->get_Row(row);
     _temp.UnreadCount = 0;
-    m_model->update_Item_At(row,_temp);
+    // m_model->update_Item_At(row,_temp);
 
     RC_Line *w = qobject_cast<RC_Line*>(ui->listView->indexWidget(index));
     if (w) {

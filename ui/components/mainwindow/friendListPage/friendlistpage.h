@@ -18,6 +18,7 @@ public:
     explicit friendListPage(QWidget *parent = nullptr);
     ~friendListPage();
 
+    void init();
 
 
 signals:

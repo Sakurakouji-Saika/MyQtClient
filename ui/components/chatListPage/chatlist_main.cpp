@@ -15,29 +15,20 @@ chatList_Main::chatList_Main(QWidget *parent)
 
     ui->splitter->setSizes({400, 100});
 
-    // 验证资源文件是否存在
     QString qssPath = ":/styles/chatListPage.css";
-    // 加载样式
     StyleLoader::loadWidgetStyle(this,qssPath);
 
-    // ---------- 把 ChatWidget 放到 scrollArea ----------
-    // 先把 Designer 放进去的占位 widget 取出来并删除（可选但推荐）
     QWidget *old = ui->scrollArea->takeWidget();
     if (old) {
         old->deleteLater();
     }
 
-    // 创建你的 ChatWidget（父对象交给 scrollArea）
     chat = new ChatWidget;
-    // 可以根据需要设置滚动区域是否自动调整子 widget 的大小
 
     ui->scrollArea->setWidgetResizable(true);
     ui->scrollArea->setWidget(chat);
 
     old->setContentsMargins(0,0,0,0);
-    // ---------- end ----------
-
-
 }
 
 chatList_Main::~chatList_Main()
@@ -47,19 +38,18 @@ chatList_Main::~chatList_Main()
 
 void chatList_Main::openChatPage(const QString _id)
 {
-    qDebug ()<< "chatList_Main::openChatPage(const QString _id)::触发::打开ID为：" << _id << "|| 本地用户为：" << AppConfig::UserID();
 
     m_user_name = DataBaseManage::instance()->getDisplayNameByFriendId(_id);
     m_user_id = _id;
 
     ui->labelContactNickname->setText(m_user_name);
 
-    QList<ChatRecord> m_list = DataBaseManage::instance()->getChatRecords(AppConfig::UserID(),_id);
+    QList<ChatRecord> m_list = DataBaseManage::instance()->getChatRecords(AppConfig::instance().getUserID(),_id);
     QString m_avatar_url;
     for(int i=0;i<m_list.size();i++){
 
-        if(AppConfig::UserID() == m_list[i].fromId ){
-            m_avatar_url = DataBaseManage::instance()->getAvatarByFriendId(AppConfig::UserID());
+        if(AppConfig::instance().getUserID() == m_list[i].fromId ){
+            m_avatar_url = DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID());
 
             addChatLeft(true,m_avatar_url,m_list[i].content);
         }else{
@@ -67,7 +57,6 @@ void chatList_Main::openChatPage(const QString _id)
 
             addChatLeft(false,m_avatar_url,m_list[i].content);
         }
-        qDebug() << "chatList_Main::openChatPage::" <<m_list[i].content;
     }
 
 }
@@ -97,7 +86,7 @@ void chatList_Main::on_btn_pushMsg_clicked()
     // 原子地写入聊天记录并更新最近会话（事务内）
     bool ok = DataBaseManage::instance()->addChatMessageAndUpdateRecent(
                 msgId,
-                AppConfig::UserID(),
+                AppConfig::instance().getUserID(),
                 m_user_id,
                 t,
                 0,
@@ -111,17 +100,17 @@ void chatList_Main::on_btn_pushMsg_clicked()
 
     if (ok) {
         // 只有在数据库写入成功后再更新 UI，确保 UI 与持久层一致
-        chat->addMessage(true, DataBaseManage::instance()->getAvatarByFriendId(AppConfig::UserID()), t);
+        chat->addMessage(true, DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()), t);
         ui->CLM_plainTextEdit->clear();
 
         ChatRecord cr;
         cr.msgId = msgId;
         cr.content = t;
-        cr.fromId = AppConfig::UserID();
+        cr.fromId = AppConfig::instance().getUserID();
         cr.toId = m_user_id;
         cr.timestamp = ts;
 
-        emit SeedMsg(cr);
+        emit MY_SeedMsg(cr);
         qDebug() << "chatlist_main: emitted SeedMsg -> peer:" << cr.toId << " msg:" << cr.content;
     } else {
         // QMessageBox::warning(this, tr("发送失败"), tr("消息发送失败，请检查网络或重试。"));

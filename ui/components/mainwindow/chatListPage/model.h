@@ -21,7 +21,7 @@ public:
     bool removeRow(int row);
     Recent_Data get_Row(int row);
     void my_diy_sort(bool descending);
-    void update_Item_At(int row, const Recent_Data &newData);
+    // void update_Item_At(int row, const Recent_Data &newData);
     void addItemFront(const Recent_Data &data);
 
 

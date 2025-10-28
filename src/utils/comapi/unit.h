@@ -150,6 +150,8 @@ typedef enum {
     GetFile             = 0x65,     // 获取文件（到服务器下载文件）
     GetPicture,                     // 图片下载
 
+    searchFriend        = 0x90      // 搜索好友
+
 } E_MSG_TYPE;
 
 typedef enum {

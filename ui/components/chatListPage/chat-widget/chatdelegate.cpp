@@ -16,25 +16,25 @@ void ChatDelegate::updateWidth(int width) {
 }
 
 QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+
     QString text = index.data(TextRole).toString();
     bool isSelf = index.data(IsSelfRole).toBool();
     QString avatar_url = index.data(avatarUrlRole).toString();
 
-    // Determine a stable base width to compute available space.
-    // Prefer option.rect.width() when the view has provided a valid rect.
+
     int baseWidth = option.rect.width();
     if (baseWidth <= 50) {
-        // option.rect may be very small during initial layout; fall back to the
-        // last known available width from the container.
         baseWidth = m_availableWidth;
     }
 
-    // Use cache keyed by content AND the base width so cached sizes are
-    // valid for the specific width they were computed for.
     QString cacheKey = QString::number(baseWidth) + "|" + text + (isSelf ? "_right" : "_left");
     if (m_sizeCache.contains(cacheKey)) {
         return m_sizeCache.value(cacheKey);
     }
+
+    //气泡的10% 留空
+    int qblk = baseWidth*0.1;
+
 
     // 计算可用宽度（考虑边距和头像）
     const int sideMargin = 14; // 左右边距
@@ -42,7 +42,7 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     const int avatarBubbleGap = 8; // 头像与气泡间距
 
     // 可用宽度 = 基准宽度 - 左右边距 - 头像宽度 - 头像气泡间距
-    int availWidth = baseWidth - 2 * sideMargin - avatarWidth - avatarBubbleGap;
+    int availWidth = baseWidth - 2 * sideMargin - avatarWidth - avatarBubbleGap - qblk;
     if (availWidth < 30) availWidth = 30; // 最小气泡宽度
 
     QFont font("Microsoft YaHei", option.font.pointSize());
@@ -72,18 +72,16 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     doc.setDefaultFont(font);
     doc.setPlainText(text);
 
-    // 关键修改：对于短文本，不使用固定宽度，让文本自然布局
     if (needWrapToAvail) {
         doc.setTextWidth(targetWidth - bubblePaddingLR);
     } else {
-        doc.setTextWidth(-1); // 使用自然宽度
+        doc.setTextWidth(-1);
     }
 
     int textHeight = doc.size().height();
-    int bubbleHeight = textHeight + 16; // 8 + 8 padding
+    int bubbleHeight = textHeight + 16;
 
-    // Total item height (bubble + margins)
-    int totalHeight = bubbleHeight + 11; // spacing
+    int totalHeight = bubbleHeight + 11;
 
     QSize size(targetWidth, totalHeight);
     m_sizeCache.insert(cacheKey, size);
@@ -91,85 +89,76 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
     return size;
 }
 
-void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
     painter->save();
 
-    QString text = index.data(TextRole).toString();
-    bool isSelf = index.data(IsSelfRole).toBool();
-    QString avatar_url = index.data(avatarUrlRole).toString();
+    // --- 取数据 ---
+    const QString text = index.data(TextRole).toString();
+    const bool isSelf = index.data(IsSelfRole).toBool();
+    const QString avatar_url = index.data(avatarUrlRole).toString();
 
     QRect rect = option.rect;
     QStyleOptionViewItem opt = option;
     opt.displayAlignment = Qt::AlignLeft;
 
-    // Draw background if selected
-    if (opt.state & QStyle::State_Selected) {
+    // 选中背景保持原样
+    if (opt.state & QStyle::State_Selected)
         painter->fillRect(rect, opt.palette.highlight());
-    }
 
-    // Calculate bubble dimensions
+    // --- 尺寸/布局参数 ---
     QSize bubbleSize = sizeHint(option, index);
-    int bubbleWidth = bubbleSize.width();
-    int bubbleHeight = bubbleSize.height() - 11; // Remove spacing
+    const int bubbleWidth = qMax(0, bubbleSize.width());
+    // 原来的实现里减了 11，保持行为一致（如果想改，可在 sizeHint 里统一处理）
+    const int bubbleHeight = qMax(0, bubbleSize.height() - 11);
 
-    // 定义边距
     const int sideMargin = 14;
+    const int avatarSize = 40;
+    const int avatarGap = 12; // 头像与气泡间距
 
-    QRect bubbleRect;
+    // 把 rect.height() 与 bubbleHeight 的差值一分为二，topOffset 放到上方
+    const int totalGap = rect.height() - bubbleHeight;
+    const int topOffset = (totalGap > 0) ? (totalGap / 2) : 0;
+    const int top = rect.top() + topOffset;
+
     QRect avatarRect;
-
+    QRect bubbleRect;
     if (isSelf) {
-        // Right bubble (self)
-        // 头像位置：右侧边距14px
-        avatarRect = QRect(rect.right() - sideMargin - 40, rect.top(), 40, 40);
-        // 气泡位置：头像左侧，与头像间隔8px
-        bubbleRect = QRect(avatarRect.left() - 8 - bubbleWidth, rect.top(), bubbleWidth, bubbleHeight);
+        avatarRect = QRect(rect.right() - sideMargin - avatarSize, top, avatarSize, avatarSize);
+        bubbleRect = QRect(avatarRect.left() - avatarGap - bubbleWidth, top, bubbleWidth, bubbleHeight);
     } else {
-        // Left bubble (other)
-        // 头像位置：左侧边距14px
-        avatarRect = QRect(rect.left() + sideMargin, rect.top(), 40, 40);
-        // 气泡位置：头像右侧，与头像间隔8px
-        bubbleRect = QRect(avatarRect.right() + 8, rect.top(), bubbleWidth, bubbleHeight);
+        avatarRect = QRect(rect.left() + sideMargin, top, avatarSize, avatarSize);
+        bubbleRect = QRect(avatarRect.right() + avatarGap, top, bubbleWidth, bubbleHeight);
     }
 
-    // Draw bubble background
-    painter->setRenderHint(QPainter::Antialiasing);
-    QPainterPath path;
-    path.addRoundedRect(bubbleRect, 10, 10);
+    // --- 绘制气泡背景（抗锯齿 + 颜色） ---
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    const QColor bubbleColor = isSelf ? QColor("#0099FF") : Qt::white;
+    QPainterPath bubblePath;
+    bubblePath.addRoundedRect(bubbleRect, 10, 10);
+    painter->fillPath(bubblePath, bubbleColor);
 
-    if (isSelf) {
-        painter->fillPath(path, QColor("#0099FF")); // Right bubble color
-    } else {
-        painter->fillPath(path, Qt::white); // Left bubble color
-    }
-
-    // ---------------------------
-    // Draw avatar as a circular image
-    // ---------------------------
-    // 注意：资源前缀使用 ":/..."
-    QPixmap avatar(avatar_url);
-
-    // 开启平滑缩放提示以提高绘制质量
-    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    // --- 绘制头像（圆形裁剪） ---
+    QPixmap avatar;
+    if (!avatar_url.isEmpty())
+        avatar = QPixmap(avatar_url);
 
     if (!avatar.isNull()) {
-        // 将图片缩放到比目标稍大（保持纵横比），以便居中裁剪
-        QPixmap scaled = avatar.scaled(avatarRect.size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        const QPixmap scaled = avatar.scaled(avatarRect.size(),
+                                             Qt::KeepAspectRatioByExpanding,
+                                             Qt::SmoothTransformation);
+        const int sx = (scaled.width() - avatarRect.width()) / 2;
+        const int sy = (scaled.height() - avatarRect.height()) / 2;
+        const QRect srcRect(sx, sy, avatarRect.width(), avatarRect.height());
 
-        // 计算从 scaled 中取哪一块作为 source（居中裁切）
-        int sx = (scaled.width() - avatarRect.width()) / 2;
-        int sy = (scaled.height() - avatarRect.height()) / 2;
-        QRect srcRect(sx, sy, avatarRect.width(), avatarRect.height());
-
-        // 使用圆形裁剪后绘制（保证边缘平滑）
         painter->save();
-        QPainterPath clipPath;
-        clipPath.addEllipse(avatarRect);
-        painter->setClipPath(clipPath);
+        QPainterPath clip;
+        clip.addEllipse(avatarRect);
+        painter->setClipPath(clip);
         painter->drawPixmap(avatarRect, scaled, srcRect);
         painter->restore();
     } else {
-        // 图片加载失败 -> 使用原先的颜色回退（保证不会空白）
+        // 占位圆
         painter->save();
         painter->setPen(Qt::NoPen);
         painter->setBrush(isSelf ? QColor("#66bb6a") : QColor("#bbbbbb"));
@@ -177,49 +166,32 @@ void ChatDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, 
         painter->restore();
     }
 
-    // Draw text
-    QRect textRect = bubbleRect.adjusted(12, 8, -12, -8);
+    // --- 绘制文本 ---
+    const QRect textRect = bubbleRect.adjusted(12, 8, -12, -8);
+
+    // 减少重复创建 font：使用 opt.font 为基础并强制设置字体家族（保留原来视觉）
+    QFont font = opt.font;
+    font.setFamily("Microsoft YaHei");
+    painter->setFont(font);
+    QFontMetrics fm(font);
 
     painter->setPen(isSelf ? Qt::white : Qt::black);
-    QFont font("Microsoft YaHei", opt.font.pointSize());
-    painter->setFont(font);
 
-    // 对于短文本，直接使用 QPainter 绘制，避免 QTextDocument 的问题
-    QFontMetrics fm(opt.font);
-    int textWidth = fm.horizontalAdvance(text);
-
-    // 如果文本宽度小于文本区域的宽度，直接绘制
+    // 快速判断是否单行能容纳，否则使用 QTextDocument 自动换行
+    const int textWidth = fm.horizontalAdvance(text);
     if (textWidth <= textRect.width()) {
-        // 设置文本对齐方式
-        Qt::Alignment alignment = isSelf ? Qt::AlignRight : Qt::AlignLeft;
-
-        // 计算文本绘制位置
-        QPoint textPos;
-        if (isSelf) {
-            textPos = QPoint(textRect.right() - textWidth, textRect.top() + fm.ascent() + 3);
-        } else {
-            textPos = QPoint(textRect.left(), textRect.top() + fm.ascent() + 3);
-        }
-
+        const QPoint textPos = isSelf
+                                   ? QPoint(textRect.right() - textWidth, textRect.top() + fm.ascent() + 3)
+                                   : QPoint(textRect.left(), textRect.top() + fm.ascent() + 3);
         painter->drawText(textPos, text);
     } else {
-        // 对于长文本，使用 QTextDocument 进行换行
         QTextDocument doc;
-        QFont font("Microsoft YaHei", opt.font.pointSize());
         doc.setDefaultFont(font);
         doc.setPlainText(text);
-        doc.setTextWidth(textRect.width());
-
-        // 设置文本颜色（自己发送的为白色，他人发送的为黑色）
-        if (isSelf) {
-            doc.setDefaultStyleSheet("body { color: white; }");
-        } else {
-            doc.setDefaultStyleSheet("body { color: black; }");
-        }
+        doc.setTextWidth(qMax(1, textRect.width())); // 避免 0 宽引发问题
 
         painter->save();
         painter->translate(textRect.topLeft());
-        // 确保使用正确的文本颜色绘制
         QAbstractTextDocumentLayout::PaintContext ctx;
         ctx.palette.setColor(QPalette::Text, isSelf ? Qt::white : Qt::black);
         doc.documentLayout()->draw(painter, ctx);

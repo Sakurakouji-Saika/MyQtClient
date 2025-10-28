@@ -88,6 +88,16 @@ public:
     // 插入一条聊天记录
     bool addChatRecords(const QList<ChatRecord> &records);
 
+    // 插入一条记录
+    int getTotalUnreadCount();
+
+    // 判断是不是已经是好友了
+    bool isFriend(const QString &friendId) const;
+
+    // 基本写接口（返回是否成功）
+    bool addFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+
+
 private:
     explicit DataBaseManage(QObject *parent = nullptr);
     ~DataBaseManage() override;
@@ -103,11 +113,6 @@ private:
     bool createTables();
 
 
-    // 判断是不是已经是好友了
-    bool isFriend(const QString &friendId) const;
-
-    // 基本写接口（返回是否成功）
-    bool addFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
 
 
 private:

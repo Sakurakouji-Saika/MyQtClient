@@ -47,6 +47,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
         find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core)
 
         add_executable(MyClient
             ${PROJECT_SOURCES}
@@ -54,7 +57,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
             src/widgets/hoverbutton.h src/widgets/hoverbutton.cpp
             src/widgets/iplineedit.h src/widgets/iplineedit.cpp
             src/app/mainwindow.h src/app/mainwindow.cpp ui/mainwindow.ui
-            src/utils/StyleLoader.h src/utils/StyleLoader.cpp
+            src/utils/StyleLoader.h
 
 
             ui/components/mainwindow/chatListPage/chatlistpage.h ui/components/mainwindow/chatListPage/chatlistpage.cpp
@@ -63,9 +66,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
             ui/components/mainwindow/userInfoPage/userinfopage.h ui/components/mainwindow/userInfoPage/userinfopage.cpp ui/components/mainwindow/userInfoPage/userinfopage.ui
             ui/components/mainwindow/addFriendPage/addfriendpage.h ui/components/mainwindow/addFriendPage/addfriendpage.cpp ui/components/mainwindow/addFriendPage/addfriendpage.ui
             ui/components/mainwindow/placeholderPage/placeholderpage.h ui/components/mainwindow/placeholderPage/placeholderpage.cpp ui/components/mainwindow/placeholderPage/placeholderpage.ui
-            src/utils/clientsocket.h src/utils/clientsocket.cpp
+
             src/utils/appconfig.h src/utils/appconfig.cpp
-            src/utils/comapi/global.h src/utils/comapi/iteminfo.cpp src/utils/comapi/iteminfo.h src/utils/comapi/myapp.cpp src/utils/comapi/myapp.h src/utils/comapi/qqcell.cpp src/utils/comapi/qqcell.h src/utils/comapi/unit.h
+            src/utils/comapi/myapp.cpp src/utils/comapi/myapp.h src/utils/comapi/qqcell.cpp src/utils/comapi/qqcell.h src/utils/comapi/unit.h
 
             ui/components/friendListPage/qqcelltitle.h ui/components/friendListPage/qqcelltitle.cpp ui/components/friendListPage/qqcelltitle.ui
             ui/components/friendListPage/qqcellline.h ui/components/friendListPage/qqcellline.cpp ui/components/friendListPage/qqcellline.ui
@@ -98,6 +101,12 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
             src/DataBaseManage/model/FriendInfo.h
             src/DataBaseManage/model/recent_messages.h
             src/DataBaseManage/model/ChatRecord.h
+            src/Network/clientsocket.h src/Network/clientsocket.cpp
+            src/utils/StyleLoader.cpp
+            src/Network/INetwork.h
+            src/Network/networkadapter.h src/Network/networkadapter.cpp
+            src/Network/FileManager/filemanager.h src/Network/FileManager/filemanager.cpp
+
 
 
 
@@ -109,11 +118,15 @@ endif()
 target_include_directories(MyClient PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets
     ${CMAKE_CURRENT_SOURCE_DIR}/ui/components/Change_Avatar_Page
+    ${CMAKE_CURRENT_SOURCE_DIR}/ui/components/chatListPage/chat-widget
 )
 
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets  Qt${QT_VERSION_MAJOR}::Network)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Sql)
+target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 
 
