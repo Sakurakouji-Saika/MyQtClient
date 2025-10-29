@@ -16,6 +16,8 @@ AppConfig::AppConfig()
     : host("127.0.0.1"),
     port(60100),
     userID("user_1000"),
+    FileHost("127.0.0.1"),
+    FilePort(60101),
     initialized(false)
 {
 }
@@ -63,10 +65,26 @@ QString AppConfig::getHost() const { return host; }
 int AppConfig::getPort() const { return port; }
 QString AppConfig::getUserID() const { return userID; }
 
+QString AppConfig::getFileHost() const{ return FileHost; }
+
+int AppConfig::getFilePort() const
+{
+    return FilePort;
+}
+
+
 // ===== Setter =====
 void AppConfig::setHost(const QString &h) { host = h; save(); }
 void AppConfig::setPort(int p) { port = p; save(); }
 void AppConfig::setUserID(const QString &id) { userID = id; save(); }
+
+void AppConfig::setFileHost(const QString &host){ FileHost = host; save(); }
+
+void AppConfig::setFilePort(int p)
+{
+    FilePort = p;
+}
+
 
 // ===== 目录访问 =====
 QString AppConfig::dataDirectory() const { return dataDir; }
@@ -84,6 +102,8 @@ bool AppConfig::save() const
     QSettings s(filePath, QSettings::IniFormat);
     s.setValue("network/host", host);
     s.setValue("network/port", port);
+    s.setValue("network/fileHost", host);
+    s.setValue("network/filePort", port);
     s.setValue("user/user_id", userID);
     s.sync();
 
@@ -104,6 +124,8 @@ bool AppConfig::load()
     QSettings s(filePath, QSettings::IniFormat);
     host = s.value("network/host", host).toString();
     port = s.value("network/port", port).toInt();
+    FileHost = s.value("network/fileHost",FileHost).toString();
+    FilePort = s.value("network/filePort",FilePort).toInt();
     userID = s.value("user/user_id", userID).toString();
 
     return true;

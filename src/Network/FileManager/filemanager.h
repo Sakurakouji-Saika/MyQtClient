@@ -4,83 +4,87 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QFile>
-#include <QQueue>
-#include <QPair>
-#include <QJsonArray>
-
-#include "../networkadapter.h"
-#include "../../utils/comapi/unit.h"
-
+#include <QDir>
+#include <QFileInfo>
+#include <QDataStream>
+#include "../utils/appconfig.h"
 
 class FileManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileManager(NetworkAdapter *msgClient = nullptr,
-                         const QString &host = QString(),
-                         quint16 msgPort = 60100,
-                         quint16 filePort = 60101,
-                         QObject *parent = nullptr);
-    ~FileManager();
+    explicit FileManager(QObject *parent = nullptr);
+    ~FileManager() override;
 
-    // 普通文件上传（用于转发给其他用户）
-    void uploadFile(const QString &localFilePath, const QString &remoteFileName, int targetUserId);
+    // 是否链接
+    bool isConnection() const;
 
-    // 请求服务器把文件发给当前已注册的 file 连接（用于下载）
-    void requestDownloadFile(const QString &remoteFileName);
+    // 开始传输文件（发送）
+    void StartTransferFile(const QString &filePath);
 
-    // 上传头像（会把文件发送到文件服务器，并通过消息服务器发送 UpdateHeadPic）
-    void uploadAvatar(const QString &localFilePath, const QString &remoteFileName = QString(), const QJsonArray &friends = QJsonArray());
+    // 向服务器请求下载远程文件（例如："1001_avatar.png"）
+    void RequestFile(const QString &remoteFileName);
 
-    // 下载头像（确保已 connectToFileServer 并 registerIdentity）
-    void downloadAvatar(const QString &remoteFileName);
+    // 连接/断开
+    void ConnectToServer(const QString &ip, int port, int usrId);
+    void CloseConnection();
 
-    // 连接并注册到文件服务器
-    void connectToFileServer();
-    void registerFileIdentity(int userId, int windowId = -2);
+    // 文件传输完成（外部可以调用以重置状态）
+    void FileTransFinished();
 
-    bool isFileServerConnected() const;
+    // 设置当前 socket 的 id
+    void SetUserId(QString id);
 
 signals:
-    void fileReceived(const QString &localPath);
-    void uploadProgress(qint64 bytesSent, qint64 totalBytes);
-    void errorOccured(const QString &msg);
+    void signalSendFinished();
+    void signalFileRecvOk(quint8 type, const QString &filePath);
+    void signalUpdateProgress(quint64 currSize, quint64 total);
+    void signalConnected();
 
 private slots:
-    void onFileSocketConnected();
-    void onFileSocketDisconnected();
-    void onFileSocketReadyRead();
-    void onFileSocketBytesWritten(qint64 bytes);
+    //显示错误
+    void displayError(QAbstractSocket::SocketError socketError);
+    void onBytesWritten(qint64 bytes);
+    void onReadyRead();
+    void onConnected();
+    void onDisconnected();
 
 private:
-    NetworkAdapter *m_msgClient; // 用于发送控制消息到消息服务器
-    QTcpSocket *m_fileSocket; // 与文件服务器的连接
+    enum EType : quint8 { Unknow = 0, Login = 1, SendFile = 2, ReceiveFile = 3 };
 
-    QString m_host;
-    quint16 m_msgPort;
-    quint16 m_filePort;
+    // 分块大小（每次从文件读取并写入 socket 的最大字节数）
+    static constexpr qint64 DEFAULT_CHUNK_SIZE = 50 * 1024; // 50 KB
 
-    int m_userId;
-    int m_windowId; // -2 表示头像目录
+    // send (发送)部分
+    QFile fileToSend;
+    qint64 totalSendBytes;   // 包头 + 文件实际大小
+    qint64 bytesWritten;     // 已写入 socket 的总数（包含头）
+    qint64 bytesToWrite;     // 还剩多少需要从文件读取并写入 socket（仅文件内容部分）
+    QByteArray outHeader;    // 用于保存头部（文件名等）的 QByteArray
 
-    // 发送相关
-    QFile *m_sendFile;
-    qint64 m_totalSendBytes;
-    qint64 m_bytesToWrite;
-    qint64 m_bytesWritten;
-    QByteArray m_outBlock;
+    // recv (接收)部分（state machine）
+    QFile fileToRecv;
+    qint64 totalRecvBytes;   // 本次接收的总字节数（头+文件）
+    qint64 bytesReceived;    // 已接收字节数
+    qint64 fileNameSize;     // 文件名部分大小（从头读取）
+    QString recvFileName;
+    QByteArray inBuffer;
 
-    // 接收相关
-    QFile *m_recvFile;
-    qint64 m_recvTotalBytes;
-    qint64 m_recvBytesReceived;
-    qint64 m_recvFileNameSize;
-    QString m_recvFileName;
-    QByteArray m_inBlock;
+    // 通信
+    QTcpSocket *tcpSocket;
 
-    // 内部工具
-    void sendFileHeader(const QString &fileName, qint64 fileSize);
-    void startSendFile();
+    // 状态
+    bool busy;
+    QString winId;
+    quint8 curType;
+
+    // 用户目录 / 路径
+    QString recvPath;
+    QString headPath;
+
+    // internal helpers
+    void initSocket();
+    void resetTransferState();
 };
 
 #endif // FILEMANAGER_H

@@ -7,6 +7,9 @@
 #include <QPainterPath>
 #include <QButtonGroup>
 
+#include "../../src/Network/AvatarManagement/avatarmanagement.h"
+
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,8 +18,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
-
-
+    // 测试下载头像
+    AvatarManagement *m_avatarMgr = new AvatarManagement();
+    int friendId = 3;
+    m_avatarMgr->DownloadAvatar(friendId);
+    // 测试下载头像
 
     // 过滤器注册
     ui->avatar->installEventFilter(this);

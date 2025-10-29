@@ -9,6 +9,7 @@
 #include "DataBaseManage/databasemanage.h"
 #include "../src/Network/networkadapter.h"
 
+
 #include "../../ui/components/Registration_Page/registration_page.h"
 #include "../ui/components/addfrienddialog/addfrienddialog.h"
 
@@ -44,7 +45,8 @@ int main(int argc, char *argv[])
 
     qWarning() << "Test warning message";
 
-    // test_DBM();
+    test_DBM();
+
 
 
 

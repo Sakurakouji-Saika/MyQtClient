@@ -83,10 +83,7 @@ void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info)
 
 
 
-    FileManager * m_fileManager = new FileManager(m_net, "127.0.0.1", 60100, 60101, this);
-    m_fileManager->connectToFileServer();
-    m_fileManager->registerFileIdentity(AppConfig::instance().getUserID().toInt(), -2); // -2 for avatar
-    m_fileManager->downloadAvatar(headAvatar);
+
 
 
     ui->Af_user_2_lab->setText(name);

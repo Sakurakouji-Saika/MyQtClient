@@ -50,6 +50,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core)
 
         add_executable(MyClient
             ${PROJECT_SOURCES}
@@ -106,6 +107,7 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/Network/INetwork.h
             src/Network/networkadapter.h src/Network/networkadapter.cpp
             src/Network/FileManager/filemanager.h src/Network/FileManager/filemanager.cpp
+            src/Network/AvatarManagement/avatarmanagement.h src/Network/AvatarManagement/avatarmanagement.cpp
 
 
 
@@ -124,6 +126,7 @@ target_include_directories(MyClient PRIVATE
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Widgets  Qt${QT_VERSION_MAJOR}::Network)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Sql)
+target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)

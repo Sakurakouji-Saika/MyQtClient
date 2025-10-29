@@ -171,5 +171,10 @@ typedef enum {
     AddFriendFailed,
 } E_STATUS;
 
+
+constexpr qint32 WINID_HEAD_PATH = -2;
+
+
+
 #endif // UNIT
 

@@ -1,7 +1,7 @@
 #include "clientsocket.h"
 #include "../utils/comapi/unit.h"
-#include "../utils/comapi/myapp.h"
 
+#include "../utils/appconfig.h"
 ClientSocket::ClientSocket(QObject *parent)
     : QObject{parent}
 {
@@ -31,7 +31,7 @@ void ClientSocket::SetUserId(const QString &id)
 void ClientSocket::CheckConnected()
 {
     if(m_tcpSocket->state()!=QTcpSocket::ConnectedState){
-        m_tcpSocket->connectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
+        m_tcpSocket->connectToHost(AppConfig::instance().getFileHost(), AppConfig::instance().getPort());
     }
 }
 
@@ -57,7 +57,7 @@ void ClientSocket::ConnectToHost(const QHostAddress &host, const int &port)
 // 登录链接
 void ClientSocket::connectToHostAsync()
 {
-    m_tcpSocket->connectToHost(MyApp::m_strHostAddr, MyApp::m_nMsgPort);
+    m_tcpSocket->connectToHost(AppConfig::instance().getHost(), AppConfig::instance().getPort());
 }
 
 
@@ -160,35 +160,3 @@ void ClientSocket::SltReadyRead()
         qDebug() << "[JSON 解析错误] 错误原因:" << jsonError.errorString();
     }
 }
-
-
-// // 用户登录
-// void ClientSocket::ParseLogin(const QJsonValue &dataVal)
-// {
-
-//     QJsonObject dataObj = dataVal.toObject();
-//     int id = dataObj.value("id").toInt();
-//     int code = dataObj.value("code").toInt();
-//     QString msg = dataObj.value("msg").toString();
-//     if(id == -1){
-//         qDebug() << "[登录信息]:" << "用户未注册";
-//         emit signalStatus(LoginPasswdError);
-//     }else if(id == -2){
-//         qDebug() << "[登录信息]:" << "用户已在线";
-//         emit signalStatus(LoginRepeat);
-//         SetUserId(QString::number(id));
-//     }else if(id > 0 && code ==0 && msg =="ok"){
-//         qDebug() << "[登录信息]:" << "用户成功";
-//         emit signalStatus(LoginSuccess);
-//     }else{
-//         qDebug() << "[登录信息]:" << "未知错误";
-//         emit signalStatus(0x01);    //这个0x01 是我自己定得。不是文档得标准
-//     }
-
-
-// }
-
-// void ClientSocket::ParseReister(const QJsonValue &dataVal)
-// {
-
-// }

@@ -13,10 +13,14 @@ public:
     QString getHost() const;
     int getPort() const;
     QString getUserID() const;
+    QString getFileHost() const;
+    int getFilePort() const;
 
     void setHost(const QString &h);
     void setPort(int p);
     void setUserID(const QString &id);
+    void setFileHost(const QString &host);
+    void setFilePort(int p);
 
     // === 目录访问 ===
     QString dataDirectory() const;
@@ -33,16 +37,19 @@ private:
     void ensureDirectories();
 
 private:
-    QString filePath;     // 配置文件路径
-    QString host;         // 网络地址
-    int port;             // 端口号
-    QString userID;       // 用户ID
+    QString filePath;       // 配置文件路径
+    QString host;           // 网络地址
+    int port;               // 端口号
+    QString userID;         // 用户ID
+
+    QString FileHost;       // 文件服务器地址
+    int FilePort;           // 文件服务器端口
 
     // 目录路径
-    QString dataDir;
-    QString databaseDir;
-    QString imagesDir;
-    QString filesDir;
+    QString dataDir;        // 数据目录
+    QString databaseDir;    // 存放用户数据的目录
+    QString imagesDir;      // 存放用户图片的目录
+    QString filesDir;       // 存放用户文件的目录
 
     bool initialized;     // 是否已初始化
 };
