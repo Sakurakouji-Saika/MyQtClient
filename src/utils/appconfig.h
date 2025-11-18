@@ -1,4 +1,9 @@
 #pragma once
+
+#ifndef APPCONFIG_H
+#define APPCONFIG_H
+
+
 #include <QString>
 
 class AppConfig {
@@ -12,13 +17,13 @@ public:
     // === Getter / Setter ===
     QString getHost() const;
     int getPort() const;
-    QString getUserID() const;
+    int getUserID() const;
     QString getFileHost() const;
     int getFilePort() const;
 
     void setHost(const QString &h);
     void setPort(int p);
-    void setUserID(const QString &id);
+    void setUserID(const int &id);
     void setFileHost(const QString &host);
     void setFilePort(int p);
 
@@ -40,7 +45,7 @@ private:
     QString filePath;       // 配置文件路径
     QString host;           // 网络地址
     int port;               // 端口号
-    QString userID;         // 用户ID
+    int userID;         // 用户ID
 
     QString FileHost;       // 文件服务器地址
     int FilePort;           // 文件服务器端口
@@ -53,3 +58,5 @@ private:
 
     bool initialized;     // 是否已初始化
 };
+
+#endif // APPCONFIG_H

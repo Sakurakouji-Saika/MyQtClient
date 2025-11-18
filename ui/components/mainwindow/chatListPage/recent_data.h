@@ -8,7 +8,7 @@
 struct Recent_Data {
     QString avatarPath;         // 头像路径（可为空，表示使用占位图）
     QString msg;                // 当前最新消息
-    QString user_id;            // 用户ID；
+    int user_id;            // 用户ID；
     QString userName;           // 用户名
     QDateTime msg_time;         // 发送时间
     qint64 timestamp;           // 发送时间戳
@@ -32,7 +32,7 @@ struct Recent_Data {
     // 带参构造，参数有默认值，方便只填部分字段
     Recent_Data(const QString& avatarPath_,
                 const QString& msg_ = {},
-                const QString& user_id_ = {},
+                const int& user_id_ = {},
                 const QString& userName_ = {},
                 const QDateTime& msg_time_ = {},
                 const qint64 & timestamp_ ={},

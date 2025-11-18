@@ -1,5 +1,4 @@
 #include "myapp.h"
-#include "unit.h"
 
 #include <QApplication>
 #include <QDesktopWidget>

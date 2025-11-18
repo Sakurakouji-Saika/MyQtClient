@@ -25,12 +25,12 @@ public:
 
     // 初始化：accountId 与 basePath 必须提供
     // 返回 true 表示初始化并打开数据库成功（并创建表）
-    bool init(const QString &accountId, const QString &basePath);
+    bool init(const int &accountId, const QString &basePath);
 
     // 关闭数据库连接（会移除 QSqlDatabase 连接）
     void close();
 
-    Add_Friend_Type checkAndAddFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+    Add_Friend_Type checkAndAddFriend(const int &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
 
     // 插入聊天消息
     bool addChatMessage(const QString &msgId,const QString &fromId,const QString &toId,const QString &content,int type,qint64 timestamp);
@@ -40,12 +40,12 @@ public:
 
     // 原子地插入聊天消息并更新最近会话（在同一事务中执行）
     bool addChatMessageAndUpdateRecent(const QString &msgId,
-                                       const QString &fromId,
-                                       const QString &toId,
+                                       const int &fromId,
+                                       const int &toId,
                                        const QString &content,
                                        int type,
                                        qint64 timestamp,
-                                       const QString &peerId,
+                                       const int &peerId,
                                        const QString &lastMsg,
                                        qint64 lastTime,
                                        int unreadCount,
@@ -77,13 +77,13 @@ public:
                                      int direction = 0);
 
     // 查找头像
-    QString getAvatarByFriendId(const QString &friendId);
+    QString getAvatarByFriendId(const int &friendId);
 
     // 查找用户名
-    QString getDisplayNameByFriendId(const QString &friendId);
+    QString getDisplayNameByFriendId(const int &friendId);
 
     // 查找聊天记录
-    QList<ChatRecord> getChatRecords(const QString &userA, const QString &userB);
+    QList<ChatRecord> getChatRecords(const int &userA, const int &userB);
 
     // 插入一条聊天记录
     bool addChatRecords(const QList<ChatRecord> &records);
@@ -92,10 +92,13 @@ public:
     int getTotalUnreadCount();
 
     // 判断是不是已经是好友了
-    bool isFriend(const QString &friendId) const;
+    bool isFriend(const int &friendId) const;
+
+    // 判断是不是已经是好友了(字符串)
+    bool isFriend(const QString &friendid) const;
 
     // 基本写接口（返回是否成功）
-    bool addFriend(const QString &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+    bool addFriend(const int &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
 
 
 private:

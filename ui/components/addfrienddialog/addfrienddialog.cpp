@@ -1,8 +1,7 @@
 #include "addfrienddialog.h"
 #include "ui_addfrienddialog.h"
 #include <QMessageBox>
-#include "../../Src/utils/comapi/unit.h"
-#include "../Network/FileManager/filemanager.h"
+
 
 addfrienddialog::addfrienddialog(QWidget *parent)
     : QWidget(parent)
@@ -24,10 +23,7 @@ addfrienddialog::~addfrienddialog()
     delete ui;
 }
 
-void addfrienddialog::SetNetwork(NetworkAdapter *_net)
-{
-    m_net = _net;
-}
+
 
 void addfrienddialog::on_add_friend_btn_clicked()
 {
@@ -41,18 +37,14 @@ void addfrienddialog::on_add_friend_btn_clicked()
         return;
     }
 
-    if(DataBaseManage::instance()->isFriend(user_id)){
+    if(DataBaseManage::instance()->isFriend(user_id.toInt())){
         QMessageBox msgBox;
         msgBox.setText("该账号已是好友");
         msgBox.exec();
         return;
     }
 
-    QJsonObject json;
-    json.insert("id",   AppConfig::instance().getUserID());
-    json.insert("name", user_id);
 
-    m_net->sendMessage(searchFriend,json);
 
 
     // 如果想隐藏整个 AF_userInfo：

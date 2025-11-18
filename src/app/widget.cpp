@@ -16,14 +16,16 @@
 
 
 #include "iplineedit.h"
-#include "../app/mainwindow.h"
 #include "../utils/StyleLoader.h"
-#include "../utils/comapi/unit.h"
-
-// #define STYLE_SHEET_PATH "../styles/loginPage.css"
 
 
-Widget::Widget(NetworkAdapter *network,QWidget *parent)
+#include "../app/mainwindow.h"
+
+
+
+
+
+Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LoginPage)
 {
@@ -43,7 +45,7 @@ Widget::Widget(NetworkAdapter *network,QWidget *parent)
     loadStyleCloseBtn();        // 这里是加载关闭窗口按钮图标
     otherStyle();               // 其他样式
     addWidget_IPInput();
-    NetWorkInit(network);       // 初始化网络
+
 
 }
 
@@ -208,47 +210,19 @@ void Widget::on_loginBtn_clicked()
     json.insert("name", userName);
     json.insert("passwd", passwd);
 
-    if (!m_network) {
-        // 兜底：不会发生在注入模式下，内部创建则应已存在
-        m_network = new NetworkAdapter(nullptr, this);
 
-        connect(m_network, &NetworkAdapter::statusChanged, this, &Widget::on_SignalStatus);
-        connect(m_network, &NetworkAdapter::messageReceived, this, &Widget::on_SignalMessage);
-    }
-
-    // 使用抽象接口发送
-    m_network->sendMessage(0x11, json);
 
 }
 
-void Widget::NetWorkInit(NetworkAdapter *network)
-{
-    // 使用注入的 network（如果为 nullptr，可 fallback 到内部创建）
-    if (network) {
-        m_network = network;
-    } else {
-        // 可选后备：内部创建（见 B 方案）
-        m_network = new NetworkAdapter(nullptr, this);
-    }
 
-    // 连接统一的 INetwork 信号
-    connect(m_network, &NetworkAdapter::statusChanged,
-            this, &Widget::on_SignalStatus);
-
-    connect(m_network, &NetworkAdapter::messageReceived,
-            this, &Widget::on_SignalMessage);
-
-    // 确保连接检查（adapter 会处理）
-    m_network->checkConnected();
-}
 
 void Widget::InitDataBaseMange()
 {
-    QString accountId = AppConfig::instance().getUserID();
+    int accountId = AppConfig::instance().getUserID();
 
     // QString basePath = QCoreApplication::applicationDirPath() + "/data";
 
-    QString basePath =  "C:\\Users\\Moe\\Desktop\\MyClient\\data";
+    QString basePath =  "C:\\Users\\Moe\\Desktop\\MyClient\\data\\";
 
     if (!DataBaseManage::instance()->init(accountId, basePath)) {
         qWarning() << "初始化数据库失败";
@@ -256,77 +230,9 @@ void Widget::InitDataBaseMange()
     }
 }
 
-void Widget::on_SignalStatus(const quint8 &state)
-{
-    switch (state) {
-    case LoginSuccess:
-
-        break;
-    case LoginPasswdError:  // 未注册
-        QMessageBox::warning(this, "登录失败", "该用户未注册！");
-        break;
-
-    case LoginRepeat:  // 用户已在线
-        QMessageBox::warning(this, "登录失败", "该用户已在线！");
-        break;
-
-    case ConnectedHost:  // 用户已在线
-        qDebug() << "客户端成功访问到服务器IP地址为可用";
-        break;
-
-    default:  // 用户已在线
-        QMessageBox::warning(this, "登录失败", "未知错误");
-        break;
-    }
-}
-
-void Widget::on_SignalMessage(const quint8&type,const QJsonValue &dataVal)
-{
-    switch(type){
-    case Register:
-        //注册
-        break;
-    case Login:  //登录 编号17
-        QJsonObject dataObj = dataVal.toObject();
-        int id = dataObj.value("id").toInt();
-        qDebug() <<  "on_SignalMessage：：登录Msg为：" << dataObj ;
-        int code = dataObj.value("code").toInt();
-        QString msg = dataObj.value("msg").toString();
-
-        if(id == -1){
-            qDebug() << "[登录信息]:" << "用户未注册";
-        }else if(id == -2){
-            qDebug() << "[登录信息]:" << "用户已在线";
-        }else if(id > 0){
-            qDebug() << "[登录信息]:" << "用户成功";
-
-            {
-                AppConfig::instance().setUserID(ui->userEdit->text());
-                m_network->setUserID(ui->userEdit->text());
-
-                InitDataBaseMange();
 
 
-                // 断开信号
-                disconnect(m_network, &NetworkAdapter::statusChanged, this, nullptr);
-                disconnect(m_network, &NetworkAdapter::messageReceived, this, nullptr);
 
-                // 打开主窗口：推荐改 MainWindow 接口接受 INetwork*
-                MainWindow *mainWindow = new MainWindow();
-                mainWindow->show();
-
-                mainWindow->SetNetwork(m_network);
-
-                this->hide();
-                break;
-            }
-        }else{
-            qDebug() << "[登录信息]:" << "未知错误";
-        }
-
-        break;
-    }
-}
 
 
 void Widget::on_registerBtn_clicked()

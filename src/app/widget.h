@@ -6,7 +6,7 @@
 #include <HoverButton.h>
 #include <QJsonObject>
 #include <QJsonDocument>
-#include "../../Src/Network/networkadapter.h"
+
 
 #include "../../ui/components/Registration_Page/registration_page.h"
 
@@ -28,9 +28,10 @@ public:
     void updateLoginBtnStyle();
     void addWidget_IPInput();
 
+    void InitDataBaseMange();
 
 public:
-    Widget(NetworkAdapter *network,QWidget *parent = nullptr);
+    Widget(QWidget *parent = nullptr);
     ~Widget();
 
 private slots:
@@ -42,22 +43,16 @@ private slots:
 
     void on_loginBtn_clicked();
 
-    // 初始化网络
-    void NetWorkInit(NetworkAdapter *network);
 
-    // 初始化数据库
-    void InitDataBaseMange();
 
-    void on_SignalStatus(const quint8 &state);
 
-    void on_SignalMessage(const quint8 &type,const QJsonValue &dataVal);
 
     void on_registerBtn_clicked();
 
 private:
     Ui::LoginPage *ui;
 
-    NetworkAdapter *m_network = nullptr;
+
     Registration_Page *m_registrationPage = nullptr;  //注册变量
 
 

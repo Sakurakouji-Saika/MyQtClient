@@ -1,15 +1,19 @@
 #include "qqcellline.h"
 #include "ui_qqcellline.h"
 #include "../../Src/utils/StyleLoader.h"
+#include "../../Src/utils/appconfig.h"
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QMouseEvent>
 #include "../../Src/utils/utils.h"
 
-QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLine, QWidget *parent)
+QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLine, QWidget *parent,const int _id)
     : QWidget(parent)
     , ui(new Ui::QQCellLine)
+    , m_user_id(_id)
 {
+
+
     ui->setupUi(this);
 
     // 打开鼠标跟踪，才能实时接收 hover 事件
@@ -52,13 +56,12 @@ QQCellLine::~QQCellLine()
 void QQCellLine::setAvatar(const QString &avatarUrl)
 {
 
-
-
+    QString FileAvatarUrl = AppConfig::instance().imagesDirectory() +"/" +avatarUrl;
 
 
     // 如果是本地文件
-    if (QFile::exists(avatarUrl)) {
-        QPixmap px(avatarUrl);
+    if (QFile::exists(FileAvatarUrl)) {
+        QPixmap px(FileAvatarUrl);
 
         int cornerRadius = 18;  // 圆角半径，根据你的需求调整
 
@@ -109,6 +112,16 @@ void QQCellLine::setOnline(bool online)
     }else{
         ui->labStatus->setText(QString("当前用户状态：离线"));
     }
+}
+
+void QQCellLine::setUserId(int _id)
+{
+    m_user_id = _id;
+}
+
+int QQCellLine::getUserId()
+{
+    return m_user_id;
 }
 
 void QQCellLine::mousePressEvent(QMouseEvent *event)

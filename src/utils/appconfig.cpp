@@ -13,10 +13,10 @@ AppConfig& AppConfig::instance() {
 
 // ===== 构造函数 =====
 AppConfig::AppConfig()
-    : host("127.0.0.1"),
+    : host("192.168.3.241"),
     port(60100),
-    userID("user_1000"),
-    FileHost("127.0.0.1"),
+    userID(3),
+    FileHost("192.168.3.241"),
     FilePort(60101),
     initialized(false)
 {
@@ -63,7 +63,7 @@ void AppConfig::initialize(const QString &iniFilePath)
 // ===== Getter =====
 QString AppConfig::getHost() const { return host; }
 int AppConfig::getPort() const { return port; }
-QString AppConfig::getUserID() const { return userID; }
+int AppConfig::getUserID() const { return userID; }
 
 QString AppConfig::getFileHost() const{ return FileHost; }
 
@@ -76,7 +76,7 @@ int AppConfig::getFilePort() const
 // ===== Setter =====
 void AppConfig::setHost(const QString &h) { host = h; save(); }
 void AppConfig::setPort(int p) { port = p; save(); }
-void AppConfig::setUserID(const QString &id) { userID = id; save(); }
+void AppConfig::setUserID(const int &id) { userID = id; save(); }
 
 void AppConfig::setFileHost(const QString &host){ FileHost = host; save(); }
 
@@ -126,7 +126,7 @@ bool AppConfig::load()
     port = s.value("network/port", port).toInt();
     FileHost = s.value("network/fileHost",FileHost).toString();
     FilePort = s.value("network/filePort",FilePort).toInt();
-    userID = s.value("user/user_id", userID).toString();
+    userID = s.value("user/user_id", userID).toInt();
 
     return true;
 }

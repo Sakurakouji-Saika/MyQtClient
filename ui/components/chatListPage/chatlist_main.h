@@ -18,7 +18,7 @@ public:
     explicit chatList_Main(QWidget *parent = nullptr);
     ~chatList_Main();
 
-    void openChatPage(const QString _id);
+    void openChatPage(const int _id);
     void addChatLeft(bool isMy,const QString avatar,const QString msg);
     void MsgALLClear();
 
@@ -30,7 +30,7 @@ private slots:
     void on_btn_pushMsg_clicked();
 
 private:
-    QString m_user_id;
+    int m_user_id;
     // QString m_avatar_url;
     QString m_user_name;
 

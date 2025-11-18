@@ -7,7 +7,7 @@
 struct FriendInfo
 {
     int id;
-    QString friend_id;
+    int friend_id;
     QString display_name;
     QString avatar;
     int status;
@@ -19,7 +19,7 @@ struct FriendInfo
     {}
 
     FriendInfo(const int &t_id,
-                        const QString& fid,
+                        const int& fid,
                         const QString& name,
                         const QString& avatarPath,
                         int status,

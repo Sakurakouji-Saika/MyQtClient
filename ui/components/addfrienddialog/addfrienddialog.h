@@ -9,7 +9,6 @@
 
 
 
-#include "../../Src/Network/networkadapter.h"
 #include "../../Src/DataBaseManage/databasemanage.h"
 
 
@@ -26,7 +25,7 @@ public:
     explicit addfrienddialog(QWidget *parent = nullptr);
     ~addfrienddialog();
 
-    void SetNetwork(NetworkAdapter *_net);
+
 
 
     void on_return_addFriend_Info(const QJsonValue &info);
@@ -39,7 +38,6 @@ private slots:
 
 private:
 
-    NetworkAdapter *m_net;
 
     Ui::addfrienddialog *ui;
 

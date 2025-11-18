@@ -45,8 +45,13 @@ else()
         find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
         find_package(Qt5 REQUIRED COMPONENTS Core)
+find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
@@ -60,16 +65,14 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/app/mainwindow.h src/app/mainwindow.cpp ui/mainwindow.ui
             src/utils/StyleLoader.h
 
-
             ui/components/mainwindow/chatListPage/chatlistpage.h ui/components/mainwindow/chatListPage/chatlistpage.cpp
             ui/components/mainwindow/friendListPage/friendlistpage.h ui/components/mainwindow/friendListPage/friendlistpage.cpp ui/components/mainwindow/friendListPage/friendlistpage.ui
-            # ui/components/mainwindow/chatContentPage/chatcontentpage.h ui/components/mainwindow/chatContentPage/chatcontentpage.cpp ui/components/mainwindow/chatContentPage/chatcontentpage.ui
             ui/components/mainwindow/userInfoPage/userinfopage.h ui/components/mainwindow/userInfoPage/userinfopage.cpp ui/components/mainwindow/userInfoPage/userinfopage.ui
             ui/components/mainwindow/addFriendPage/addfriendpage.h ui/components/mainwindow/addFriendPage/addfriendpage.cpp ui/components/mainwindow/addFriendPage/addfriendpage.ui
             ui/components/mainwindow/placeholderPage/placeholderpage.h ui/components/mainwindow/placeholderPage/placeholderpage.cpp ui/components/mainwindow/placeholderPage/placeholderpage.ui
 
             src/utils/appconfig.h src/utils/appconfig.cpp
-            src/utils/comapi/myapp.cpp src/utils/comapi/myapp.h src/utils/comapi/qqcell.cpp src/utils/comapi/qqcell.h src/utils/comapi/unit.h
+            src/utils/comapi/myapp.cpp src/utils/comapi/myapp.h src/utils/comapi/qqcell.cpp src/utils/comapi/qqcell.h
 
             ui/components/friendListPage/qqcelltitle.h ui/components/friendListPage/qqcelltitle.cpp ui/components/friendListPage/qqcelltitle.ui
             ui/components/friendListPage/qqcellline.h ui/components/friendListPage/qqcellline.cpp ui/components/friendListPage/qqcellline.ui
@@ -102,12 +105,12 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/DataBaseManage/model/FriendInfo.h
             src/DataBaseManage/model/recent_messages.h
             src/DataBaseManage/model/ChatRecord.h
-            src/Network/clientsocket.h src/Network/clientsocket.cpp
             src/utils/StyleLoader.cpp
-            src/Network/INetwork.h
-            src/Network/networkadapter.h src/Network/networkadapter.cpp
-            src/Network/FileManager/filemanager.h src/Network/FileManager/filemanager.cpp
-            src/Network/AvatarManagement/avatarmanagement.h src/Network/AvatarManagement/avatarmanagement.cpp
+            src/Network/socketclient.h src/Network/socketclient.cpp
+            src/utils/comapi/Protocol.h
+            src/Network/PacketProcessor/packetprocessor.h src/Network/PacketProcessor/packetprocessor.cpp
+
+
 
 
 
@@ -131,6 +134,11 @@ target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

@@ -63,9 +63,12 @@ void chatListPage::test()
 
 
     for(int i=0;i<temp.size();i++){
+
+        qDebug()  << "temp[i].peer_id" << temp[i].peer_id;
         Recent_Data t;
         t.UnreadCount = temp[i].unread_count;
         t.avatarPath = mgr->getAvatarByFriendId(temp[i].peer_id);
+
         qDebug() << "chatListPage::test()::t.avatarPath::" << t.avatarPath;
         qDebug() << "chatListPage::test()::t.avatarPath::用户ID：" << temp[i].peer_id;
         t.msg = temp[i].last_msg;
@@ -138,8 +141,8 @@ void chatListPage::on_showListContextMenu(const QPoint &pos)
 
 
     if(act == aOpen){
-        qDebug() << "打开 item：" << index.data(user_id_Role).toString();
-        emit openChatPage(index.data(user_id_Role).toString());
+        qDebug() << "打开 item：" << index.data(user_id_Role).toInt();
+        emit openChatPage(index.data(user_id_Role).toInt());
 
     } else if(act == aDel){
         // 删除选中项：移除 listView 中的 index widget（如果有），并从 model 与内部 map 中删除
@@ -198,7 +201,7 @@ void chatListPage::onNewMessage(const Recent_Data &msg)
 void chatListPage::onListItemClicked(const QModelIndex &index)
 {
     if (!index.isValid()) return;
-    QString userId = index.data(user_id_Role).toString();
+    int userId = index.data(user_id_Role).toInt();
     qDebug() << "item clicked (left):" << userId;
 
 
@@ -213,7 +216,7 @@ void chatListPage::onListItemClicked(const QModelIndex &index)
         w->setUnReadOnZero();
     }
 
-    emit openChatPage(index.data(user_id_Role).toString());
+    emit openChatPage(index.data(user_id_Role).toInt());
 }
 
 void chatListPage::onModelDataChanged(const QModelIndex &topLeft, const QModelIndex &bottomRight)

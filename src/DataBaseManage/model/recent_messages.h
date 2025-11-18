@@ -8,7 +8,7 @@
 // 这里表有问题，再插入的时候，ID会随意更改。反正有问题，测试的时候，应该是测试语句的问题，或者说不是问题，当插入一个已有的时候，会更改已有的ID。
 struct RecentMessage {
     int id;                 // 自增主键
-    QString peer_id;        // 唯一标识
+    int peer_id;        // 唯一标识
     QString last_msg;       // 最后一条消息
     qint64 last_time;       // 时间戳
     int unread_count;       // 未读消息数
@@ -17,7 +17,7 @@ struct RecentMessage {
     // 构造函数（带默认值）
     RecentMessage(
         int id_ = 0,
-        const QString& peer_id_ = "",
+        const int& peer_id_ = 0,
         const QString& last_msg_ = "",
         long long last_time_ = 0,
         int unread_count_ = 0,

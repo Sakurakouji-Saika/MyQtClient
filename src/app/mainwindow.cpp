@@ -6,8 +6,11 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QButtonGroup>
+#include <QFileInfo>
 
-#include "../../src/Network/AvatarManagement/avatarmanagement.h"
+#include <QThread>
+#include <QJsonArray>
+
 
 
 
@@ -18,11 +21,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
-    // 测试下载头像
-    AvatarManagement *m_avatarMgr = new AvatarManagement();
-    int friendId = 3;
-    m_avatarMgr->DownloadAvatar(friendId);
-    // 测试下载头像
+
+
+
+
+
+
+
+
+
+
 
     // 过滤器注册
     ui->avatar->installEventFilter(this);
@@ -94,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     });
 
-    connect(chatList,&chatListPage::openChatPage,[this](const QString &user_id){
+    connect(chatList,&chatListPage::openChatPage,[this](const int &user_id){
         m_chatlist_page->MsgALLClear();
 
         m_chatlist_page->openChatPage(user_id);
@@ -105,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_chatlist_page, &chatList_Main::MY_SeedMsg, this, [this](const ChatRecord &_CR){
         // QString peerId = (_CR.fromId == AppConfig::UserID()) ? _CR.toId : _CR.fromId;
-        QString peerId = _CR.toId;
+        int peerId = _CR.toId;
         Recent_Data r;
         r.user_id = peerId;
         r.msg = _CR.content;
@@ -118,6 +126,12 @@ MainWindow::MainWindow(QWidget *parent)
 
         chatList->receiveMessage(r);
     });
+
+
+
+
+
+
 }
 
 MainWindow::~MainWindow()
@@ -131,7 +145,7 @@ MainWindow::~MainWindow()
 void MainWindow::initProfilePicture()
 {
     // 1. 加载原始图片
-    QPixmap src(DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
+    QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +  DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
 
     // 2. 缩放到目标大小（假设 85×85）
     const int size = 40;
@@ -204,14 +218,6 @@ void MainWindow::loadStyleCloseBtn()
 
 }
 
-void MainWindow::SetNetwork(NetworkAdapter *_net)
-{
-    m_network =_net;
-    // 调试网络的时候临时注册。记得删除
-    connect(m_network, &NetworkAdapter::statusChanged, this, &MainWindow::on_SignalStatus);
-    connect(m_network, &NetworkAdapter::messageReceived, this, &MainWindow::on_SignalMessage);
-
-}
 
 
 
@@ -286,6 +292,9 @@ void MainWindow::SltTrayIconMenuClicked(QAction *action)
         // m_tcpSocket->CloseConnected();
     }
 }
+
+
+
 
 
 
@@ -398,7 +407,6 @@ void MainWindow::on_searchBtn_clicked()
         if (!m_addfriend) {
             m_addfriend = new addfrienddialog();
 
-            // m_addfriend->setSocket(m_tcpSocket);
 
             m_addfriend->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -406,11 +414,17 @@ void MainWindow::on_searchBtn_clicked()
                 m_addfriend = nullptr;
             });
 
+
+
         }
-        m_addfriend->SetNetwork(m_network);
+
         m_addfriend->show();
         m_addfriend->raise();
         m_addfriend->activateWindow();
+
+
+
+
 
     });
     connect(act2, &QAction::triggered, this, [this](){
@@ -423,7 +437,7 @@ void MainWindow::on_searchBtn_clicked()
         Recent_Data testData(
             ":/picture/avatar/11.jpg",
             "我喜欢你",
-            "1111",
+            1111,
             "薇婷",
             QDateTime::currentDateTime(),
             QDateTime::currentDateTime().toMSecsSinceEpoch(),
@@ -446,22 +460,7 @@ void MainWindow::on_searchBtn_clicked()
 
 }
 
-void MainWindow::on_SignalStatus(const quint8 &state)
-{
 
-}
-
-void MainWindow::on_SignalMessage(const quint8 &type, const QJsonValue &dataVal)
-{
-    qDebug() << "MainWindow::on_SignalMessage::[type]:" <<type;
-    switch (type) {
-    case searchFriend:
-            m_addfriend->on_return_addFriend_Info(dataVal);
-        break;
-    default:
-        break;
-    }
-}
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
@@ -476,3 +475,4 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     }
     return QMainWindow::eventFilter(watched, event);
 }
+

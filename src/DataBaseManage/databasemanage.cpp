@@ -15,15 +15,12 @@ DataBaseManage *DataBaseManage::instance()
     return &inst;
 }
 
-bool DataBaseManage::init(const QString &accountId, const QString &basePath)
+bool DataBaseManage::init(const int &accountId, const QString &basePath)
 {
 
     QMutexLocker locker(&m_mutex);
 
-    if(accountId.isEmpty() || basePath.isEmpty()){
-        qDebug() << "DataBaseManage::init 参数无效";
-        return false;
-    }
+
 
     // 如果已初始化且相同 account，直接返回 true
     if (!m_accountId.isEmpty() && m_accountId == accountId && m_db.isValid() && m_db.isOpen()) {
@@ -51,7 +48,7 @@ bool DataBaseManage::init(const QString &accountId, const QString &basePath)
     }
 
     // 创建 account 目录
-    QString accountDirPath = QDir(basePath).filePath(accountId);
+    QString accountDirPath = QDir(basePath).filePath(QString::number(accountId));
 
 
     QDir accountDir(accountDirPath);
@@ -63,10 +60,10 @@ bool DataBaseManage::init(const QString &accountId, const QString &basePath)
     }
 
     // 数据库文件命名： accountID.db
-    m_dbPath = accountDir.filePath(accountId + ".db");
+    m_dbPath = accountDir.filePath(QString::number(accountId) + ".db");
 
     // QSqlDatabase 连接名需要唯一
-    m_connName = QString("ChatDB_%1").arg(accountId);
+    m_connName = QString("ChatDB_%1").arg(QString::number(accountId));
 
     // 打开数据库
     if(!openDatabase()){
@@ -111,7 +108,7 @@ void DataBaseManage::close()
     m_connName.clear();
 }
 
-Add_Friend_Type DataBaseManage::checkAndAddFriend(const QString &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
+Add_Friend_Type DataBaseManage::checkAndAddFriend(const int &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
 {
     if(isFriend(friendId)){
         qDebug()<< "DataBaseManage::checkAndAddFriend::[已经是好友了]:" << friendId;
@@ -127,9 +124,8 @@ Add_Friend_Type DataBaseManage::checkAndAddFriend(const QString &friendId, const
     }
 }
 
-bool DataBaseManage::isFriend(const QString &friendId) const
+bool DataBaseManage::isFriend(const int &friendId) const
 {
-    if (friendId.isEmpty()) return false;
 
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) {
@@ -154,9 +150,35 @@ bool DataBaseManage::isFriend(const QString &friendId) const
 
 }
 
-bool DataBaseManage::addFriend(const QString &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
+bool DataBaseManage::isFriend(const QString &friendId) const
 {
-    if (friendId.isEmpty()) return false;
+    if(friendId.isEmpty()) return false;
+
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) {
+        return false;
+    }
+
+    QSqlQuery q(m_db);
+    q.prepare("SELECT EXISTS(SELECT 1 FROM friend_info WHERE friend_id = :fid)");
+    q.bindValue(":fid",friendId);
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseMgr::isFriend 错误:" << q.lastError().text();
+        return false;
+    }
+
+
+    if (q.next()) {
+        qDebug() << "isFriend[value]:" <<q.value(0).toInt();
+        return q.value(0).toInt() != 0; // SQLite 的 EXISTS 返回 0 或 1
+    }
+    return false;
+
+}
+
+bool DataBaseManage::addFriend(const int &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
+{
 
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) {
@@ -260,15 +282,15 @@ QList<FriendInfo> DataBaseManage::getFriendList() const
     } else {
         qDebug() << "---- friend_info ----";
         while (query.next()) {
-            qDebug() << "id:" << query.value(0).toString()
-            << "friend_id:" << query.value(1).toString()
+            qDebug() << "id:" << query.value(0).toInt()
+            << "friend_id:" << query.value(1).toInt()
             << "name:" << query.value(2).toString()
             << "avatar:" << query.value(3).toString()
             << "status:" << query.value(4).toInt()
             << "remark:" << query.value(5).toString()
             << "created_at:" << QDateTime::fromSecsSinceEpoch(query.value(6).toLongLong()).toString();
 
-            temp.append(FriendInfo(query.value(0).toInt(),query.value(1).toString(),query.value(2).toString(),query.value(3).toString(),query.value(4).toInt(),query.value(5).toString(),query.value(6).toLongLong()));
+            temp.append(FriendInfo(query.value(0).toInt(),query.value(1).toInt(),query.value(2).toString(),query.value(3).toString(),query.value(4).toInt(),query.value(5).toString(),query.value(6).toLongLong()));
         }
     }
 
@@ -298,7 +320,9 @@ QList<RecentMessage> DataBaseManage::getRecentMessageList() const
         // 列：0=id, 1=peer_id, 2=last_msg, 3=last_time, 4=unread_count, 5=direction
         RecentMessage r;
         r.id = query.value(0).toInt();
-        r.peer_id = query.value(1).toString();
+        r.peer_id = query.value(1).toInt();
+
+
         r.last_msg = query.value(2).toString();
 
         // 处理时间戳：自动判断是秒级还是毫秒级
@@ -361,18 +385,17 @@ bool DataBaseManage::insertOrUpdateRecentMessage(const QString &peerId, const QS
 }
 
 bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
-                                                   const QString &fromId,
-                                                   const QString &toId,
+                                                   const int &fromId,
+                                                   const int &toId,
                                                    const QString &content,
                                                    int type,
                                                    qint64 timestamp,
-                                                   const QString &peerId,
+                                                   const int &peerId,
                                                    const QString &lastMsg,
                                                    qint64 lastTime,
                                                    int unreadCount,
                                                    int direction)
 {
-    if (msgId.isEmpty() || peerId.isEmpty()) return false;
 
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return false;
@@ -433,9 +456,8 @@ bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
     return true;
 }
 
-QString DataBaseManage::getAvatarByFriendId(const QString &friendId)
+QString DataBaseManage::getAvatarByFriendId(const int &friendId)
 {
-    if (friendId.isEmpty()) return QString();
 
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return QString();
@@ -456,10 +478,8 @@ QString DataBaseManage::getAvatarByFriendId(const QString &friendId)
     return QString(); // 没找到
 }
 
-QString DataBaseManage::getDisplayNameByFriendId(const QString &friendId)
+QString DataBaseManage::getDisplayNameByFriendId(const int &friendId)
 {
-    if (friendId.isEmpty())
-        return QString();
 
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen())
@@ -489,7 +509,7 @@ QString DataBaseManage::getDisplayNameByFriendId(const QString &friendId)
     return QString(); // 没找到
 }
 
-QList<ChatRecord> DataBaseManage::getChatRecords(const QString &userA, const QString &userB)
+QList<ChatRecord> DataBaseManage::getChatRecords(const int &userA, const int &userB)
 {
     QList<ChatRecord> records;
     QMutexLocker locker(&m_mutex);
@@ -519,8 +539,8 @@ QList<ChatRecord> DataBaseManage::getChatRecords(const QString &userA, const QSt
         ChatRecord rec;
         rec.id = query.value("id").toInt();
         rec.msgId = query.value("msg_id").toString();
-        rec.fromId = query.value("from_id").toString();
-        rec.toId = query.value("to_id").toString();
+        rec.fromId = query.value("from_id").toInt();
+        rec.toId = query.value("to_id").toInt();
         rec.content = query.value("content").toString();
         rec.type = query.value("type").toInt();
         rec.timestamp = query.value("timestamp").toLongLong();

@@ -37,7 +37,7 @@ public:
 
 
 signals:
-    void openChatPage(const QString &user_id); // 自定义信号
+    void openChatPage(const int &user_id); // 自定义信号
 
 private slots:
     void onListItemClicked(const QModelIndex &index);

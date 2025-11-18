@@ -43,10 +43,23 @@ inline QPixmap scaledRoundedPixmap(const QPixmap &src, const QSize &targetSize, 
 
 
 
+inline static quint32 readUint32BE(const QByteArray &b)
+{
+    const unsigned char *d = reinterpret_cast<const unsigned char*>(b.constData());
+    return (quint32(d[0]) << 24) | (quint32(d[1]) << 16) | (quint32(d[2]) << 8) | quint32(d[3]);
+}
 
 
 
-
+inline static QByteArray uint32ToBE(quint32 v)
+{
+    QByteArray a(4, '\0');
+    a[0] = char((v >> 24) & 0xFF);
+    a[1] = char((v >> 16) & 0xFF);
+    a[2] = char((v >> 8) & 0xFF);
+    a[3] = char(v & 0xFF);
+    return a;
+}
 
 
 

@@ -3,6 +3,7 @@
 
 #include <QSize>
 #include <QMenu>
+#include <QTimer>
 #include <QMouseEvent>
 #include <QMainWindow>
 #include <hoverbutton.h>
@@ -11,8 +12,10 @@
 
 #include "../../Src/DataBaseManage/databasemanage.h"
 
-#include "../../Src/Network/networkadapter.h"
-#include "../utils/comapi/unit.h"
+
+
+
+
 
 
 
@@ -24,6 +27,7 @@
 #include "../../ui/components/addfrienddialog/addfrienddialog.h"
 #include "../../ui/components/Change_Avatar_Page/change_avatar_page.h"
 #include "../../Src/DataBaseManage/model/ChatRecord.h"
+
 
 
 
@@ -45,9 +49,13 @@ public:
     void initStackedWidgetPages();
     void loadStyleCloseBtn();
 
-    void SetNetwork(NetworkAdapter *_net);
 
     void Open_Edit_Avatar_Page();
+
+
+    // 测试下载头像
+    void DownloadAvatarTest();
+
 
 private slots:
 
@@ -61,9 +69,7 @@ private slots:
 
     void on_searchBtn_clicked();
 
-    // 测试完成记得删除
-    void on_SignalStatus(const quint8 &state);
-    void on_SignalMessage(const quint8 &type,const QJsonValue &dataVal);
+
 
 
 private:
@@ -82,8 +88,8 @@ private:
     // 主动退出操作时不进行断线匹配
     bool            m_bQuit;
 
-    // 网络操作
-    NetworkAdapter *m_network = nullptr;
+
+
 
 
     // QObject interface

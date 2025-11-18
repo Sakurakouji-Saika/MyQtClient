@@ -2,6 +2,8 @@
 #include "ui_rc_line.h"
 #include <qDebug>
 #include <QStyle>
+#include <QDir>
+#include "../../Src/utils/appconfig.h"
 
 RC_Line::RC_Line(QWidget *parent)
     : QWidget(parent)
@@ -23,7 +25,7 @@ void RC_Line::setData(const Recent_Data &m_data)
     QSize avatarSize;
     avatarSize.setWidth(40);
     avatarSize.setHeight(40);
-    ui->RCL_Avatar->setPixmap(scaledRoundedPixmap(QPixmap(m_data.avatarPath),avatarSize,40));
+    ui->RCL_Avatar->setPixmap(scaledRoundedPixmap(QPixmap(AppConfig::instance().imagesDirectory() + QDir::separator() + m_data.avatarPath ),avatarSize,40));
 
     // 设置其他属性
 
