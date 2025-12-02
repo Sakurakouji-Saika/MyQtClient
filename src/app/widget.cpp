@@ -210,6 +210,11 @@ void Widget::on_loginBtn_clicked()
     json.insert("name", userName);
     json.insert("passwd", passwd);
 
+    std::optional<QPair<bool, QString>> temp_msg;
+
+    m_sm->auth()->login(userName,passwd);
+
+
 
 
 }
@@ -230,10 +235,35 @@ void Widget::InitDataBaseMange()
     }
 }
 
+void Widget::setNetwork(ServiceManager *_sm)
+{
+    m_sm = _sm;
 
 
+     AuthService* auth = m_sm->auth();
+    if (!auth) return;
 
+    // 登录成功：显示信息并恢复登录按钮
+    connect(auth, &AuthService::loginSucceeded, this, [this](qint64 userId){
+        ui->loginBtn->setEnabled(true);
+        QMessageBox::information(this, QStringLiteral("登录成功"),
+                                 QStringLiteral("用户 %1 登录成功").arg(userId));
+        // TODO: 登录成功后的导航或初始化
+    });
 
+    // 登录失败：弹出错误并恢复登录按钮
+    connect(auth, &AuthService::loginFailed, this, [this](const QString &reason){
+        ui->loginBtn->setEnabled(true);
+        QMessageBox::warning(this, QStringLiteral("登录失败"), reason);
+    });
+
+    // 登出通知（可选）
+    connect(auth, &AuthService::loggedOut, this, [this](){
+        QMessageBox::information(this, QStringLiteral("已登出"), QStringLiteral("已退出登录"));
+    });
+
+    
+}
 
 void Widget::on_registerBtn_clicked()
 {

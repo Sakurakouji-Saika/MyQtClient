@@ -22,16 +22,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-
-
-
-
-
-
-
-
-
-
     // 过滤器注册
     ui->avatar->installEventFilter(this);
 

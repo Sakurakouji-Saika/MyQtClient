@@ -5,7 +5,7 @@
 #include <QApplication>
 #include "utils/appconfig.h"
 #include "app/mainwindow.h"
-
+#include "Network/Service/servicemanager.h"
 #include "DataBaseManage/databasemanage.h"
 
 
@@ -28,24 +28,21 @@ int main(int argc, char *argv[])
     StyleLoader::setDebugResourceRoot("C:/Users/Moe/Desktop/MyClient/src/resources");
 
 
-
     AppConfig::instance().initialize();
-
     AppConfig::instance().setUserID(3);
 
-    // AvatarManagerTest tester;
-    // tester.startTest();
+
+    ServiceManager *services = new ServiceManager();
+    services->init();
+    services->start();
 
 
     Widget w; // 注入
+    w.setNetwork(services);
     w.show();
 
-
-    // MainWindow m;
-    // m.SetNetwork(netAdapter);
-    // m.show();
-
-
+    // MainWindow w2;
+    // w2.show();
     return a.exec();
 }
 

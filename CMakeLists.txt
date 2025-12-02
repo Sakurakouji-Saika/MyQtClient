@@ -49,6 +49,8 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
         find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
@@ -109,6 +111,8 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/Network/socketclient.h src/Network/socketclient.cpp
             src/utils/comapi/Protocol.h
             src/Network/PacketProcessor/packetprocessor.h src/Network/PacketProcessor/packetprocessor.cpp
+            src/Network/Service/authservice.h src/Network/Service/authservice.cpp
+            src/Network/Service/servicemanager.h src/Network/Service/servicemanager.cpp
 
 
 
@@ -135,6 +139,8 @@ target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)

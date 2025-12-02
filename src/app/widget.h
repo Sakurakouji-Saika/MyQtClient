@@ -7,7 +7,8 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 
-
+#include "../Network/Service/authservice.h"
+#include "../Network/Service/servicemanager.h"
 #include "../../ui/components/Registration_Page/registration_page.h"
 
 
@@ -30,6 +31,8 @@ public:
 
     void InitDataBaseMange();
 
+    void setNetwork(ServiceManager *_sm);
+
 public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
@@ -43,10 +46,6 @@ private slots:
 
     void on_loginBtn_clicked();
 
-
-
-
-
     void on_registerBtn_clicked();
 
 private:
@@ -55,7 +54,7 @@ private:
 
     Registration_Page *m_registrationPage = nullptr;  //注册变量
 
-
+    ServiceManager *m_sm;
 
 };
 #endif // WIDGET_H

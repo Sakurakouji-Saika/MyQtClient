@@ -11,6 +11,7 @@ namespace Protocol  {
         LoginRepeat      = 1003,  // 重复登录
         ChangePassword   = 1004,  // 修改密码
         RecoverPassword  = 1005,  // 找回密码
+        KickNotification = 1006,  // 其他客户端,异地登陆
 
         // ===== 好友管理相关 =====
         AddFriend        = 2001,  // 添加好友请求
@@ -25,10 +26,13 @@ namespace Protocol  {
         // ===== 消息传输相关 =====
         SendText         = 3001,  // 发送文本消息
         ReceiveText      = 3002,  // 接收文本消息
+
         SendImage        = 3003,  // 发送图片
         ReceiveImage     = 3004,  // 接收图片
+
         SendFileStart    = 3005,  // 发送文件开始
         SendFileChunk    = 3006,  // 发送文件块
+
         ReceiveFileStart = 3007,  // 接收文件开始
         ReceiveFileChunk = 3008,  // 接收文件块
 

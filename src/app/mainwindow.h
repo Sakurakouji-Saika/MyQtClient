@@ -12,13 +12,6 @@
 
 #include "../../Src/DataBaseManage/databasemanage.h"
 
-
-
-
-
-
-
-
 #include "../../ui/components/mainwindow/chatListPage/chatlistpage.h"
 #include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
 #include "../../ui/components/ProfilePage/profilepage_main.h"
