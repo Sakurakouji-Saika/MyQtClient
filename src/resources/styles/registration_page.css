@@ -24,7 +24,7 @@ Registration_Page{
     margin-bottom: 20px;
 }
 
-#RP_name,#RP_pwd,#RP_pwd_ok{
+#RP_name,#RP_pwd,#RP_pwd_ok,#RP_email{
     border: none;
     color: rgb(92, 92, 92);
     width: 300px;

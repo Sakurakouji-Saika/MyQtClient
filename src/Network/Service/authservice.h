@@ -14,14 +14,26 @@ public:
     ~AuthService() override;
 
     void login(const QString &username,const QString &password,int timeoutMs = 5000);
+    void registration(const QString &username,const QString &password,const QString &email,int timeoutMs = 5000);
+
+    void GetMyFriends(qint64 &id,int timeoutMs = 5000);
+
     void logout();
 
     bool isAuthenticated() const;
     qint64 userId() const;
 
 signals:
-    void loginSucceeded(qint64 userId);
+
+    void registrationSucceede(qint64 userId);
+    void regostrationFailed(const QString &err);
+
+    void loginSucceeded(QJsonObject user);
     void loginFailed(const QString &reason);
+
+    void GetMyFriendsSucceeded(QJsonObject friends);
+    void GetMyFriendsFailed(const QString &reason);
+
     void loggedOut();
 
 private:

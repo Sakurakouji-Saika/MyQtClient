@@ -11,7 +11,6 @@
 #include <QGraphicsDropShadowEffect>
 
 #include "../../Src/DataBaseManage/databasemanage.h"
-
 #include "../../ui/components/mainwindow/chatListPage/chatlistpage.h"
 #include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
 #include "../../ui/components/ProfilePage/profilepage_main.h"
@@ -20,9 +19,7 @@
 #include "../../ui/components/addfrienddialog/addfrienddialog.h"
 #include "../../ui/components/Change_Avatar_Page/change_avatar_page.h"
 #include "../../Src/DataBaseManage/model/ChatRecord.h"
-
-
-
+#include "../../Src/Network/Service/servicemanager.h"
 
 
 namespace Ui {
@@ -41,27 +38,20 @@ public:
     void initProfilePicture();
     void initStackedWidgetPages();
     void loadStyleCloseBtn();
-
-
     void Open_Edit_Avatar_Page();
-
-
     // 测试下载头像
     void DownloadAvatarTest();
+
+    void setNetWork(ServiceManager *_sm);
 
 
 private slots:
 
     void SltTrayIcoClicked(QSystemTrayIcon::ActivationReason reason);
     void SltTrayIconMenuClicked(QAction *action);
-
-
-
     void SltQuitApp();
     void on_MinBtn_clicked();
-
     void on_searchBtn_clicked();
-
 
 
 
@@ -78,11 +68,10 @@ private:
     addfrienddialog * m_addfriend = nullptr;    // 搜索添加好友页面
     Change_Avatar_Page * m_CAvatarPG = nullptr; // 修改头像页面
 
+    ServiceManager * m_sm = nullptr;
+
     // 主动退出操作时不进行断线匹配
     bool            m_bQuit;
-
-
-
 
 
     // QObject interface

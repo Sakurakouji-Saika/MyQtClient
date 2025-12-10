@@ -113,6 +113,10 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/Network/PacketProcessor/packetprocessor.h src/Network/PacketProcessor/packetprocessor.cpp
             src/Network/Service/authservice.h src/Network/Service/authservice.cpp
             src/Network/Service/servicemanager.h src/Network/Service/servicemanager.cpp
+            src/utils/comapi/message_kind_utils.h
+            src/DataBaseManage/model/FriendsResponse.h
+            src/DataBaseManage/model/FriendsResponse.cpp
+
 
 
 

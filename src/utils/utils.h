@@ -8,6 +8,29 @@
 #include <QString>
 
 
+
+static qint64 parseIso8601ToSecs(const QString &iso)
+{
+    if (iso.isEmpty()) return 0;
+    QDateTime dt = QDateTime::fromString(iso, Qt::ISODate);
+    if (!dt.isValid()) {
+        // 退而求其次的解析（宽松）
+        dt = QDateTime::fromString(iso, Qt::ISODateWithMs);
+    }
+    if (!dt.isValid()) {
+        dt = QDateTime::fromString(iso); // 最后尝试默认解析
+    }
+    if (!dt.isValid()) return 0;
+    if (dt.timeSpec() == Qt::LocalTime || dt.timeSpec() == Qt::TimeZone) {
+        // 保证为 UTC 秒（按你的业务需要可调整）
+        return dt.toSecsSinceEpoch();
+    }
+    return dt.toSecsSinceEpoch();
+}
+
+
+
+
 // 帮助函数：先缩放再圆角
 inline QPixmap scaledRoundedPixmap(const QPixmap &src, const QSize &targetSize, int radius) {
     // 1. 缩放到目标尺寸（这里用填充方式保证铺满，再裁剪到圆角）
@@ -85,11 +108,10 @@ inline QString formatMsToYMDHM(qint64 ms) {
 }
 
 
+
 // 示例
 // qint64 ts = makeTimestampMs(2025, 10, 13, 14, 30);   // 用户本地时间 2025-10-13 14:30 -> 存为 UTC ms
 // QString disp = formatMsToYMDHM(ts);                  // 格式化回显示字符串（本地时区）
-
-
 
 
 

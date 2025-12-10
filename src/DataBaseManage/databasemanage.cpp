@@ -8,9 +8,11 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QMutexLocker>
+#include "model/FriendsResponse.h"
 
 DataBaseManage *DataBaseManage::instance()
 {
+
     static DataBaseManage inst; // 在第一次调用时创建，程序退出时自动析构
     return &inst;
 }
@@ -110,17 +112,39 @@ void DataBaseManage::close()
 
 Add_Friend_Type DataBaseManage::checkAndAddFriend(const int &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
 {
-    if(isFriend(friendId)){
-        qDebug()<< "DataBaseManage::checkAndAddFriend::[已经是好友了]:" << friendId;
+    // 如果已经是好友
+    if (isFriend(friendId)) {
+        qDebug() << "DataBaseManage::checkAndAddFriend::[已经是好友了]:" << friendId;
         return Add_Friend_Type::exist;
-    }else{
-        qDebug()<< "DataBaseManage::checkAndAddFriend::[不是好友]:" << friendId;
-        if(addFriend(friendId, displayName, avatar, status, remark)){
-            return Add_Friend_Type::success;
-        }else{
-            qDebug()<< "DataBaseManage::checkAndAddFriend::[插入失败]:" << friendId;
-            return Add_Friend_Type::failure;
-        }
+    }
+
+    qDebug() << "DataBaseManage::checkAndAddFriend::[不是好友]:" << friendId;
+
+
+
+    // 把 displayName 写入 nickname，remark 如果需要可写进另一个字段或存到 nickname 的括号里
+    QString nickname = displayName;
+    if (!remark.isEmpty()) {
+        // 可选：把 remark 合并进 nickname（或单独保存），这里示例不合并，仅注释说明
+        // nickname += " (" + remark + ")";
+    }
+
+    // avatar 参数 直接写入 avatar 字段；avatar_file_id 暂时留空
+    bool ok = upsertFriend(friendId,
+                           /*username*/ QString(),
+                           /*nickname*/ nickname,
+                           /*email*/ QString(),
+                           /*avatar_file_id*/ QString(),
+                           /*avatar*/ avatar,
+                           /*status*/ status,
+                           /*createdAt*/ QDateTime::currentSecsSinceEpoch(),
+                           /*updatedAt*/ 0);
+
+    if (ok) {
+        return Add_Friend_Type::success;
+    } else {
+        qDebug() << "DataBaseManage::checkAndAddFriend::[插入失败]:" << friendId;
+        return Add_Friend_Type::failure;
     }
 }
 
@@ -134,17 +158,15 @@ bool DataBaseManage::isFriend(const int &friendId) const
 
     QSqlQuery q(m_db);
     q.prepare("SELECT EXISTS(SELECT 1 FROM friend_info WHERE friend_id = :fid)");
-    q.bindValue(":fid",friendId);
+    q.bindValue(":fid", QVariant::fromValue(friendId));
 
     if (!q.exec()) {
         qDebug() << "DataBaseMgr::isFriend 错误:" << q.lastError().text();
         return false;
     }
 
-
     if (q.next()) {
-        qDebug() << "isFriend[value]:" <<q.value(0).toInt();
-        return q.value(0).toInt() != 0; // SQLite 的 EXISTS 返回 0 或 1
+        return q.value(0).toInt() != 0;
     }
     return false;
 
@@ -177,34 +199,235 @@ bool DataBaseManage::isFriend(const QString &friendId) const
 
 }
 
-bool DataBaseManage::addFriend(const int &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
+bool DataBaseManage::upsertFriend(qint64 friendId, const QString &username, const QString &nickname, const QString &email, const QString &avatar_file_id, const QString &avatar, const int &status, qint64 createdAt, qint64 updatedAt)
 {
-
     QMutexLocker locker(&m_mutex);
-    if (!m_db.isValid() || !m_db.isOpen()) {
-        return false;
-    }
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
 
     QSqlQuery q(m_db);
     q.prepare(R"(
-        INSERT OR REPLACE INTO friend_info (friend_id, display_name, avatar, status, remark, created_at)
-        VALUES (:fid, :name, :avatar, :status, :remark, :ctime)
+        INSERT INTO friend_info
+            (friend_id, username, nickname, email, avatar_file_id, avatar, status, created_at, updated_at)
+        VALUES
+            (:friend_id, :username, :nickname, :email, :avatar_file_id, :avatar, :status, :created_at, :updated_at)
+        ON CONFLICT(friend_id) DO UPDATE SET
+            username = excluded.username,
+            nickname = excluded.nickname,
+            email = excluded.email,
+            avatar_file_id = excluded.avatar_file_id,
+            avatar = excluded.avatar,
+            status = excluded.status,
+            created_at = excluded.created_at,
+            updated_at = excluded.updated_at
     )");
 
-    q.bindValue(":fid", friendId);
-    q.bindValue(":name", displayName);
+    q.bindValue(":friend_id", QVariant::fromValue(friendId));
+    q.bindValue(":username", username);
+    q.bindValue(":nickname", nickname);
+    q.bindValue(":email", email);
+    q.bindValue(":avatar_file_id", avatar_file_id);
     q.bindValue(":avatar", avatar);
     q.bindValue(":status", status);
-    q.bindValue(":remark", remark);
-    q.bindValue(":ctime", QDateTime::currentSecsSinceEpoch()); // 或 currentMSecs... 取决于你统一的时间单位
+    q.bindValue(":created_at", createdAt ? createdAt : QDateTime::currentSecsSinceEpoch());
+    q.bindValue(":updated_at", updatedAt);
+
+    qDebug() << "-----------11111111111---------";
 
     if (!q.exec()) {
-        qDebug() << "DataBaseMgr::addFriend failed:" << q.lastError().text();
+
+        qDebug() << "DataBaseMgr::upsertFriend failed:" << q.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    const FriendsResponse &r = resp;
+    int myUserId = r.userId;
+
+    // 开事务
+    if (!m_db.transaction()) {
+        qWarning() << "DB transaction start failed:" << m_db.lastError().text();
+        return false;
+    }
+
+    // 预编译语句（使用 UPDATE -> INSERT 的可移植 upsert）
+    QSqlQuery qUpdateFriend(m_db);
+    qUpdateFriend.prepare(
+        "UPDATE friend_info SET username = :username, nickname = :nickname, avatar = :avatar, updated_at = :updated_at "
+        "WHERE friend_id = :friend_id;"
+        );
+
+    QSqlQuery qInsertFriend(m_db);
+    qInsertFriend.prepare(
+        "INSERT INTO friend_info (friend_id, username, nickname, avatar, created_at, updated_at) "
+        "VALUES (:friend_id, :username, :nickname, :avatar, :created_at, :updated_at);"
+        );
+
+    QSqlQuery qUpdateRecent(m_db);
+    qUpdateRecent.prepare(
+        "UPDATE recent_messages SET last_msg = :last_msg, last_time = :last_time, unread_count = :unread_count, direction = :direction "
+        "WHERE peer_id = :peer_id;"
+        );
+
+    QSqlQuery qInsertRecent(m_db);
+    qInsertRecent.prepare(
+        "INSERT INTO recent_messages (peer_id, last_msg, last_time, unread_count, direction) "
+        "VALUES (:peer_id, :last_msg, :last_time, :unread_count, :direction);"
+        );
+
+    QSqlQuery qInsertChat(m_db);
+    qInsertChat.prepare(
+        "INSERT OR IGNORE INTO chat_records (msg_id, from_id, to_id, content, type, timestamp, status) "
+        "VALUES (:msg_id, :from_id, :to_id, :content, :type, :timestamp, :status);"
+        );
+
+    // 遍历好友数组
+    for (const FriendInfo_sever &fi : r.friends) {
+        int friendId = fi.id;
+        QString username = fi.username;
+        QString nickname = fi.nickname;
+        QString avatar = fi.avatarPath;
+        int unread = fi.unreadCount;
+
+        qint64 nowSec = QDateTime::currentSecsSinceEpoch();
+
+        // 1) friend_info: update first
+        qUpdateFriend.bindValue(":username", username);
+        qUpdateFriend.bindValue(":nickname", nickname);
+        qUpdateFriend.bindValue(":avatar", avatar);
+        qUpdateFriend.bindValue(":updated_at", nowSec);
+        qUpdateFriend.bindValue(":friend_id", friendId);
+
+        if (!qUpdateFriend.exec()) {
+            qWarning() << "UPDATE friend_info failed for" << friendId << ":" << qUpdateFriend.lastError().text();
+            m_db.rollback();
+            return false;
+        }
+
+        // 如果没有更新任何行，执行 INSERT
+        if (qUpdateFriend.numRowsAffected() == 0) {
+            qInsertFriend.bindValue(":friend_id", friendId);
+            qInsertFriend.bindValue(":username", username);
+            qInsertFriend.bindValue(":nickname", nickname);
+            qInsertFriend.bindValue(":avatar", avatar);
+            qInsertFriend.bindValue(":created_at", nowSec);
+            qInsertFriend.bindValue(":updated_at", nowSec);
+            if (!qInsertFriend.exec()) {
+                qWarning() << "INSERT friend_info failed for" << friendId << ":" << qInsertFriend.lastError().text();
+                m_db.rollback();
+                return false;
+            }
+        }
+
+        // 2) 解析 last message（可能为 null）
+        QString lastMsgStr;
+        qint64 lastMsgTime = 0;
+        int direction = 0; // 0 = 对方发来, 1 = 我发出
+
+        if (fi.lastMessage.has_value()) {
+            const LastMessageInfo &lm = *fi.lastMessage;
+            lastMsgStr = lm.content;
+            if (lm.sentAt.isValid()) lastMsgTime = lm.sentAt.toSecsSinceEpoch();
+            else lastMsgTime = 0;
+            direction = (lm.senderId == myUserId) ? 1 : 0;
+
+            // 3) 尝试插入 chat_records（忽略重复 msg_id）
+            QString msgIdStr = QString::number(lm.id);
+            QString fromIdStr = QString::number(lm.senderId);
+            QString toIdStr = QString::number((lm.senderId == myUserId) ? friendId : myUserId);
+
+            qInsertChat.bindValue(":msg_id", msgIdStr);
+            qInsertChat.bindValue(":from_id", fromIdStr);
+            qInsertChat.bindValue(":to_id", toIdStr);
+            qInsertChat.bindValue(":content", lm.content);
+            qInsertChat.bindValue(":type", messageTypeToInt(lm.type));
+            qInsertChat.bindValue(":timestamp", lastMsgTime);
+            qInsertChat.bindValue(":status", 0);
+
+            if (!qInsertChat.exec()) {
+                qWarning() << "INSERT chat_records failed for msg" << msgIdStr << ":" << qInsertChat.lastError().text();
+                m_db.rollback();
+                return false;
+            }
+        } else {
+            // 没有 last message
+            lastMsgStr = "";
+            lastMsgTime = 0;
+            direction = 0;
+        }
+
+        // 4) recent_messages: update then insert
+        QString peerIdStr = QString::number(friendId);
+        qUpdateRecent.bindValue(":last_msg", lastMsgStr);
+        qUpdateRecent.bindValue(":last_time", lastMsgTime);
+        qUpdateRecent.bindValue(":unread_count", unread);
+        qUpdateRecent.bindValue(":direction", direction);
+        qUpdateRecent.bindValue(":peer_id", peerIdStr);
+
+        if (!qUpdateRecent.exec()) {
+            qWarning() << "UPDATE recent_messages failed for peer" << peerIdStr << ":" << qUpdateRecent.lastError().text();
+            m_db.rollback();
+            return false;
+        }
+
+        if (qUpdateRecent.numRowsAffected() == 0) {
+            qInsertRecent.bindValue(":peer_id", peerIdStr);
+            qInsertRecent.bindValue(":last_msg", lastMsgStr);
+            qInsertRecent.bindValue(":last_time", lastMsgTime);
+            qInsertRecent.bindValue(":unread_count", unread);
+            qInsertRecent.bindValue(":direction", direction);
+            if (!qInsertRecent.exec()) {
+                qWarning() << "INSERT recent_messages failed for peer" << peerIdStr << ":" << qInsertRecent.lastError().text();
+                m_db.rollback();
+                return false;
+            }
+        }
+
+    } // end for friends
+
+    // 提交事务
+    if (!m_db.commit()) {
+        qWarning() << "DB commit failed:" << m_db.lastError().text();
+        m_db.rollback();
         return false;
     }
 
     return true;
 }
+
+// bool DataBaseManage::addFriend(const int &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
+// {
+
+//     QMutexLocker locker(&m_mutex);
+//     if (!m_db.isValid() || !m_db.isOpen()) {
+//         return false;
+//     }
+
+//     QSqlQuery q(m_db);
+//     q.prepare(R"(
+//         INSERT OR REPLACE INTO friend_info (friend_id, display_name, avatar, status, remark, created_at)
+//         VALUES (:fid, :name, :avatar, :status, :remark, :ctime)
+//     )");
+
+//     q.bindValue(":fid", friendId);
+//     q.bindValue(":name", displayName);
+//     q.bindValue(":avatar", avatar);
+//     q.bindValue(":status", status);
+//     q.bindValue(":remark", remark);
+//     q.bindValue(":ctime", QDateTime::currentSecsSinceEpoch()); // 或 currentMSecs... 取决于你统一的时间单位
+
+//     if (!q.exec()) {
+//         qDebug() << "DataBaseMgr::addFriend failed:" << q.lastError().text();
+//         return false;
+//     }
+
+//     return true;
+// }
 
 bool DataBaseManage::addChatMessage(const QString &msgId, const QString &fromId, const QString &toId, const QString &content, int type, qint64 timestamp)
 {
@@ -271,27 +494,52 @@ bool DataBaseManage::isOpen() const
 QList<FriendInfo> DataBaseManage::getFriendList() const
 {
     QMutexLocker locker(&m_mutex);
-    if (!m_db.isValid() || !m_db.isOpen()) return QList<FriendInfo>();
-
     QList<FriendInfo> temp;
+    if (!m_db.isValid() || !m_db.isOpen()) return temp;
 
     QSqlQuery query(m_db);
-
-    if (!query.exec("SELECT id,friend_id, display_name, avatar, status, remark, created_at FROM friend_info;")) {
+    if (!query.exec("SELECT id, friend_id, username, nickname, email, avatar_file_id, avatar, status, created_at, updated_at FROM friend_info;")) {
         qWarning() << "select friend_info failed:" << query.lastError().text();
-    } else {
-        qDebug() << "---- friend_info ----";
-        while (query.next()) {
-            qDebug() << "id:" << query.value(0).toInt()
-            << "friend_id:" << query.value(1).toInt()
-            << "name:" << query.value(2).toString()
-            << "avatar:" << query.value(3).toString()
-            << "status:" << query.value(4).toInt()
-            << "remark:" << query.value(5).toString()
-            << "created_at:" << QDateTime::fromSecsSinceEpoch(query.value(6).toLongLong()).toString();
+        return temp;
+    }
 
-            temp.append(FriendInfo(query.value(0).toInt(),query.value(1).toInt(),query.value(2).toString(),query.value(3).toString(),query.value(4).toInt(),query.value(5).toString(),query.value(6).toLongLong()));
-        }
+    qDebug() << "---- friend_info ----";
+    while (query.next()) {
+        int id = query.value(0).toInt();
+        qint64 friend_id = query.value(1).toLongLong();
+        QString username = query.value(2).toString();
+        QString nickname = query.value(3).toString();
+        QString email = query.value(4).toString();
+        QString avatar_file_id = query.value(5).toString();
+        QString avatar = query.value(6).toString();
+        bool status = query.value(7).toBool();
+        qint64 created_at = query.value(8).toLongLong();
+        qint64 updated_at = query.value(9).toLongLong();
+
+        qDebug() << "id:" << id
+                 << "friend_id:" << friend_id
+                 << "username:" << username
+                 << "nickname:" << nickname
+                 << "email:" << email
+                 << "avatar_file_id:" << avatar_file_id
+                 << "avatar:" << avatar
+                 << "status:" << status
+                 << "created_at:" << QDateTime::fromSecsSinceEpoch(created_at).toString()
+                 << "updated_at:" << (updated_at ? QDateTime::fromSecsSinceEpoch(updated_at).toString() : QString("null"));
+
+        FriendInfo fi;
+        fi.id = id;
+        fi.friendId = friend_id;
+        fi.username = username;
+        fi.nickname = nickname;
+        fi.email = email;
+        fi.avatarFileId = avatar_file_id;
+        fi.avatar = avatar;
+        fi.status = status;
+        fi.createdAt = created_at;
+        fi.updatedAt = updated_at;
+
+        temp.append(fi);
     }
 
     return temp;
@@ -456,57 +704,49 @@ bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
     return true;
 }
 
-QString DataBaseManage::getAvatarByFriendId(const int &friendId)
+QString DataBaseManage::getAvatarByFriendId(const qint64 &friendId)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return QString();
+
+    QSqlQuery query(m_db);
+    query.prepare("SELECT avatar_file_id FROM friend_info WHERE friend_id = :friend_id");
+    query.bindValue(":friend_id", QVariant::fromValue(friendId));
+
+    if (!query.exec()) {
+        qWarning() << "Failed to get avatar:" << query.lastError().text();
+        return QString();
+    }
+    if (query.next()) return query.value(0).toString();
+    return QString();
+}
+
+
+QString DataBaseManage::getDisplayNameByFriendId(const qint64 &friendId)
 {
 
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return QString();
 
     QSqlQuery query(m_db);
-    query.prepare("SELECT avatar FROM friend_info WHERE friend_id = :friend_id");
-    query.bindValue(":friend_id", friendId);
-
-    if (!query.exec()) {
-        qWarning() << "Failed to get avatar:" << query.lastError().text();
-        return QString();
-    }
-
-    if (query.next()) {
-        return query.value(0).toString(); // avatar
-    }
-
-    return QString(); // 没找到
-}
-
-QString DataBaseManage::getDisplayNameByFriendId(const int &friendId)
-{
-
-    QMutexLocker locker(&m_mutex);
-    if (!m_db.isValid() || !m_db.isOpen())
-        return QString();
-
-    QSqlQuery query(m_db);
     query.prepare(R"(
         SELECT
             CASE
-                WHEN remark IS NOT NULL AND remark <> '' THEN remark
-                ELSE display_name
+                WHEN nickname IS NOT NULL AND nickname <> '' THEN nickname
+                ELSE username
             END AS name
         FROM friend_info
         WHERE friend_id = :friend_id
     )");
-    query.bindValue(":friend_id", friendId);
+    query.bindValue(":friend_id", QVariant::fromValue(friendId));
 
     if (!query.exec()) {
         qWarning() << "Failed to get display name:" << query.lastError().text();
         return QString();
     }
+    if (query.next()) return query.value("name").toString();
+    return QString();
 
-    if (query.next()) {
-        return query.value("name").toString();
-    }
-
-    return QString(); // 没找到
 }
 
 QList<ChatRecord> DataBaseManage::getChatRecords(const int &userA, const int &userB)
@@ -646,19 +886,29 @@ bool DataBaseManage::createTables()
     QSqlQuery q(m_db);
     bool ok;
 
-    // friend_info
+    // friend_info (friend_id 使用长整型)
     ok = q.exec(R"(
         CREATE TABLE IF NOT EXISTS friend_info (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            friend_id TEXT UNIQUE NOT NULL,
-            display_name TEXT,
-            avatar TEXT,
-            status INTEGER DEFAULT 0,
-            remark TEXT,
-            created_at INTEGER
+            friend_id INTEGER UNIQUE NOT NULL,         -- 服务端用户 id（64-bit 整数）
+            username TEXT NOT NULL,                    -- 服务端 username（登录名）
+            nickname TEXT,                             -- 客户端/用户设置的昵称（优先显示）
+            email TEXT,                                -- 邮箱
+            avatar_file_id TEXT,                       -- 服务端的头像文件 id（字符串）
+            avatar TEXT,                               -- 客户端使用的头像 URL 或本地缓存路径
+            status TEXT DEFAULT 'offline',             -- 好友状态（'online'/'offline'...）
+            created_at INTEGER DEFAULT (strftime('%s','now')), -- 本地记录创建时间（UNIX 秒）
+            updated_at INTEGER                         -- 服务端最后更新时间（UNIX 秒）
         );
     )");
     if (!ok) { qDebug() << "create friend_info failed:" << q.lastError().text(); return false; }
+
+    ok = q.exec("CREATE INDEX IF NOT EXISTS idx_friend_info_friend_id ON friend_info(friend_id);");
+    if (!ok) { qDebug() << "create idx_friend_info_friend_id failed:" << q.lastError().text(); /*非致命*/ }
+
+    ok = q.exec("CREATE INDEX IF NOT EXISTS idx_friend_info_username ON friend_info(username);");
+    if (!ok) { qDebug() << "create idx_friend_info_username failed:" << q.lastError().text(); /*非致命*/ }
+
 
     // chat_records
     ok = q.exec(R"(

@@ -23,26 +23,19 @@ int main(int argc, char *argv[])
 
     qWarning() << "Test warning message";
 
-
     StyleLoader::setDebugEnabled(false);
     StyleLoader::setDebugResourceRoot("C:/Users/Moe/Desktop/MyClient/src/resources");
 
-
     AppConfig::instance().initialize();
-    AppConfig::instance().setUserID(3);
-
 
     ServiceManager *services = new ServiceManager();
     services->init();
     services->start();
 
-
     Widget w; // 注入
     w.setNetwork(services);
     w.show();
 
-    // MainWindow w2;
-    // w2.show();
     return a.exec();
 }
 

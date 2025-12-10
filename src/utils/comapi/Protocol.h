@@ -23,6 +23,7 @@ namespace Protocol  {
         RefreshFriends   = 2007,  // 刷新好友状态
         SearchFriend     = 2008,  // 搜索好友
 
+
         // ===== 消息传输相关 =====
         SendText         = 3001,  // 发送文本消息
         ReceiveText      = 3002,  // 接收文本消息
@@ -44,7 +45,6 @@ namespace Protocol  {
         // ===== 心跳与系统控制 =====
         HeartbeatPing    = 9001,  // 心跳包
         HeartbeatAck     = 9002   // 心跳回复
-
     };
 }
 

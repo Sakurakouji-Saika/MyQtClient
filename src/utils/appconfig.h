@@ -21,11 +21,16 @@ public:
     QString getFileHost() const;
     int getFilePort() const;
 
+
     void setHost(const QString &h);
     void setPort(int p);
     void setUserID(const int &id);
     void setFileHost(const QString &host);
     void setFilePort(int p);
+
+
+    bool isDatabaseInitialized() const;
+    void setDatabaseInitialized(bool initialized);
 
     // === 目录访问 ===
     QString dataDirectory() const;
@@ -36,6 +41,8 @@ public:
     // === 文件操作 ===
     bool save() const;
     bool load();
+
+    void extractAvatarImages() const;
 
 private:
     AppConfig();
@@ -56,7 +63,8 @@ private:
     QString imagesDir;      // 存放用户图片的目录
     QString filesDir;       // 存放用户文件的目录
 
-    bool initialized;     // 是否已初始化
+    bool initialized;       // 是否已初始化
+    bool dbInitialized;     // 数据库是否初始化
 };
 
 #endif // APPCONFIG_H

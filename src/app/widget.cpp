@@ -20,6 +20,7 @@
 
 
 #include "../app/mainwindow.h"
+#include "../DataBaseManage/model/FriendsResponse.h"
 
 
 
@@ -240,15 +241,71 @@ void Widget::setNetwork(ServiceManager *_sm)
     m_sm = _sm;
 
 
-     AuthService* auth = m_sm->auth();
+    AuthService* auth = m_sm->auth();
     if (!auth) return;
 
     // 登录成功：显示信息并恢复登录按钮
-    connect(auth, &AuthService::loginSucceeded, this, [this](qint64 userId){
-        ui->loginBtn->setEnabled(true);
+    connect(auth, &AuthService::loginSucceeded, this, [this](const QJsonObject &resp){
+        ui->loginBtn->setEnabled(false);
+
+        QString idStr = resp.value("id").toString();
+        qint64 uid = idStr.toLongLong();
+
+        // 服务端字段
+        QString avatar_file_id = resp.value("avatar_file_id").toString();
+        QString nickname = resp.value("nickname").toString();   // 服务端 nickname
+        QString username = resp.value("username").toString();   // 服务端 username
+        QString email = resp.value("email").toString();
+        qint64 createdAt = resp.value("created_at").toString().toLongLong();
+        qint64 updatedAt = resp.value("updated_at").toString().toLongLong();
+        qint64 lastSeen = resp.value("last_seen").toString().toLongLong();
+        QString statusStr = resp.value("status").toString().toLower();
+
+        AppConfig::instance().setUserID(uid);
+
+        InitDataBaseMange();
+
+        int statusCode = 0; // 0 = offline
+        if (statusStr == "online")      statusCode = 1;
+        else if (statusStr == "away")   statusCode = 2;
+        else if (statusStr == "busy")   statusCode = 3;
+        else if (statusStr == "offline")statusCode = 0;
+        else {
+            statusCode = 0;
+        }
+
+        qDebug() << "statusCode::" << statusCode;
+
+        // 调用 upsertFriend（用服务端的 username/nickname/email 等字段）
+        bool ok = DataBaseManage::instance()->upsertFriend(
+            uid,
+            username,         // username
+            nickname,         // nickname
+            email,            // email
+            avatar_file_id,   // avatar_file_id
+            QString(""),        // avatar (实际 URL 或空)
+            statusCode,       // status (int)
+            createdAt,        // created_at from server (秒)
+            updatedAt         // updated_at from server (秒)
+            );
+
+        if (!ok) {
+            qDebug() << "upsterFriend 更新数据失败" << uid;
+        }
+
+        // 其余 UI 流程
         QMessageBox::information(this, QStringLiteral("登录成功"),
-                                 QStringLiteral("用户 %1 登录成功").arg(userId));
-        // TODO: 登录成功后的导航或初始化
+                                 QStringLiteral("用户 %1 登录成功").arg(uid));
+
+
+
+        // 判断客户端数据库是否初始化
+        if(AppConfig::instance().isDatabaseInitialized()){
+            m_sm->auth()->GetMyFriends(uid,5000);
+        }else{
+            m_sm->auth()->GetMyFriends(uid,5000);
+        }
+
     });
 
     // 登录失败：弹出错误并恢复登录按钮
@@ -262,7 +319,22 @@ void Widget::setNetwork(ServiceManager *_sm)
         QMessageBox::information(this, QStringLiteral("已登出"), QStringLiteral("已退出登录"));
     });
 
-    
+    // 绑定获取好友列表
+    connect(auth, &AuthService::GetMyFriendsSucceeded, this, [this](const QJsonObject &resp){
+
+        QString err;
+
+        FriendsResponse fr = parseFriendsResponse(resp);
+
+        DataBaseManage::instance()->saveFriendListToDb(fr);
+
+        m_mw = new MainWindow();
+        m_mw->setAttribute(Qt::WA_DeleteOnClose);
+
+        this->hide();
+        m_mw->show();
+    });
+
 }
 
 void Widget::on_registerBtn_clicked()
@@ -271,6 +343,7 @@ void Widget::on_registerBtn_clicked()
     if (m_registrationPage== nullptr) {
         m_registrationPage = new Registration_Page();
         m_registrationPage->setAttribute(Qt::WA_DeleteOnClose);
+        m_registrationPage->setNetwork(m_sm);
 
         connect(m_registrationPage, &Registration_Page::destroyed, this, [this](){
             m_registrationPage = nullptr;

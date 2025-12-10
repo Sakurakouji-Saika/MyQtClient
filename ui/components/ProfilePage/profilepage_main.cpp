@@ -24,8 +24,8 @@ void ProfilePage_Main::addInfo(FriendInfo info)
 {
 
     ui->State->setText(info.status?"在线":"离线");
-    ui->name->setText(info.display_name);
-    ui->id->setText(info.display_name);
+    ui->name->setText(info.nickname);
+    ui->id->setText(info.username);
 
     QSize avatarSize;
     avatarSize.setWidth(90);

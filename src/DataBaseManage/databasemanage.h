@@ -8,6 +8,7 @@
 #include "model/FriendInfo.h"
 #include "model/recent_messages.h"
 #include "model/ChatRecord.h"
+#include "model/FriendsResponse.h"
 
 enum Add_Friend_Type{
     failure = 0,    // 失败
@@ -77,10 +78,10 @@ public:
                                      int direction = 0);
 
     // 查找头像
-    QString getAvatarByFriendId(const int &friendId);
+    QString getAvatarByFriendId(const qint64 &friendId);
 
     // 查找用户名
-    QString getDisplayNameByFriendId(const int &friendId);
+    QString getDisplayNameByFriendId(const qint64  &friendId);
 
     // 查找聊天记录
     QList<ChatRecord> getChatRecords(const int &userA, const int &userB);
@@ -98,7 +99,21 @@ public:
     bool isFriend(const QString &friendid) const;
 
     // 基本写接口（返回是否成功）
-    bool addFriend(const int &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+    // bool addFriend(const int &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
+
+    // 插入单个好友
+    bool upsertFriend(qint64 friendId,
+                      const QString &username,
+                      const QString &nickname,
+                      const QString &email,
+                      const QString &avatar_file_id,
+                      const QString &avatar,
+                      const int &status,
+                      qint64 createdAt = 0,
+                      qint64 updatedAt = 0);
+
+    // 初始化获取好友列表
+    bool saveFriendListToDb(const FriendsResponse &resp);
 
 
 private:

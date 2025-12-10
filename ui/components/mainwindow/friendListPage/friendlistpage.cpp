@@ -56,7 +56,7 @@ void friendListPage::init()
     // 4. 连接信号示例（可选）
     QObject::connect(friendList, &FriendListWidget::friendClicked,
                      [this](const FriendInfo &fi){
-                         qDebug() << "你点击了：" << fi.display_name << "(ID:" << fi.friend_id << ")";
+                         qDebug() << "你点击了：" << fi.username << "(ID:" << fi.friendId << ")";
 
                          emit signals_open_profile_page(fi);
 

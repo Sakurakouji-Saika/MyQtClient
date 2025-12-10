@@ -13,12 +13,13 @@ AppConfig& AppConfig::instance() {
 
 // ===== 构造函数 =====
 AppConfig::AppConfig()
-    : host("192.168.3.241"),
+    : host("127.0.0.1"),
     port(9000),
     userID(3),
-    FileHost("192.168.3.241"),
+    FileHost("127.0.0.1"),
     FilePort(9000),
-    initialized(false)
+    initialized(false),
+    dbInitialized(false)
 {
 }
 
@@ -58,6 +59,8 @@ void AppConfig::initialize(const QString &iniFilePath)
 
     initialized = true;
     qDebug() << "AppConfig 初始化完成: host=" << host << ", port=" << port;
+
+    extractAvatarImages();
 }
 
 // ===== Getter =====
@@ -85,6 +88,17 @@ void AppConfig::setFilePort(int p)
     FilePort = p;
 }
 
+bool AppConfig::isDatabaseInitialized() const
+{
+    return dbInitialized;
+}
+
+void AppConfig::setDatabaseInitialized(bool initialized)
+{
+    dbInitialized = initialized;
+    save();
+}
+
 
 // ===== 目录访问 =====
 QString AppConfig::dataDirectory() const { return dataDir; }
@@ -102,9 +116,12 @@ bool AppConfig::save() const
     QSettings s(filePath, QSettings::IniFormat);
     s.setValue("network/host", host);
     s.setValue("network/port", port);
-    s.setValue("network/fileHost", host);
-    s.setValue("network/filePort", port);
+    s.setValue("network/fileHost", FileHost);
+    s.setValue("network/filePort", FilePort);
     s.setValue("user/user_id", userID);
+
+    s.setValue("database/initialized", dbInitialized);
+
     s.sync();
 
     if (s.status() != QSettings::NoError) {
@@ -147,4 +164,72 @@ void AppConfig::ensureDirectories()
     ensure(databaseDir);
     ensure(imagesDir);
     ensure(filesDir);
+}
+
+void AppConfig::extractAvatarImages() const
+{
+    // 资源路径目录
+    QDir resDir(":/picture/avatar");
+    if (!resDir.exists()) {
+        qDebug() << "资源目录不存在: :/picture/avatar";
+        return;
+    }
+
+    // 支持的扩展名：按需增减
+    QStringList nameFilters;
+    nameFilters << "*.jpg" << "*.jpeg" << "*.png";
+
+    QStringList files = resDir.entryList(nameFilters, QDir::Files | QDir::NoDotAndDotDot);
+    if (files.isEmpty()) {
+        qDebug() << "没有找到头像资源文件";
+        return;
+    }
+
+    // 确保目标目录存在
+    QDir targetDir(imagesDir);
+    if (!targetDir.exists()) {
+        if (!QDir().mkpath(targetDir.absolutePath())) {
+            qWarning() << "无法创建 images 目录:" << targetDir.absolutePath();
+            return;
+        }
+    }
+
+    for (const QString &fname : files) {
+        QString resPath = QDir(":/picture/avatar").filePath(fname); // 例如 :/picture/avatar/1.jpg
+        QString targetPath = targetDir.filePath(fname);
+
+        // 如果已存在则跳过（若要覆盖可删除此检查）
+        if (QFile::exists(targetPath)) {
+            qDebug() << "已存在，跳过:" << targetPath;
+            continue;
+        }
+
+        QFile resFile(resPath);
+        if (!resFile.exists()) {
+            qWarning() << "资源不存在:" << resPath;
+            continue;
+        }
+        if (!resFile.open(QIODevice::ReadOnly)) {
+            qWarning() << "无法打开资源:" << resPath;
+            continue;
+        }
+
+        QFile outFile(targetPath);
+        if (!outFile.open(QIODevice::WriteOnly)) {
+            qWarning() << "无法创建目标文件:" << targetPath;
+            resFile.close();
+            continue;
+        }
+
+        QByteArray data = resFile.readAll();
+        qint64 written = outFile.write(data);
+        resFile.close();
+        outFile.close();
+
+        if (written != data.size()) {
+            qWarning() << "写入文件大小不一致:" << targetPath;
+        } else {
+            qDebug() << "解压头像到:" << targetPath;
+        }
+    }
 }

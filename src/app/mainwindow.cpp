@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_profile_main_page,&ProfilePage_Main::open_friend_chat_page,[this](const FriendInfo &fi){
         m_chatlist_page->MsgALLClear();
-        m_chatlist_page->openChatPage(fi.friend_id);
+        m_chatlist_page->openChatPage(fi.friendId);
 
         ui->chatDetailStack->setCurrentIndex(2);
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
@@ -134,8 +134,27 @@ MainWindow::~MainWindow()
 
 void MainWindow::initProfilePicture()
 {
-    // 1. 加载原始图片
-    QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +  DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
+    // QPixmap src;
+
+    // QString avatar = DataBaseManage::instance()->getAvatarByFriendId(
+        // AppConfig::instance().getUserID());
+
+    qDebug() << "头像完整路径:" <<AppConfig::instance().imagesDirectory() + QDir::separator() +
+                                   DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID());
+
+    // if (avatar == "0" || avatar.trimmed().isEmpty()) {
+    //     src.load("://picture/avatar/0.png");
+    // } else {
+
+
+
+    //     QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
+    //                 DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
+    // }
+
+
+    QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
+                                               DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
 
     // 2. 缩放到目标大小（假设 85×85）
     const int size = 40;
@@ -324,6 +343,11 @@ void MainWindow::Open_Edit_Avatar_Page()
     }
 
 
+}
+
+void MainWindow::setNetWork(ServiceManager *_sm)
+{
+    m_sm = _sm;
 }
 
 

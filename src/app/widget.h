@@ -6,7 +6,7 @@
 #include <HoverButton.h>
 #include <QJsonObject>
 #include <QJsonDocument>
-
+#include "mainwindow.h"
 #include "../Network/Service/authservice.h"
 #include "../Network/Service/servicemanager.h"
 #include "../../ui/components/Registration_Page/registration_page.h"
@@ -28,9 +28,7 @@ public:
     void otherStyle();
     void updateLoginBtnStyle();
     void addWidget_IPInput();
-
     void InitDataBaseMange();
-
     void setNetwork(ServiceManager *_sm);
 
 public:
@@ -38,23 +36,20 @@ public:
     ~Widget();
 
 private slots:
+
     void on_setupBtn_clicked();
-
     void on_setupBtn_2_clicked();
-
     void on_config_Ok_Btn_clicked();
-
     void on_loginBtn_clicked();
-
     void on_registerBtn_clicked();
 
 private:
+
     Ui::LoginPage *ui;
 
-
     Registration_Page *m_registrationPage = nullptr;  //注册变量
-
     ServiceManager *m_sm;
 
+    MainWindow *m_mw = nullptr;
 };
 #endif // WIDGET_H

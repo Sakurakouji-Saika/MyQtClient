@@ -80,6 +80,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QLineEdit" name="RP_email">
+          <property name="placeholderText">
+           <string>电子邮箱</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QGroupBox" name="registration_Box2">
           <layout class="QHBoxLayout" name="registration_QHB">
            <property name="spacing">

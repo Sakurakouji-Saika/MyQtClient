@@ -93,7 +93,7 @@ void FriendListWidget::setFriendsForGroup(const QString &groupName, const QList<
 
     // 填充新好友
     for (auto &fi : friends) {
-        auto cell = new QQCellLine(fi.avatar,fi.display_name,fi.status,this,fi.friend_id);
+        auto cell = new QQCellLine(fi.avatar,fi.displayName(),fi.status,this,fi.friendId);
         // 假设 QQCellMain 有这些接口，你酌情调整
             // cell->setAvatar(fi.avatarUrl);
             // cell->setName(fi.name);
