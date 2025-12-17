@@ -24,7 +24,7 @@
 
 
 
-
+#include "../Network/Service/avatarservice.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -244,6 +244,8 @@ void Widget::setNetwork(ServiceManager *_sm)
     AuthService* auth = m_sm->auth();
     if (!auth) return;
 
+    // AvatarService* avatar = m_sm->avatar();
+
     // 登录成功：显示信息并恢复登录按钮
     connect(auth, &AuthService::loginSucceeded, this, [this](const QJsonObject &resp){
         ui->loginBtn->setEnabled(false);
@@ -314,10 +316,6 @@ void Widget::setNetwork(ServiceManager *_sm)
         QMessageBox::warning(this, QStringLiteral("登录失败"), reason);
     });
 
-    // 登出通知（可选）
-    connect(auth, &AuthService::loggedOut, this, [this](){
-        QMessageBox::information(this, QStringLiteral("已登出"), QStringLiteral("已退出登录"));
-    });
 
     // 绑定获取好友列表
     connect(auth, &AuthService::GetMyFriendsSucceeded, this, [this](const QJsonObject &resp){
@@ -328,12 +326,20 @@ void Widget::setNetwork(ServiceManager *_sm)
 
         DataBaseManage::instance()->saveFriendListToDb(fr);
 
-        m_mw = new MainWindow();
-        m_mw->setAttribute(Qt::WA_DeleteOnClose);
 
-        this->hide();
-        m_mw->show();
+
+
+
+        // m_mw = new MainWindow();
+        // m_mw->setAttribute(Qt::WA_DeleteOnClose);
+
+        // this->hide();
+        // m_mw->show();
+
     });
+
+
+
 
 }
 
@@ -353,5 +359,14 @@ void Widget::on_registerBtn_clicked()
     m_registrationPage->show();
     m_registrationPage->raise();
     m_registrationPage->activateWindow();
+}
+
+
+void Widget::on_forgotPasswordBtn_clicked()
+{
+
+    // 获取登录头像
+    m_sm->avatar()->requestAvatarById("1");
+
 }
 

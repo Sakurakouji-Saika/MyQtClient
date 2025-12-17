@@ -503,7 +503,7 @@ QList<FriendInfo> DataBaseManage::getFriendList() const
         return temp;
     }
 
-    qDebug() << "---- friend_info ----";
+    // qDebug() << "---- friend_info ----";
     while (query.next()) {
         int id = query.value(0).toInt();
         qint64 friend_id = query.value(1).toLongLong();
@@ -516,16 +516,16 @@ QList<FriendInfo> DataBaseManage::getFriendList() const
         qint64 created_at = query.value(8).toLongLong();
         qint64 updated_at = query.value(9).toLongLong();
 
-        qDebug() << "id:" << id
-                 << "friend_id:" << friend_id
-                 << "username:" << username
-                 << "nickname:" << nickname
-                 << "email:" << email
-                 << "avatar_file_id:" << avatar_file_id
-                 << "avatar:" << avatar
-                 << "status:" << status
-                 << "created_at:" << QDateTime::fromSecsSinceEpoch(created_at).toString()
-                 << "updated_at:" << (updated_at ? QDateTime::fromSecsSinceEpoch(updated_at).toString() : QString("null"));
+        // qDebug() << "id:" << id
+        //          << "friend_id:" << friend_id
+        //          << "username:" << username
+        //          << "nickname:" << nickname
+        //          << "email:" << email
+        //          << "avatar_file_id:" << avatar_file_id
+        //          << "avatar:" << avatar
+        //          << "status:" << status
+        //          << "created_at:" << QDateTime::fromSecsSinceEpoch(created_at).toString()
+        //          << "updated_at:" << (updated_at ? QDateTime::fromSecsSinceEpoch(updated_at).toString() : QString("null"));
 
         FriendInfo fi;
         fi.id = id;
@@ -563,7 +563,7 @@ QList<RecentMessage> DataBaseManage::getRecentMessageList() const
         return temp;
     }
 
-    qDebug() << "---- recent_messages ----";
+
     while (query.next()) {
         // 列：0=id, 1=peer_id, 2=last_msg, 3=last_time, 4=unread_count, 5=direction
         RecentMessage r;
@@ -584,14 +584,14 @@ QList<RecentMessage> DataBaseManage::getRecentMessageList() const
         r.unread_count = query.value(4).toInt();
         r.direction = query.value(5).toInt();
 
-        // Debug 输出（可选）
-        qDebug() << "id:" << r.id
-                 << "peer_id:" << r.peer_id
-                 << "last_msg:" << r.last_msg
-                 << "last_time(raw):" << ts
-                 << "last_time(str):" << dt.toString("yyyy-MM-dd HH:mm:ss")
-                 << "unread_count:" << r.unread_count
-                 << "direction:" << r.direction;
+        // // Debug 输出（可选）
+        // qDebug() << "id:" << r.id
+        //          << "peer_id:" << r.peer_id
+        //          << "last_msg:" << r.last_msg
+        //          << "last_time(raw):" << ts
+        //          << "last_time(str):" << dt.toString("yyyy-MM-dd HH:mm:ss")
+        //          << "unread_count:" << r.unread_count
+        //          << "direction:" << r.direction;
 
         temp.append(r);
     }

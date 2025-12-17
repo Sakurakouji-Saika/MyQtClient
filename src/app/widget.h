@@ -8,6 +8,7 @@
 #include <QJsonDocument>
 #include "mainwindow.h"
 #include "../Network/Service/authservice.h"
+
 #include "../Network/Service/servicemanager.h"
 #include "../../ui/components/Registration_Page/registration_page.h"
 
@@ -42,6 +43,8 @@ private slots:
     void on_config_Ok_Btn_clicked();
     void on_loginBtn_clicked();
     void on_registerBtn_clicked();
+
+    void on_forgotPasswordBtn_clicked();
 
 private:
 

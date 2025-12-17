@@ -62,6 +62,8 @@ void SocketClient::sendJson(const QJsonObject &obj)
 {
     QJsonDocument doc(obj);
 
+
+
     QByteArray payload = doc.toJson(QJsonDocument::Compact);
     sendRaw(payload);
 }
@@ -173,8 +175,9 @@ void SocketClient::processBuff()
 
 
         m_expectedSize = readUint32BE(lenBytes);
-        m_buffer.remove(0,4);   // 移除表示长度的数据。
+
         if(m_expectedSize == 0){
+            m_buffer.remove(0, 4);
             continue;
         }
 
@@ -183,6 +186,14 @@ void SocketClient::processBuff()
             return; // 停止当前解析
         }
 
+        // 检查是否已经收到完整的 payload（长度字段 + payload）
+        if (static_cast<quint64>(m_buffer.size()) < 4 + static_cast<quint64>(m_expectedSize)) {
+            // 尚未收到完整帧，等待更多数据
+            break;
+        }
+
+
+        m_buffer.remove(0,4);   // 移除表示长度的数据。
         QByteArray payload = m_buffer.left(m_expectedSize);
         m_buffer.remove(0,m_expectedSize);
         m_expectedSize = 0;

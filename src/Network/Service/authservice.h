@@ -18,10 +18,6 @@ public:
 
     void GetMyFriends(qint64 &id,int timeoutMs = 5000);
 
-    void logout();
-
-    bool isAuthenticated() const;
-    qint64 userId() const;
 
 signals:
 
@@ -34,12 +30,10 @@ signals:
     void GetMyFriendsSucceeded(QJsonObject friends);
     void GetMyFriendsFailed(const QString &reason);
 
-    void loggedOut();
 
 private:
     QPointer<PacketProcessor> m_processor;
-    QString m_username;
-    qint64 m_userId = -1;
+
 
 signals:
 };

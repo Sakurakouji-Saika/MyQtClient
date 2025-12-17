@@ -103,11 +103,6 @@ bool IPLineEdit::eventFilter(QObject *obj, QEvent *event)
         // 4个 输入框里面正在输入的那个
         QLineEdit *pCurrent = qobject_cast<QLineEdit*>(obj);
 
-
-
-
-
-
         // —— 1. 先拦截粘贴（Ctrl+V、Shift+Insert 等） ——
         if (event->type() == QEvent::KeyPress)
         {

@@ -58,7 +58,6 @@ void AuthService::registration(const QString &username, const QString &password,
     req["nickname"] = username;
 
     m_processor->sendRequest(req,[this,username](const QJsonObject &resp){
-        qDebug() << "AuthService::registration::注册返回消息:" << resp;
 
         bool ok = resp.value("ok").toBool(false);
 
@@ -84,12 +83,12 @@ void AuthService::GetMyFriends(qint64 &id, int timeoutMs)
     QJsonObject req;
     req["type"] = static_cast<int>(Protocol::MessageType::GetMyFriends);
     req["user_id"] = id;
-    qDebug() << req;
+
 
     m_processor->sendRequest(req,[this](const QJsonObject &resp){
         bool ok = resp.value("ok").toBool(false);
 
-        qDebug() << "获取好友列表信息:" << resp << "\n";
+
 
         if(!ok){
             QString reason = resp.value("error").toString("服务端错误信息提示为空");
@@ -103,21 +102,4 @@ void AuthService::GetMyFriends(qint64 &id, int timeoutMs)
 
 
 
-}
-
-void AuthService::logout()
-{
-    m_userId = -1;
-    m_username.clear();
-    emit loggedOut();
-}
-
-bool AuthService::isAuthenticated() const
-{
-    return m_userId != -1;
-}
-
-qint64 AuthService::userId() const
-{
-    return m_userId;
 }

@@ -7,6 +7,7 @@
 #include "app/mainwindow.h"
 #include "Network/Service/servicemanager.h"
 #include "DataBaseManage/databasemanage.h"
+#include "../src/Network/Handlers/handlerregistry.h"
 
 
 class Widget;
@@ -31,6 +32,9 @@ int main(int argc, char *argv[])
     ServiceManager *services = new ServiceManager();
     services->init();
     services->start();
+
+    handlerregistry hr(services);
+    hr.registerAll();
 
     Widget w; // 注入
     w.setNetwork(services);

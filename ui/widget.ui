@@ -266,6 +266,9 @@
                 <height>16777215</height>
                </size>
               </property>
+              <property name="text">
+               <string>alice</string>
+              </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
@@ -317,6 +320,9 @@
                 <width>256</width>
                 <height>16777215</height>
                </size>
+              </property>
+              <property name="text">
+               <string>pass_alice</string>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::Password</enum>

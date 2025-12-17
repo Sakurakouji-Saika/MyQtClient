@@ -220,11 +220,24 @@ void PacketProcessor::onFrame(const QByteArray &payload)
     // try parse json
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(payload, &err);
+
+    // qDebug() << "PacketProcessor::onFrame(const QByteArray &payload):" << payload << "\n\n\n";
+
+    qDebug() << "parse error:" << err.error          // 枚举值（比如 5）
+             << ", meaning:" << err.errorString()   // 可读的错误说明
+             << ", offset:" << err.offset;          // 出错位置（字节偏移）
+    qDebug() << "payload preview:" << payload.left(200) << "\n\n\n\n"; // 打印前 200 字节查看内容
+
+
+
+
+
     if (err.error == QJsonParseError::NoError && doc.isObject()) {
         QJsonObject obj = doc.object();
 
         // seq matching
         qint64 seq = (qint64)obj.value("seq").toDouble(0);
+
         if (seq > 0) {
             ResponseCallback cb;
             {

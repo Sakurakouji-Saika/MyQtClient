@@ -51,6 +51,10 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
         find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
@@ -116,6 +120,10 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/utils/comapi/message_kind_utils.h
             src/DataBaseManage/model/FriendsResponse.h
             src/DataBaseManage/model/FriendsResponse.cpp
+            src/Network/Service/avatarservice.h src/Network/Service/avatarservice.cpp
+            src/Network/Handlers/handlerregistry.h src/Network/Handlers/handlerregistry.cpp
+            src/Network/Files/tempchunkmanager.h src/Network/Files/tempchunkmanager.cpp
+
 
 
 
@@ -143,6 +151,10 @@ target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
