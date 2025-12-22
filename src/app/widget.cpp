@@ -22,7 +22,7 @@
 #include "../app/mainwindow.h"
 #include "../DataBaseManage/model/FriendsResponse.h"
 
-
+#include "../utils/utils.h"
 
 #include "../Network/Service/avatarservice.h"
 
@@ -38,9 +38,6 @@ Widget::Widget(QWidget *parent)
 
     // 加载样式
     StyleLoader::loadWidgetStyle(this, qssPath);
-
-
-
 
     initProfilePicture();       // 初始化登录页面头像效果
     loadStyleCloseBtn();        // 这里是加载关闭窗口按钮图标
@@ -162,8 +159,6 @@ void Widget::addWidget_IPInput()
     // 4) 把 IPLineEdit 插到它下面一行（所以是 idx+1）
     lay->insertWidget(idx + 1, ip);
 
-
-
 }
 
 
@@ -181,10 +176,6 @@ void Widget::on_setupBtn_2_clicked()
     ui->stackedWidget->setCurrentIndex(0);
 }
 
-
-
-
-
 void Widget::on_config_Ok_Btn_clicked()
 {
     IPLineEdit *ipWidget = this->findChild<IPLineEdit*>("IP_Input");
@@ -199,8 +190,6 @@ void Widget::on_config_Ok_Btn_clicked()
 void Widget::on_loginBtn_clicked()
 {
 
-
-
     // 添加按钮禁用防止重复点击
     ui->loginBtn->setEnabled(false);
 
@@ -214,9 +203,6 @@ void Widget::on_loginBtn_clicked()
     std::optional<QPair<bool, QString>> temp_msg;
 
     m_sm->auth()->login(userName,passwd);
-
-
-
 
 }
 
@@ -240,8 +226,9 @@ void Widget::setNetwork(ServiceManager *_sm)
 {
     m_sm = _sm;
 
-
     AuthService* auth = m_sm->auth();
+    AvatarService * m_avatarService = m_sm->avatar();
+
     if (!auth) return;
 
     // AvatarService* avatar = m_sm->avatar();
@@ -278,17 +265,20 @@ void Widget::setNetwork(ServiceManager *_sm)
 
         qDebug() << "statusCode::" << statusCode;
 
+
+        QString Avatar = DataBaseManage::instance()->GetFriendAvatarById(uid)->avatar;
+
         // 调用 upsertFriend（用服务端的 username/nickname/email 等字段）
         bool ok = DataBaseManage::instance()->upsertFriend(
             uid,
-            username,         // username
-            nickname,         // nickname
-            email,            // email
-            avatar_file_id,   // avatar_file_id
-            QString(""),        // avatar (实际 URL 或空)
-            statusCode,       // status (int)
-            createdAt,        // created_at from server (秒)
-            updatedAt         // updated_at from server (秒)
+            username,
+            nickname,
+            email,
+            avatar_file_id,
+            Avatar,
+            statusCode,
+            createdAt,
+            updatedAt
             );
 
         if (!ok) {
@@ -300,15 +290,36 @@ void Widget::setNetwork(ServiceManager *_sm)
                                  QStringLiteral("用户 %1 登录成功").arg(uid));
 
 
+        m_sm->avatar()->RequestAvatarInfoByUserID(uid);
 
-        // 判断客户端数据库是否初始化
-        if(AppConfig::instance().isDatabaseInitialized()){
-            m_sm->auth()->GetMyFriends(uid,5000);
-        }else{
-            m_sm->auth()->GetMyFriends(uid,5000);
+        // 获取好友列表
+        m_sm->auth()->GetMyFriends(uid,5000);
+
+
+    });
+
+    // 为登录用户设置头像
+    // 1.如果本地数据库存在头像路径，就判断返回数据 和 本地数据的头像数据是否一致，如果一直就不下载头像文件,如果不一致就下载头像文件.
+    // 2.如果本地数据库不存在头像路径，就插入到本地数据库中，然后下载头像文件。
+    connect(m_avatarService,&AvatarService::avatarNicknameFetched,this,[this](const qint64 uid,const qint64 file_id, const QString fileName){
+
+        std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(uid);
+        if(info.has_value()){
+            if(info.value().avatarFileId.toLongLong() != file_id || info.value().avatar != fileName){
+
+                qDebug() << "触发下载头像:: " << uid << "\t" << fileName;
+                m_sm->avatar()->requestAvatarById(QString::number(uid));
+            }
         }
 
     });
+
+
+    connect(m_avatarService,&AvatarService::avatarNicknameFetchFailed,this,[this](QString error){
+
+    });
+
+
 
     // 登录失败：弹出错误并恢复登录按钮
     connect(auth, &AuthService::loginFailed, this, [this](const QString &reason){
@@ -320,21 +331,34 @@ void Widget::setNetwork(ServiceManager *_sm)
     // 绑定获取好友列表
     connect(auth, &AuthService::GetMyFriendsSucceeded, this, [this](const QJsonObject &resp){
 
-        QString err;
 
+        qDebug() << "widget::app::setNetwork::&AuthService::GetMyFriendsSucceeded::resp" << resp << "\n\n";
+
+
+        QString err;
         FriendsResponse fr = parseFriendsResponse(resp);
 
-        DataBaseManage::instance()->saveFriendListToDb(fr);
+        bool ok = DataBaseManage::instance()->saveFriendListToDb(fr);
 
+        // 开始下载好友头像
+        if(ok){
+            for(int i=0;i< fr.friends.size();i++){
+                // 理论上这里还要读取本地客户端中关于存储头像的目录是否存在这个头像文件，存在就不用下载了
 
+                if(!fileExistsInDir(AppConfig::instance().imagesDirectory(),fr.friends.at(i).avatarPath) && fr.friends.at(i).avatar_file_id !=-1){
 
+                    qDebug() << "触发下载头像:: " << i << "\t fr.friends.at(i).avatarPath::" << fr.friends.at(i).avatarPath;
+                    m_sm->avatar()->requestAvatarById(QString::number(fr.friends.at(i).avatar_file_id));
+                }
+            }
+        }
 
+        m_mw = new MainWindow();
+        m_mw->setAttribute(Qt::WA_DeleteOnClose);
 
-        // m_mw = new MainWindow();
-        // m_mw->setAttribute(Qt::WA_DeleteOnClose);
-
-        // this->hide();
-        // m_mw->show();
+        this->hide();
+        m_mw->show();
+        m_mw->setNetWork(m_sm);
 
     });
 
@@ -364,6 +388,10 @@ void Widget::on_registerBtn_clicked()
 
 void Widget::on_forgotPasswordBtn_clicked()
 {
+
+
+    m_sm->avatar()->RequestAvatarInfoByUserID(1);
+
 
     // 获取登录头像
     m_sm->avatar()->requestAvatarById("1");

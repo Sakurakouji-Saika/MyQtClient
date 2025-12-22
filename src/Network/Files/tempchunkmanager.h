@@ -45,11 +45,11 @@ public:
     // 清理过期会话（超过 ttl 秒）
     void cleanupExpired(qint64 ttl = 3600);  // 默认 1 小时
 
-    QString getFileName(const QString &uuid);
+    QString getFileName(const QString &uuid, QString &outError);
 
-    void setUserID(const QString &uuid,const qint64 &id) { m_sessions[uuid].usetID  = id; }
+    void setUserID(const QString &uuid,const qint64 &id, QString &outError);
 
-    qint64 GetUserID(const QString &uuid) { return m_sessions[uuid].usetID; };
+    qint64 GetUserID(const QString &uuid, QString &outError);
 
 private:
     QMap<QString, TempChunk> m_sessions;

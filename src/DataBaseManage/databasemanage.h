@@ -115,6 +115,14 @@ public:
     // 初始化获取好友列表
     bool saveFriendListToDb(const FriendsResponse &resp);
 
+    // 获取用户头像数据，（通过文件ID来查找）
+    std::optional<FriendInfo> GetFriendAvatarById(qint64 uid);
+
+
+    // 更新用户头像数据
+    bool UpdateFriendAvatarByAvatarID(const qint64 avatar_file_id, const QString avatar);
+
+
 
 private:
     explicit DataBaseManage(QObject *parent = nullptr);

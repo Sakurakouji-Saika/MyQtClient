@@ -49,11 +49,11 @@ void chatList_Main::openChatPage(const int _id)
     for(int i=0;i<m_list.size();i++){
 
         if(AppConfig::instance().getUserID() == m_list[i].fromId ){
-            m_avatar_url = AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID());
+            m_avatar_url = AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar;
 
             addChatLeft(true,m_avatar_url,m_list[i].content);
         }else{
-            m_avatar_url = AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->getAvatarByFriendId(_id);
+            m_avatar_url = AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->GetFriendAvatarById(_id)->avatar;
 
             addChatLeft(false,m_avatar_url,m_list[i].content);
         }
@@ -100,7 +100,7 @@ void chatList_Main::on_btn_pushMsg_clicked()
 
     if (ok) {
         // 只有在数据库写入成功后再更新 UI，确保 UI 与持久层一致
-        chat->addMessage(true, AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()), t);
+        chat->addMessage(true, AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar, t);
         ui->CLM_plainTextEdit->clear();
 
         ChatRecord cr;
@@ -112,6 +112,7 @@ void chatList_Main::on_btn_pushMsg_clicked()
 
         emit MY_SeedMsg(cr);
         qDebug() << "chatlist_main: emitted SeedMsg -> peer:" << cr.toId << " msg:" << cr.content;
+
     } else {
         // QMessageBox::warning(this, tr("发送失败"), tr("消息发送失败，请检查网络或重试。"));
         qDebug() << "chatlist_main: addChatMessageAndUpdateRecent failed for peer:" << m_user_id << " msg:" << t;

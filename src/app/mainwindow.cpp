@@ -20,18 +20,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-
-
     // 过滤器注册
     ui->avatar->installEventFilter(this);
-
 
     // 设计两页分栏
     QList<int> sizes;
     sizes.append(250); // 第一个值 250 对应 splitter 的第一个子控件的宽度
     sizes.append(this->width() - 250);  // 第二个值 的宽度，占满剩下的宽度
     ui->splitter->setSizes(sizes);
-
 
     // 验证资源文件是否存在
     QString qssPath = ":/styles/mainwindow.css";
@@ -52,10 +48,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     InitSysTrayIcon();
 
-
-
-
-
     //``````````````````````````````````````````````````````````
     m_blankPage = new QWidget(this);
     ui->chatDetailStack->addWidget(m_blankPage); // index 0
@@ -69,13 +61,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_friendNotify = new FriendNotify_Page(this);
     ui->chatDetailStack->addWidget(m_friendNotify); // index 3
 
-
-
     // 初始显示空白页
     ui->chatDetailStack->setCurrentIndex(0);
-
-
-
 
     connect(friendList,&friendListPage::signals_open_profile_page,[this](const FriendInfo &fi){
         ui->chatDetailStack->setCurrentIndex(1);
@@ -109,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent)
         r.msg = _CR.content;
         r.msg_time = QDateTime::fromSecsSinceEpoch(_CR.timestamp);
         r.timestamp = _CR.timestamp;
-        r.avatarPath = DataBaseManage::instance()->getAvatarByFriendId(peerId);
+        r.avatarPath = DataBaseManage::instance()->GetFriendAvatarById(peerId)->avatar;
         r.userName = DataBaseManage::instance()->getDisplayNameByFriendId(peerId);
         // r.UnreadCount = (_CR.fromId == AppConfig::UserID()) ? 0 : DataBaseManage::instance()->getTotalUnreadCount();
         r.UnreadCount = 0;
@@ -117,12 +104,12 @@ MainWindow::MainWindow(QWidget *parent)
         chatList->receiveMessage(r);
     });
 
-
-
-
-
-
+    connect(m_CAvatarPG,&Change_Avatar_Page::avatarUploaded,this,[this](QString &avatarPath){
+        m_sm->avatar();
+    });
 }
+
+
 
 MainWindow::~MainWindow()
 {
@@ -134,27 +121,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::initProfilePicture()
 {
-    // QPixmap src;
-
-    // QString avatar = DataBaseManage::instance()->getAvatarByFriendId(
-        // AppConfig::instance().getUserID());
-
-    qDebug() << "头像完整路径:" <<AppConfig::instance().imagesDirectory() + QDir::separator() +
-                                   DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID());
-
-    // if (avatar == "0" || avatar.trimmed().isEmpty()) {
-    //     src.load("://picture/avatar/0.png");
-    // } else {
-
-
-
-    //     QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
-    //                 DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
-    // }
-
 
     QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
-                                               DataBaseManage::instance()->getAvatarByFriendId(AppConfig::instance().getUserID()));
+                DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar);
 
     // 2. 缩放到目标大小（假设 85×85）
     const int size = 40;
@@ -224,14 +193,7 @@ void MainWindow::loadStyleCloseBtn()
     btn->setHoverIcon(icoHover);
     btn->setIconSize(QSize(16,16));
 
-
 }
-
-
-
-
-
-
 
 
 /**

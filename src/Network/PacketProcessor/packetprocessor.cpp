@@ -221,17 +221,6 @@ void PacketProcessor::onFrame(const QByteArray &payload)
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(payload, &err);
 
-    // qDebug() << "PacketProcessor::onFrame(const QByteArray &payload):" << payload << "\n\n\n";
-
-    qDebug() << "parse error:" << err.error          // 枚举值（比如 5）
-             << ", meaning:" << err.errorString()   // 可读的错误说明
-             << ", offset:" << err.offset;          // 出错位置（字节偏移）
-    qDebug() << "payload preview:" << payload.left(200) << "\n\n\n\n"; // 打印前 200 字节查看内容
-
-
-
-
-
     if (err.error == QJsonParseError::NoError && doc.isObject()) {
         QJsonObject obj = doc.object();
 

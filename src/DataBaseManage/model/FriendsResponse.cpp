@@ -37,12 +37,10 @@ FriendsResponse parseFriendsResponse(const QJsonObject &_resp)
 
     resp.userId = root.value("user").toInt(0);
 
-    // 先把 QJsonArray 存为局部变量，避免把临时放进 range-for
     QJsonArray fa = root.value("friends").toArray();
 
-    // 使用索引循环并调用 at(i)
     for (int i = 0, n = fa.size(); i < n; ++i) {
-        QJsonValue fv = fa.at(i); // 使用 at() 更明确且不会引起额外 detach
+        QJsonValue fv = fa.at(i);
         if (!fv.isObject())
             continue;
 
@@ -51,10 +49,12 @@ FriendsResponse parseFriendsResponse(const QJsonObject &_resp)
         fi.id = fo.value("id").toInt(0);
         fi.username = fo.value("username").toString();
         fi.nickname = fo.value("nickname").toString();
+
+        fi.avatar_file_id = fo.value("avatar_file_id").toDouble();
+
         fi.avatarPath = fo.value("avatarPath").toString();
         fi.unreadCount = fo.value("unreadCount").toInt(0);
 
-        // 解析 LastMessageInfo（可能为 null）
         fi.lastMessage = _parseLastMessage(fo.value("LastMessageInfo"));
 
         resp.friends.append(fi);

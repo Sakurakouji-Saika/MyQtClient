@@ -322,7 +322,7 @@
                </size>
               </property>
               <property name="text">
-               <string>pass_alice</string>
+               <string>pbkdf2$1000$salta$hash1</string>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::Password</enum>

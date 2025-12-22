@@ -6,7 +6,20 @@
 #include <QPainterPath>
 #include <QDateTime>
 #include <QString>
+#include <QDir>
 
+
+// 判断指定路径下的文件是否存在
+inline bool fileExistsInDir(const QString &dirPath,
+                            const QString &fileName)
+{
+    QDir dir(dirPath);
+    if (!dir.exists())
+        return false;
+
+    QFileInfo fi(dir.filePath(fileName));
+    return fi.exists() && fi.isFile();
+}
 
 
 static qint64 parseIso8601ToSecs(const QString &iso)

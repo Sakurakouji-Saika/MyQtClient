@@ -46,7 +46,10 @@ enum class MessageType: int   {
 
     // ===== 心跳与系统控制 =====
     HeartbeatPing    = 9001,  // 心跳包
-    HeartbeatAck     = 9002   // 心跳回复
+    HeartbeatAck     = 9002,   // 心跳回复
+
+    // ===== 其他杂乱功能 =====
+    AvatarFilename   = 9501,   // 查找
 };
 
 

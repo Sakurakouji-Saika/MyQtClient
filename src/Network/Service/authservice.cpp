@@ -84,11 +84,8 @@ void AuthService::GetMyFriends(qint64 &id, int timeoutMs)
     req["type"] = static_cast<int>(Protocol::MessageType::GetMyFriends);
     req["user_id"] = id;
 
-
     m_processor->sendRequest(req,[this](const QJsonObject &resp){
         bool ok = resp.value("ok").toBool(false);
-
-
 
         if(!ok){
             QString reason = resp.value("error").toString("服务端错误信息提示为空");
@@ -99,7 +96,4 @@ void AuthService::GetMyFriends(qint64 &id, int timeoutMs)
         emit GetMyFriendsSucceeded(resp);
 
     },timeoutMs);
-
-
-
 }

@@ -9,6 +9,8 @@
 #include "../PacketProcessor/packetprocessor.h"
 #include "../../Src/utils/comapi/Protocol.h"
 #include "../Files/tempchunkmanager.h"
+#include "../../utils/AppConfig.h"
+#include "../../DataBaseManage/databasemanage.h"
 
 AvatarService::AvatarService(PacketProcessor *processor,QObject *parent)
     : QObject{parent},
@@ -32,15 +34,65 @@ void AvatarService::requestAvatarById(QString file_avatarID)
 
     m_pp->sendJson(request);
 
+}
 
+void AvatarService::RequestAvatarInfoByUserID(qint64 uid)
+{
+    if(!m_pp){
+        emit requestAvatarByIdFailed(QStringLiteral("AvatarService::RequestAvatarInfoByUserID:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::AvatarFilename);
+    request["user_id"] = uid;
+
+
+
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+        bool ok = resp["ok"].toBool();
+
+        if(ok){
+
+            qDebug() << "AvatarService::RequestAvatarInfoByUserID::resp:: " << resp << "\n";
+
+            qint64 user_id = resp.value("user_id").toDouble();
+            qint64 file_id = resp.value("file_id").toDouble();
+            QString fileName = resp.value("path").toString();
+
+
+
+            emit avatarNicknameFetched(user_id,file_id,fileName);
+            return;
+
+        }else{
+
+            QString error = resp.value("error").toString();
+            emit avatarNicknameFetchFailed(error);
+            return;
+
+        }
+    });
+}
+
+void AvatarService::UpoadLoadAvatarStart(const QJsonObject &packet)
+{
+
+}
+
+void AvatarService::UpoadLoadAvatarChunk(const QJsonObject &packet)
+{
 
 }
 
 void AvatarService::DownloadAvatarStart(const QJsonObject &packet)
 {
-    qDebug() << "AvatarService::DownloadAvatarStart::" << packet;
+
+
 
     QString filename = packet["filename"].toString();
+
     QString uuid     = packet["uuid"].toString();
 
     qint64 chunkSize = packet["file_chunk_size"].toVariant().toLongLong();
@@ -69,12 +121,12 @@ void AvatarService::DownloadAvatarChunk(const QJsonObject &packet)
     const qint64 CHUNK_SIZE = 64 * 1024; // 64KB
 
 
-    int    type      = packet.value("type").toInt();
-    QString uuid     = packet.value("uuid").toString();
-    qint64 fileId    = packet.value("file_id").toString().toLongLong();
-    qint64 chunkId   = packet.value("chunk_id").toString().toLongLong();
-    qint64 chunkSize = packet.value("chunk_size").toString().toLongLong(); // 报告的分片长度（字符串或数字）
-    bool   isLast    = packet.value("is_last").toBool();
+    int     type        = packet.value("type").toInt();
+    QString uuid        = packet.value("uuid").toString();
+    qint64  fileId      = packet.value("file_id").toString().toLongLong();
+    qint64  chunkId     = packet.value("chunk_id").toString().toLongLong();
+    qint64  chunkSize   = packet.value("chunk_size").toString().toLongLong(); // 报告的分片长度（字符串或数字）
+    bool    isLast      = packet.value("is_last").toBool();
 
     QByteArray contentBase64 = packet.value("content").toString().toUtf8();
     QByteArray content = QByteArray::fromBase64(contentBase64);
@@ -92,31 +144,30 @@ void AvatarService::DownloadAvatarChunk(const QJsonObject &packet)
 
     // 检查是否全部接收完毕
     if (m_tcm->isComplete(uuid)) {
+
+        QString outError;
+        QString filename = m_tcm->getFileName(uuid,outError);
+
         QByteArray fileData = m_tcm->getAndRemoveSession(uuid, error);
         if (fileData.isEmpty()) {
             qDebug() << "AvatarService::DownloadAvatarChunk ::[getAndRemoveSession] :: 错误:" << error;
             return;
         }
 
-        QString filename = m_tcm->getFileName(uuid);
-
-        if (filename.isEmpty()) {
-            // 从 session 记录中读取（需要修改 TempChunkManager 提供该接口，暂时使用默认）
-            filename = QString("avatar_%1.png").arg(QDateTime::currentSecsSinceEpoch());
-        }
-
         // 保存文件到磁盘并插入 files 表
         if (!saveAvatarFile(fileId, filename, fileData, fileId, error)) {
             return;
         }
+
+
     }
 }
 
 
-bool AvatarService::saveAvatarFile(qint64 userId, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError)
+bool AvatarService::saveAvatarFile(qint64 fileid, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError)
 {
     // 获取存储目录
-    QString dir = QCoreApplication::applicationDirPath() + QDir::separator() + "AvatarDir";
+    QString dir = AppConfig::instance().imagesDirectory();
     QDir d;
     if (!d.exists(dir)) {
         if (!d.mkpath(dir)) {
@@ -125,12 +176,15 @@ bool AvatarService::saveAvatarFile(qint64 userId, const QString &filename, const
         }
     }
 
-    // 生成唯一文件名并保存
-    QString uniqueName = QString("avatar_%1_%2_%3.png")
-                             .arg(QString::number(userId))
-                             .arg(QDateTime::currentSecsSinceEpoch())
-                             .arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
-    QString fullPath = QDir(dir).filePath(uniqueName);
+    // // 生成唯一文件名并保存
+    // QString uniqueName = QString("avatar_%1_%2_%3.jpg")
+    //                          .arg(QString::number(fileid))
+    //                          .arg(QDateTime::currentSecsSinceEpoch())
+    //                          .arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
+    // QString fullPath = QDir(dir).filePath(uniqueName);
+
+
+    QString fullPath = QDir(dir).filePath(filename);
 
     QFile f(fullPath);
     if (!f.open(QIODevice::WriteOnly)) {
@@ -146,12 +200,8 @@ bool AvatarService::saveAvatarFile(qint64 userId, const QString &filename, const
     f.close();
 
 
-    // 插入 files 表
-    // FileRepository frepo;
-    // if (!frepo.createFile(userId, QString("avatar"), uniqueName, data.size(), outFileId, outError)) {
-    //     QFile::remove(fullPath);
-    //     return false;
-    // }
+    // 保存文件到数据库
+    DataBaseManage::instance()->UpdateFriendAvatarByAvatarID(fileid,filename);
 
     return true;
 }

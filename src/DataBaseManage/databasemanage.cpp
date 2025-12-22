@@ -258,14 +258,14 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
     // 预编译语句（使用 UPDATE -> INSERT 的可移植 upsert）
     QSqlQuery qUpdateFriend(m_db);
     qUpdateFriend.prepare(
-        "UPDATE friend_info SET username = :username, nickname = :nickname, avatar = :avatar, updated_at = :updated_at "
+        "UPDATE friend_info SET username = :username, nickname = :nickname, avatar = :avatar, updated_at = :updated_at, avatar_file_id = :avatar_file_id "
         "WHERE friend_id = :friend_id;"
         );
 
     QSqlQuery qInsertFriend(m_db);
     qInsertFriend.prepare(
-        "INSERT INTO friend_info (friend_id, username, nickname, avatar, created_at, updated_at) "
-        "VALUES (:friend_id, :username, :nickname, :avatar, :created_at, :updated_at);"
+        "INSERT INTO friend_info (friend_id, username, nickname, avatar, created_at, updated_at, avatar_file_id) "
+        "VALUES (:friend_id, :username, :nickname, :avatar, :created_at, :updated_at, :avatar_file_id);"
         );
 
     QSqlQuery qUpdateRecent(m_db);
@@ -293,15 +293,19 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
         QString nickname = fi.nickname;
         QString avatar = fi.avatarPath;
         int unread = fi.unreadCount;
-
+        qint64 avatar_file_id = fi.avatar_file_id;
         qint64 nowSec = QDateTime::currentSecsSinceEpoch();
 
         // 1) friend_info: update first
         qUpdateFriend.bindValue(":username", username);
         qUpdateFriend.bindValue(":nickname", nickname);
+
         qUpdateFriend.bindValue(":avatar", avatar);
         qUpdateFriend.bindValue(":updated_at", nowSec);
+        qUpdateFriend.bindValue(":avatar_file_id", avatar_file_id);
+
         qUpdateFriend.bindValue(":friend_id", friendId);
+
 
         if (!qUpdateFriend.exec()) {
             qWarning() << "UPDATE friend_info failed for" << friendId << ":" << qUpdateFriend.lastError().text();
@@ -314,8 +318,11 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
             qInsertFriend.bindValue(":friend_id", friendId);
             qInsertFriend.bindValue(":username", username);
             qInsertFriend.bindValue(":nickname", nickname);
+
             qInsertFriend.bindValue(":avatar", avatar);
             qInsertFriend.bindValue(":created_at", nowSec);
+            qUpdateFriend.bindValue(":avatar_file_id", avatar_file_id);
+
             qInsertFriend.bindValue(":updated_at", nowSec);
             if (!qInsertFriend.exec()) {
                 qWarning() << "INSERT friend_info failed for" << friendId << ":" << qInsertFriend.lastError().text();
@@ -400,34 +407,63 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
     return true;
 }
 
-// bool DataBaseManage::addFriend(const int &friendId, const QString &displayName, const QString &avatar, int status, const QString &remark)
-// {
+std::optional<FriendInfo> DataBaseManage::GetFriendAvatarById(qint64 uid)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) {
+        return std::nullopt;
+    }
 
-//     QMutexLocker locker(&m_mutex);
-//     if (!m_db.isValid() || !m_db.isOpen()) {
-//         return false;
-//     }
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        SELECT id, avatar_file_id, avatar
+        FROM friend_info
+        WHERE id = :uid
+        LIMIT 1;
+    )");
+    q.bindValue(":uid", uid);
 
-//     QSqlQuery q(m_db);
-//     q.prepare(R"(
-//         INSERT OR REPLACE INTO friend_info (friend_id, display_name, avatar, status, remark, created_at)
-//         VALUES (:fid, :name, :avatar, :status, :remark, :ctime)
-//     )");
+    if (!q.exec()) {
+        qDebug() << "GetFriendAvatarById failed:" << q.lastError().text();
+        return std::nullopt;
+    }
 
-//     q.bindValue(":fid", friendId);
-//     q.bindValue(":name", displayName);
-//     q.bindValue(":avatar", avatar);
-//     q.bindValue(":status", status);
-//     q.bindValue(":remark", remark);
-//     q.bindValue(":ctime", QDateTime::currentSecsSinceEpoch()); // 或 currentMSecs... 取决于你统一的时间单位
+    if (!q.next()) {
+        // 没查到记录
+        return std::nullopt;
+    }
 
-//     if (!q.exec()) {
-//         qDebug() << "DataBaseMgr::addFriend failed:" << q.lastError().text();
-//         return false;
-//     }
+    FriendInfo info; // 使用默认构造，其余字段保持默认值
 
-//     return true;
-// }
+    info.id = q.value("id").toInt();
+    info.avatarFileId = q.value("avatar_file_id").toString();
+    info.avatar = q.value("avatar").toString();
+
+
+    return info;
+}
+
+bool DataBaseManage::UpdateFriendAvatarByAvatarID(const qint64 avatar_file_id, const QString avatar)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        UPDATE friend_info SET avatar = :avatar WHERE avatar_file_id = :avatar_file_id
+    )");
+
+    q.bindValue(":avatar_file_id", avatar_file_id);
+    q.bindValue(":avatar", avatar);
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseMgr::UpdateFriendAvatarByID failed:" << q.lastError().text();
+        return false;
+    }
+    return true;
+}
+
+
 
 bool DataBaseManage::addChatMessage(const QString &msgId, const QString &fromId, const QString &toId, const QString &content, int type, qint64 timestamp)
 {
@@ -516,16 +552,6 @@ QList<FriendInfo> DataBaseManage::getFriendList() const
         qint64 created_at = query.value(8).toLongLong();
         qint64 updated_at = query.value(9).toLongLong();
 
-        // qDebug() << "id:" << id
-        //          << "friend_id:" << friend_id
-        //          << "username:" << username
-        //          << "nickname:" << nickname
-        //          << "email:" << email
-        //          << "avatar_file_id:" << avatar_file_id
-        //          << "avatar:" << avatar
-        //          << "status:" << status
-        //          << "created_at:" << QDateTime::fromSecsSinceEpoch(created_at).toString()
-        //          << "updated_at:" << (updated_at ? QDateTime::fromSecsSinceEpoch(updated_at).toString() : QString("null"));
 
         FriendInfo fi;
         fi.id = id;

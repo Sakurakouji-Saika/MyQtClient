@@ -36,7 +36,7 @@ public:
     QPixmap getRotatedSource() const;
 
 signals:
-    void updateHeader(const QPixmap& header);
+    void avatarUploaded(const QString header);
 
 private slots:
     void onUpload();
@@ -55,7 +55,7 @@ private:
     void updateScaledPixmap(double scale);
     void drawMaskLayer(QPainter& painter, const QRect& rect);
     QPixmap getCurrentPixmap() const;
-    bool saveHeader(const QPixmap& pixmap);
+    std::optional<QString> saveHeader(const QPixmap& pixmap);
 
 
     // 常量

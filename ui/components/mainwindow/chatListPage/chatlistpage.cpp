@@ -67,7 +67,7 @@ void chatListPage::test()
         qDebug()  << "temp[i].peer_id" << temp[i].peer_id;
         Recent_Data t;
         t.UnreadCount = temp[i].unread_count;
-        t.avatarPath = mgr->getAvatarByFriendId(temp[i].peer_id);
+        t.avatarPath = mgr->GetFriendAvatarById(temp[i].peer_id)->avatar;
 
         qDebug() << "chatListPage::test()::t.avatarPath::" << t.avatarPath;
         qDebug() << "chatListPage::test()::t.avatarPath::用户ID：" << temp[i].peer_id;

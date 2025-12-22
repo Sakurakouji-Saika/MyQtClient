@@ -2,7 +2,8 @@
 #include "ui_change_avatar_page.h"
 
 #include "dragscrollarea.h"
-
+#include <QRandomGenerator>
+#include "../../Src/utils/AppConfig.h"
 
 // 辅助函数：安全地获取 QLabel 中的 QPixmap
 static QPixmap getLabelPixmap(const QLabel* label)
@@ -267,14 +268,16 @@ void Change_Avatar_Page::onOk()
 {
     QPixmap currentPixmap = getLabelPixmap(ui->labelPreview);
     if (!currentPixmap.isNull()) {
-        emit updateHeader(currentPixmap);
 
-        if (saveHeader(currentPixmap)) {
-            qDebug() <<"修改头像成功，已保存到用户目录";
-        } else {
+        std::optional<QString> avatarPath = saveHeader(currentPixmap);
+
+        if(avatarPath.has_value()){
             qDebug() <<"修改头像成功，但保存失败";
-
+            emit avatarUploaded(avatarPath.value());
+        }else{
+            qDebug() <<"修改头像成功，但保存失败";
         }
+
     } else {
         qDebug() <<"还未加载头像";
     }
@@ -292,9 +295,18 @@ void Change_Avatar_Page::onCancel()
     m_sourceHeader = QPixmap();;
 }
 
-bool Change_Avatar_Page::saveHeader(const QPixmap& pixmap)
+std::optional<QString> Change_Avatar_Page::saveHeader(const QPixmap& pixmap)
 {
-    const QString savePath = QCoreApplication::applicationDirPath() + "/user_header.png";
+
+    qint64 ts = QDateTime::currentSecsSinceEpoch();
+    int rand = QRandomGenerator::global()->bounded(1000000);
+
+    QString fileName = QString("avatar_tmp_%1_%2_%3.jpg")
+                           .arg(AppConfig::instance().getUserID())
+                           .arg(ts)
+                           .arg(rand);
+
+    const QString savePath = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
 
     QScrollBar* hBar = ui->previewScrollArea->horizontalScrollBar();
     QScrollBar* vBar = ui->previewScrollArea->verticalScrollBar();
@@ -309,6 +321,11 @@ bool Change_Avatar_Page::saveHeader(const QPixmap& pixmap)
     rect = rect.intersected(QRect(QPoint(0,0), pixmap.size()));
 
     QPixmap cropped = pixmap.copy(rect);
-    return cropped.save(savePath);
+
+    if(cropped.save(savePath)){
+        return fileName;
+    }else{
+        return std::nullopt;
+    }
 }
 

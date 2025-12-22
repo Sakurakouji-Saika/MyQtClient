@@ -19,6 +19,15 @@ public:
     // 主动
     void requestAvatarById(QString file_avatarID);
 
+    void RequestAvatarInfoByUserID(qint64 uid);
+
+
+    void UpoadLoadAvatarStart(const QJsonObject &packet);
+
+    void UpoadLoadAvatarChunk(const QJsonObject &packet);
+
+
+
     // 被动
     void DownloadAvatarStart(const QJsonObject &packet);
 
@@ -32,6 +41,10 @@ private:
 
 signals:
     void requestAvatarByIdFailed(const QString &err);
+
+    void avatarNicknameFetched(const qint64 uid,const qint64 file_id, const QString fileName);
+    void avatarNicknameFetchFailed(const QString err);
+
 
 private:
 

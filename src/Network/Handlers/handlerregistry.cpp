@@ -18,10 +18,9 @@ void handlerregistry::registerAll()
     });
 
     registerHandler(static_cast<int>(Protocol::MessageType::ReceiveImageChunk),[this](const QJsonObject& json){
-
-
         m_sm->avatar()->DownloadAvatarChunk(json);
     });
+
 
 }
 

@@ -29,6 +29,7 @@ bool TempChunkManager::createSession(const QString &uuid, const QString &filenam
     t.receivedChunks = 0;
     m_sessions[uuid] = t;
 
+
     return true;
 }
 
@@ -131,8 +132,41 @@ void TempChunkManager::cleanupExpired(qint64 ttl)
 
 }
 
-QString TempChunkManager::getFileName(const QString &uuid)
+QString TempChunkManager::getFileName(const QString &uuid, QString &outError)
 {
-    return m_sessions[uuid].filename;
+    QMutexLocker locker(&m_mutex);
+
+    if(!m_sessions.contains(uuid)){
+        outError = "The file upload UUID does not exist.";
+        return QString();
+    }
+
+    TempChunk &t = m_sessions[uuid];
+    return t.filename;
+}
+
+void TempChunkManager::setUserID(const QString &uuid, const qint64 &id, QString &outError)
+{
+    QMutexLocker lock(&m_mutex);
+
+    if(m_sessions.contains(uuid)){
+        outError = "File upload session already exists.";
+        return ;
+    }
+
+    m_sessions[uuid].usetID = id;
+}
+
+qint64 TempChunkManager::GetUserID(const QString &uuid, QString &outError)
+{
+    QMutexLocker lock(&m_mutex);
+
+    if(m_sessions.contains(uuid)){
+        outError = "File upload session already exists.";
+        return -1;
+    }
+
+    TempChunk &t = m_sessions[uuid];
+    return t.usetID;
 }
 

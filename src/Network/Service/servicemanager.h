@@ -7,6 +7,7 @@
 class PacketProcessor;
 class SocketClient;
 class AuthService;
+class AvatarService;
 
 
 
@@ -29,6 +30,7 @@ public:
 
 
     AuthService* auth() const { return m_auth; }
+    AvatarService  *avatar() const{ return m_as; }
 
 
 private:
@@ -38,6 +40,7 @@ private:
     SocketClient* m_socket = nullptr;
     PacketProcessor* m_processor = nullptr;
     AuthService* m_auth = nullptr;
+    AvatarService *m_as = nullptr;
 
 };
 
