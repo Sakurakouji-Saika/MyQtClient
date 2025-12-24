@@ -56,7 +56,7 @@ Widget::~Widget()
 void Widget::initProfilePicture()
 {
     // 1. 加载原始图片
-    QPixmap src(":/picture/avatar/1.jpg");
+    QPixmap src(":/picture/avatar/7.jpg");
 
     // 2. 缩放到目标大小（假设 85×85）
     const int size = 86;

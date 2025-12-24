@@ -50,6 +50,10 @@ enum class MessageType: int   {
 
     // ===== 其他杂乱功能 =====
     AvatarFilename   = 9501,   // 查找
+
+    avatarUploadSucceeded   = 9502,   // 用户上传头像成功
+    avatarUploadFailed      = 9503,   // 用户上传头像失败
+    avatarUploadInfo        = 9504,   // 用户上传过程的信息(比如每个文件块 返回的结果信息)
 };
 
 

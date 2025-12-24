@@ -5,8 +5,6 @@
         <file>svg/Setting.svg</file>
         <file>picture/Default_avatar.png</file>
         <file>picture/favicon.ico</file>
-        <file>picture/avatar/1.jpg</file>
-        <file>picture/avatar/2.jpg</file>
         <file>styles/loginPage.css</file>
         <file>styles/mainwindow.css</file>
         <file>svg/More.svg</file>
@@ -33,8 +31,6 @@
         <file>svg/open_file_24.svg</file>
         <file>svg/Notification.svg</file>
         <file>svg/add_group_24.svg</file>
-        <file>picture/avatar/3.jpg</file>
-        <file>picture/avatar/4.jpg</file>
         <file>svg/102_copy.svg</file>
         <file>svg/102_del.svg</file>
         <file>svg/102_open.svg</file>
@@ -49,14 +45,8 @@
         <file>styles/recent_chats.css</file>
         <file>svg/up_Avatar.svg</file>
         <file>picture/transparent.png</file>
-        <file>picture/avatar/5.jpg</file>
-        <file>picture/avatar/8.jpg</file>
-        <file>picture/avatar/10.jpg</file>
-        <file>picture/avatar/11.jpg</file>
         <file>picture/avatar/6.jpg</file>
         <file>picture/avatar/7.jpg</file>
         <file>picture/avatar/9.jpg</file>
-        <file>picture/avatar/12.jpg</file>
-        <file>picture/avatar/0.jpg</file>
     </qresource>
 </RCC>

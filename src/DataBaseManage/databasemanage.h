@@ -122,6 +122,8 @@ public:
     // 更新用户头像数据
     bool UpdateFriendAvatarByAvatarID(const qint64 avatar_file_id, const QString avatar);
 
+    // 更新用户头像完成,将新的文件id 和 文件名 写入到用户表.
+    bool updateUserAvatarById(qint64 userId, qint64 avatarFileId, const QString &avatarFileName);
 
 
 private:

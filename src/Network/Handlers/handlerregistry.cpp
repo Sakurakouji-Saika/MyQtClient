@@ -22,6 +22,15 @@ void handlerregistry::registerAll()
     });
 
 
+    registerHandler(static_cast<int>(Protocol::MessageType::avatarUploadSucceeded),[this](const QJsonObject& json){
+        m_sm->avatar()->avatarUploadSucceeded(json);
+    });
+
+    registerHandler(static_cast<int>(Protocol::MessageType::avatarUploadFailed),[this](const QJsonObject& json){
+        m_sm->avatar()->avatarUploadFailed(json);
+    });
+
+
 }
 
 void handlerregistry::registerHandler(int messageType, JsonHandler handler)

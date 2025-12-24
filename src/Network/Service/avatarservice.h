@@ -22,9 +22,9 @@ public:
     void RequestAvatarInfoByUserID(qint64 uid);
 
 
-    void UpoadLoadAvatarStart(const QJsonObject &packet);
+    void UpoadLoadAvatarStart(const QString &fullFilePath);
 
-    void UpoadLoadAvatarChunk(const QJsonObject &packet);
+    void UpoadLoadAvatarChunk(const QString &uuid, const QString &fullFilePath, QByteArray &fileData, const qint64 &chunk_size,const qint64 &chunk_num);
 
 
 
@@ -33,10 +33,16 @@ public:
 
     void DownloadAvatarChunk(const QJsonObject &packet);
 
+    void avatarUploadSucceeded(const QJsonObject &packet);
+
+    void avatarUploadFailed(const QJsonObject &packet);
+
 private:
 
     // 保存文件到磁盘并插入 files 表
     bool saveAvatarFile(qint64 userId, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError);
+
+    bool readAvatarFile(const QString &fileName, QByteArray &fileData, const qint64 &chunk_size, qint64 &chunk_num);
 
 
 signals:
@@ -50,6 +56,8 @@ private:
 
     QPointer<PacketProcessor> m_pp;
     TempChunkManager * m_tcm;
+
+    QString avatarTempFileUploadPath;
 };
 
 #endif // AVATARSERVICE_H

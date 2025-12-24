@@ -11,6 +11,7 @@
 #include <QThread>
 #include <QJsonArray>
 
+#include "../Network/Service/avatarservice.h"
 
 
 
@@ -104,9 +105,7 @@ MainWindow::MainWindow(QWidget *parent)
         chatList->receiveMessage(r);
     });
 
-    connect(m_CAvatarPG,&Change_Avatar_Page::avatarUploaded,this,[this](QString &avatarPath){
-        m_sm->avatar();
-    });
+
 }
 
 
@@ -280,6 +279,13 @@ void MainWindow::Open_Edit_Avatar_Page()
         // 当窗口被 delete 时，自动把指针置空，避免悬空指针
         connect(m_CAvatarPG,&Change_Avatar_Page::destroyed,this,[this]{
             m_CAvatarPG = nullptr;
+        });
+
+        connect(m_CAvatarPG,&Change_Avatar_Page::avatarUploaded,this,[=](QString &avatarPath){
+
+            qDebug() << avatarPath;
+
+            m_sm->avatar()->UpoadLoadAvatarStart(avatarPath);
         });
 
 

@@ -36,7 +36,7 @@ public:
     QPixmap getRotatedSource() const;
 
 signals:
-    void avatarUploaded(const QString header);
+    void avatarUploaded(QString &avatarPath);
 
 private slots:
     void onUpload();

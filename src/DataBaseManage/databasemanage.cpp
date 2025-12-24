@@ -463,6 +463,31 @@ bool DataBaseManage::UpdateFriendAvatarByAvatarID(const qint64 avatar_file_id, c
     return true;
 }
 
+bool DataBaseManage::updateUserAvatarById(qint64 userId, qint64 avatarFileId, const QString &avatarFileName)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        UPDATE friend_info
+        SET avatar_file_id=:avatar_file_id , avatar=:avatar
+        WHERE id = :uid;
+    )");
+
+    q.bindValue(":avatar_file_id", QString::number(avatarFileId));
+    q.bindValue(":avatar", QString(avatarFileName));
+    q.bindValue(":uid", userId);
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseManage::updateUserAvatarById failed:" << q.lastError().text();
+        return false;
+    } else {
+        qDebug() << "update ok, rowsAffected =" << q.numRowsAffected();
+    }
+
+    return true;
+}
 
 
 bool DataBaseManage::addChatMessage(const QString &msgId, const QString &fromId, const QString &toId, const QString &content, int type, qint64 timestamp)

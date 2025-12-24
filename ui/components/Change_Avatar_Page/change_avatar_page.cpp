@@ -272,10 +272,10 @@ void Change_Avatar_Page::onOk()
         std::optional<QString> avatarPath = saveHeader(currentPixmap);
 
         if(avatarPath.has_value()){
-            qDebug() <<"修改头像成功，但保存失败";
+            qDebug() <<"修改头像成功" << avatarPath.value();
             emit avatarUploaded(avatarPath.value());
         }else{
-            qDebug() <<"修改头像成功，但保存失败";
+            qDebug() <<"修改头像成功，但保存失败" ;
         }
 
     } else {
@@ -323,7 +323,7 @@ std::optional<QString> Change_Avatar_Page::saveHeader(const QPixmap& pixmap)
     QPixmap cropped = pixmap.copy(rect);
 
     if(cropped.save(savePath)){
-        return fileName;
+        return savePath;
     }else{
         return std::nullopt;
     }
