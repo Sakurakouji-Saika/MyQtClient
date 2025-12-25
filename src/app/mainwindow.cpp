@@ -12,7 +12,8 @@
 #include <QJsonArray>
 
 #include "../Network/Service/avatarservice.h"
-
+#include "../widgets/avatar/avatarmanager.h"
+#include "../DataBaseManage/ViewModel/FriendAvatarDTO.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -35,7 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
     // 加载样式
     StyleLoader::loadWidgetStyle(this, qssPath);
 
+
+    // 初始化头像管理
+    initAvatarManager();
+
+    //
     initProfilePicture();
+
+
 
     //初始化 stack 页面(聊天和好友页)
     initStackedWidgetPages();
@@ -48,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     InitSysTrayIcon();
+
+
 
     //``````````````````````````````````````````````````````````
     m_blankPage = new QWidget(this);
@@ -106,6 +116,9 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
+
+
+
 }
 
 
@@ -121,34 +134,37 @@ MainWindow::~MainWindow()
 void MainWindow::initProfilePicture()
 {
 
-    QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
-                DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar);
+    // QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
+    //             DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar);
 
-    // 2. 缩放到目标大小（假设 85×85）
-    const int size = 40;
-    QPixmap scaled = src.scaled(size, size,
-                                Qt::KeepAspectRatioByExpanding,
-                                Qt::SmoothTransformation);
+    // // 2. 缩放到目标大小（假设 85×85）
+    // const int size = 40;
+    // QPixmap scaled = src.scaled(size, size,
+    //                             Qt::KeepAspectRatioByExpanding,
+    //                             Qt::SmoothTransformation);
 
-    // 3. 准备一个透明底的 QPixmap 来绘制圆形剪裁结果
-    QPixmap result(size, size);
-    result.fill(Qt::transparent);
+    // // 3. 准备一个透明底的 QPixmap 来绘制圆形剪裁结果
+    // QPixmap result(size, size);
+    // result.fill(Qt::transparent);
 
-    QPainter painter(&result);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
+    // QPainter painter(&result);
+    // painter.setRenderHint(QPainter::Antialiasing, true);
+    // painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    // 4. 用 QPainterPath 定义一个圆形区域，并裁剪
-    QPainterPath path;
-    path.addEllipse(0, 0, size, size);
-    painter.setClipPath(path);
+    // // 4. 用 QPainterPath 定义一个圆形区域，并裁剪
+    // QPainterPath path;
+    // path.addEllipse(0, 0, size, size);
+    // painter.setClipPath(path);
 
-    // 5. 把缩放后的原图画上去
-    painter.drawPixmap(0, 0, scaled);
-    painter.end();
+    // // 5. 把缩放后的原图画上去
+    // painter.drawPixmap(0, 0, scaled);
+    // painter.end();
 
-    // 6. 设置到 QLabel
-    ui->avatar->setPixmap(result);
+
+    // ui->avatar->setPixmap(result);
+    // // 6. 设置到 QLabel
+
+    ui->avatar->setUserId(AppConfig::instance().getUserID());
 }
 
 void MainWindow::initStackedWidgetPages()
@@ -176,6 +192,19 @@ void MainWindow::initStackedWidgetPages()
     ui->friendSelectorStack->addWidget(chatList);
     ui->friendSelectorStack->addWidget(friendList);
     ui->friendSelectorStack->setCurrentIndex(0);
+}
+
+void MainWindow::initAvatarManager()
+{
+    QList<FriendAvatar> avatarData;
+
+    DataBaseManage::instance()->GetUserAvatarData(avatarData);
+
+    for(auto &t : avatarData){
+        AvatarManager::instance().updateAvatar(t.uid,t.fileName);
+    }
+
+
 }
 
 void MainWindow::loadStyleCloseBtn()

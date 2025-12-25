@@ -13,6 +13,8 @@
 #include "../../DataBaseManage/databasemanage.h"
 #include <QMessageBox>
 
+#include "../../Src/widgets/avatar/avatarmanager.h"
+
 
 AvatarService::AvatarService(PacketProcessor *processor,QObject *parent)
     : QObject{parent},
@@ -237,6 +239,9 @@ void AvatarService::avatarUploadSucceeded(const QJsonObject &packet)
     if(!DataBaseManage::instance()->updateUserAvatarById(uid,file_id,file_name)){
 
     }
+
+    AvatarManager::instance().avatarUpdated(uid,file_name);
+
 
 
 }

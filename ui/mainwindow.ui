@@ -78,7 +78,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="avatar">
+        <widget class="AvatarLabel" name="avatar">
          <property name="minimumSize">
           <size>
            <width>40</width>
@@ -566,6 +566,11 @@
    <class>HoverButton</class>
    <extends>QPushButton</extends>
    <header location="global">hoverbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AvatarLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">avatarlabel.h</header>
   </customwidget>
  </customwidgets>
  <resources>

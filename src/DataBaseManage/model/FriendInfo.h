@@ -18,6 +18,7 @@ struct FriendInfo
     qint64 createdAt;      // 本地记录创建时间（UNIX 秒）
     qint64 updatedAt;      // 服务端最后更新时间（UNIX 秒）
 
+
     // 默认构造函数：id=-1 表示未持久化，status 默认为 "offline",
     // createdAt 默认为当前时间戳，updatedAt 可为 0 表示未知
     FriendInfo()

@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QMutexLocker>
 #include "model/FriendsResponse.h"
+#include "ViewModel/FriendAvatarDTO.h"
 
 DataBaseManage *DataBaseManage::instance()
 {
@@ -487,6 +488,38 @@ bool DataBaseManage::updateUserAvatarById(qint64 userId, qint64 avatarFileId, co
     }
 
     return true;
+}
+
+void DataBaseManage::GetUserAvatarData(QList<FriendAvatar> &result)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return;
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        SELECT friend_id, avatar
+        FROM friend_info;
+    )");
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseMgr::GetUserAvatarData exec failed:" << q.lastError().text();
+        return;
+    }
+
+    QSqlRecord rec = q.record();
+    int idxFriendId = rec.indexOf("friend_id");
+    int idxAvatar = rec.indexOf("avatar");
+    if (idxFriendId < 0 || idxAvatar < 0) {
+        qDebug() << "Expected columns not found in record";
+        return;
+    }
+
+    while (q.next()) {
+        FriendAvatar t;
+        t.uid = q.value(idxFriendId).toLongLong();
+        t.fileName = q.value(idxAvatar).toString();
+        result.append(t);
+    }
 }
 
 

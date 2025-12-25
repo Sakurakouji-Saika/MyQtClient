@@ -17,6 +17,8 @@ enum Add_Friend_Type{
 };
 
 
+class FriendAvatar;
+
 class DataBaseManage : public QObject
 {
     Q_OBJECT
@@ -124,6 +126,9 @@ public:
 
     // 更新用户头像完成,将新的文件id 和 文件名 写入到用户表.
     bool updateUserAvatarById(qint64 userId, qint64 avatarFileId, const QString &avatarFileName);
+
+    // 获取用户头像数据
+    void GetUserAvatarData(QList<FriendAvatar> &result);
 
 
 private:

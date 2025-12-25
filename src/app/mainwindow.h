@@ -24,6 +24,8 @@
 
 
 
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -39,6 +41,8 @@ public:
     void InitSysTrayIcon();
     void initProfilePicture();
     void initStackedWidgetPages();
+    void initAvatarManager();
+
     void loadStyleCloseBtn();
     void Open_Edit_Avatar_Page();
     // 测试下载头像
@@ -71,6 +75,8 @@ private:
     Change_Avatar_Page * m_CAvatarPG = nullptr; // 修改头像页面
 
     ServiceManager * m_sm = nullptr;
+
+
 
     // 主动退出操作时不进行断线匹配
     bool            m_bQuit;

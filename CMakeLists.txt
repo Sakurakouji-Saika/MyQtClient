@@ -55,6 +55,9 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
         find_package(Qt5 REQUIRED COMPONENTS Core)
 find_package(Qt5 REQUIRED COMPONENTS Core)
@@ -123,6 +126,10 @@ find_package(Qt5 REQUIRED COMPONENTS Core)
             src/Network/Service/avatarservice.h src/Network/Service/avatarservice.cpp
             src/Network/Handlers/handlerregistry.h src/Network/Handlers/handlerregistry.cpp
             src/Network/Files/tempchunkmanager.h src/Network/Files/tempchunkmanager.cpp
+            src/widgets/avatar/avatarlabel.h src/widgets/avatar/avatarlabel.cpp
+            src/widgets/avatar/avatarmanager.h src/widgets/avatar/avatarmanager.cpp
+            src/DataBaseManage/ViewModel/FriendAvatarDTO.h
+
 
 
 
@@ -138,6 +145,7 @@ endif()
 # 自己添加的，用于提升类的时候，路径报错的问题
 target_include_directories(MyClient PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/widgets/avatar
     ${CMAKE_CURRENT_SOURCE_DIR}/ui/components/Change_Avatar_Page
     ${CMAKE_CURRENT_SOURCE_DIR}/ui/components/chatListPage/chat-widget
 )
@@ -151,6 +159,9 @@ target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
 target_link_libraries(MyClient PRIVATE Qt5::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
