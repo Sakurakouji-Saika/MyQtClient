@@ -1,7 +1,7 @@
 #include "myapp.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
+// #include <QDesktopWidget>
 #include <QSettings>
 #include <QFile>
 #include <QDir>

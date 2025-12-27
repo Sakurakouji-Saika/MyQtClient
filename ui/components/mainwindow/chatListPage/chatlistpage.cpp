@@ -3,7 +3,7 @@
 #include <QList>
 #include "recent_chats/rc_line.h"
 
-#include "../../Src/DataBaseManage/databasemanage.h"
+#include "../../src/DataBaseManage/databasemanage.h"
 
 #include <QTimer>
 #include <QThread>

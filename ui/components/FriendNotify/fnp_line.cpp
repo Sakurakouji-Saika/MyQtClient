@@ -1,7 +1,7 @@
 #include "fnp_line.h"
 #include "ui_fnp_line.h"
 
-#include "../../Src/utils/utils.h"
+#include "../../src/utils/utils.h"
 FNP_Line::FNP_Line(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::FNP_Line)

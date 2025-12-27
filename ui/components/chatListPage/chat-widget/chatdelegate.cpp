@@ -50,7 +50,8 @@ QSize ChatDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelInd
 
     // Calculate text width
     text.replace('\r', QString());
-    QStringList lines = text.split('\n', QString::KeepEmptyParts);
+
+    QStringList lines = text.split('\n', Qt::KeepEmptyParts);
 
     int maxLineWidth = 0;
     for (const QString &line : lines) {

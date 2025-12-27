@@ -1,11 +1,11 @@
 #include "qqcellline.h"
 #include "ui_qqcellline.h"
-#include "../../Src/utils/StyleLoader.h"
-#include "../../Src/utils/appconfig.h"
+#include "../../src/utils/styleLoader.h"
+#include "../../src/utils/appconfig.h"
 #include <QNetworkReply>
 #include <QNetworkAccessManager>
 #include <QMouseEvent>
-#include "../../Src/utils/utils.h"
+#include "../../src/utils/utils.h"
 
 QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLine, QWidget *parent,const int _id)
     : QWidget(parent)

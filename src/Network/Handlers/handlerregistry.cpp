@@ -4,7 +4,7 @@
 #include "../Service/servicemanager.h"
 #include "../Service/avatarservice.h"
 #include "../PacketProcessor/packetprocessor.h"
-#include "../../Src/utils/comapi/Protocol.h"
+#include "../../src/utils/comapi/Protocol.h"
 
 
 handlerregistry::handlerregistry(ServiceManager *_sm)

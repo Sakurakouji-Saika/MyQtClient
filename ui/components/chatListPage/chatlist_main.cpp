@@ -1,6 +1,6 @@
 #include "chatlist_main.h"
 #include "ui_chatlist_main.h"
-#include "../../src/utils/StyleLoader.h"
+#include "../../src/utils/styleLoader.h"
 #include <QUuid>
 #include <QDir>
 #include <QVBoxLayout>

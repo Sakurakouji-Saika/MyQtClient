@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QFileSystemWatcher>
-#include <HoverButton.h>
+#include "hoverbutton.h"
 #include <QJsonObject>
 #include <QJsonDocument>
 #include "mainwindow.h"

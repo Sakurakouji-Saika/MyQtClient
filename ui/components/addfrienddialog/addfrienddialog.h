@@ -4,12 +4,12 @@
 #include <QWidget>
 #include <QJsonObject>
 
-#include "../../src/utils/StyleLoader.h"
-#include "../../Src/utils/utils.h"
+#include "../../src/utils/styleLoader.h"
+#include "../../src/utils/utils.h"
 
 
 
-#include "../../Src/DataBaseManage/databasemanage.h"
+#include "../../src/DataBaseManage/databasemanage.h"
 
 
 

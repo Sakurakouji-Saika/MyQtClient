@@ -6,7 +6,8 @@
 #include <QMouseEvent>
 #include <QScrollBar>
 #include <QCursor>
-#include <qDebug>
+#include <QDebug>
+
 #include <QScrollArea>
 
 class DragScrollArea : public QScrollArea

@@ -26,7 +26,7 @@ bool DataBaseManage::init(const int &accountId, const QString &basePath)
 
 
     // 如果已初始化且相同 account，直接返回 true
-    if (!m_accountId.isEmpty() && m_accountId == accountId && m_db.isValid() && m_db.isOpen()) {
+    if (!m_accountId.isEmpty() && m_accountId.toInt() == accountId && m_db.isValid() && m_db.isOpen()) {
         qDebug() << "DataBaseManage::init 已初始化过";
         return true;
     }
@@ -37,7 +37,7 @@ bool DataBaseManage::init(const int &accountId, const QString &basePath)
         close();
     }
 
-    m_accountId = accountId;
+    m_accountId = QString::number(accountId);
 
     QDir baseDir(basePath);
 

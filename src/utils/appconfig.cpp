@@ -1,4 +1,4 @@
-#include "AppConfig.h"
+#include "appconfig.h"
 #include <QCoreApplication>
 #include <QSettings>
 #include <QFileInfo>

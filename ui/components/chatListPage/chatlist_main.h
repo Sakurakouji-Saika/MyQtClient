@@ -3,9 +3,9 @@
 
 #include <QWidget>
 #include "chat-widget/chatwidget.h"
-#include "../../Src/DataBaseManage/databasemanage.h"
-#include "../../Src/DataBaseManage/model/ChatRecord.h"
-#include "../../Src/utils/appconfig.h"
+#include "../../src/DataBaseManage/databasemanage.h"
+#include "../../src/DataBaseManage/model/ChatRecord.h"
+#include "../../src/utils/appconfig.h"
 namespace Ui {
 class chatList_Main;
 }

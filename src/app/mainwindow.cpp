@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "../utils/StyleLoader.h"
+#include "../utils/styleLoader.h"
 #include "../DataBaseManage/databasemanage.h"
 #include "../../ui/components/mainwindow/chatListPage/recent_data.h"
 #include <QPainter>

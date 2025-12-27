@@ -4,9 +4,9 @@
 #include <QWidget>
 
 
-#include "../../Src/Network/Service/authservice.h"
-#include "../../Src/Network/Service/servicemanager.h"
-#include "../../src/utils/StyleLoader.h"
+#include "../../src/Network/Service/authservice.h"
+#include "../../src/Network/Service/servicemanager.h"
+#include "../../src/utils/styleLoader.h"
 
 namespace Ui {
 class Registration_Page;

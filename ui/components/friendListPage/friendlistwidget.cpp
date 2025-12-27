@@ -1,11 +1,14 @@
 // FriendListWidget.cpp
+
 #include "friendlistwidget.h"
+
 // #include "qqcellmain.h"
 
 // 在这两行之上，加入：
 #include <QScrollBar>
 
-#include "../../src/utils/StyleLoader.h"
+#include "../../src/utils/styleLoader.h"
+#include "qqcelltitle.h"
 
 
 FriendListWidget::FriendListWidget(QWidget *parent)

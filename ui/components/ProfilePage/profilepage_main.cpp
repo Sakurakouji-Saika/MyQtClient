@@ -3,8 +3,8 @@
 
 #include <QDir>
 
-#include "../../src/utils/StyleLoader.h"
-#include "../../Src/utils/appconfig.h"
+#include "../../src/utils/styleLoader.h"
+#include "../../src/utils/appconfig.h"
 
 ProfilePage_Main::ProfilePage_Main(QWidget *parent)
     : QWidget(parent)

@@ -1,6 +1,6 @@
 #include "friendnotify_page.h"
 #include "ui_friendnotify_page.h"
-#include "../../src/utils/StyleLoader.h"
+#include "../../src/utils/styleLoader.h"
 
 FriendNotify_Page::FriendNotify_Page(QWidget *parent)
     : QWidget(parent)

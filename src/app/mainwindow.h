@@ -10,16 +10,17 @@
 #include <QSystemTrayIcon>
 #include <QGraphicsDropShadowEffect>
 
-#include "../../Src/DataBaseManage/databasemanage.h"
+#include "../../src/DataBaseManage/databasemanage.h"
 #include "../../ui/components/mainwindow/chatListPage/chatlistpage.h"
+#include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
 #include "../../ui/components/mainwindow/friendListPage/friendlistpage.h"
 #include "../../ui/components/ProfilePage/profilepage_main.h"
 #include "../../ui/components/chatListPage/chatlist_main.h"
 #include "../../ui/components/FriendNotify/friendnotify_page.h"
 #include "../../ui/components/addfrienddialog/addfrienddialog.h"
 #include "../../ui/components/Change_Avatar_Page/change_avatar_page.h"
-#include "../../Src/DataBaseManage/model/ChatRecord.h"
-#include "../../Src/Network/Service/servicemanager.h"
+#include "../../src/DataBaseManage/model/ChatRecord.h"
+#include "../../src/Network/Service/servicemanager.h"
 
 
 

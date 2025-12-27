@@ -5,8 +5,8 @@
 #include "ui_friendlistpage.h"
 #include "../../friendListPage/friendlistwidget.h"  // 请确保头文件路径正确
 
-#include "../../Src/DataBaseManage/databasemanage.h"
-#include "../../Src/DataBaseManage/model/FriendInfo.h"     // FriendInfo 定义的头文件
+#include "../../src/DataBaseManage/databasemanage.h"
+#include "../../src/DataBaseManage/model/FriendInfo.h"     // FriendInfo 定义的头文件
 
 friendListPage::friendListPage(QWidget *parent)
     : QWidget(parent)

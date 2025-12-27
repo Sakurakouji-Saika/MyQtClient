@@ -7,13 +7,14 @@
 #include <QCoreApplication>
 
 #include "../PacketProcessor/packetprocessor.h"
-#include "../../Src/utils/comapi/Protocol.h"
+
+#include "../../src/utils/comapi/Protocol.h"
 #include "../Files/tempchunkmanager.h"
-#include "../../utils/AppConfig.h"
+#include "../../utils/appconfig.h"
 #include "../../DataBaseManage/databasemanage.h"
 #include <QMessageBox>
 
-#include "../../Src/widgets/avatar/avatarmanager.h"
+#include "../../src/widgets/avatar/avatarmanager.h"
 
 
 AvatarService::AvatarService(PacketProcessor *processor,QObject *parent)

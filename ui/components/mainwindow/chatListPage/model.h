@@ -6,7 +6,7 @@
 #include <QList>
 #include <QSize>
 #include "recent_data.h"
-#include "../../Src/DataBaseManage/model/ChatRecord.h"
+#include "../../src/DataBaseManage/model/ChatRecord.h"
 
 class Model : public QAbstractListModel
 {

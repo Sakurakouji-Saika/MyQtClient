@@ -5,7 +5,7 @@
 #include <QFile>
 
 #include "FNPData.h"
-#include "../../src/utils/StyleLoader.h"
+#include "../../src/utils/styleLoader.h"
 
 namespace Ui {
 class FNP_Line;

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include "../../src/DataBaseManage/model/FriendInfo.h"
 #include "../../ui/components/friendListPage/friendlistwidget.h"
-#include <qDebug>
+#include <QDebug>
 
 namespace Ui {
 class friendListPage;

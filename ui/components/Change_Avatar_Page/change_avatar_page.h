@@ -12,11 +12,11 @@
 #include <QTimer>
 #include <QPainterPath>
 #include <QPixmap>
-#include <qDebug>
+#include <QDebug>
 #include <QLabel>
 
-#include "../../src/utils/StyleLoader.h"
-#include "../../Src/utils/utils.h"
+#include "../../src/utils/styleLoader.h"
+#include "../../src/utils/utils.h"
 
 
 namespace Ui {

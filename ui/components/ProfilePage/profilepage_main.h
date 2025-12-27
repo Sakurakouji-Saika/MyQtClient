@@ -2,8 +2,8 @@
 #define PROFILEPAGE_MAIN_H
 
 #include <QWidget>
-#include "../../Src/DataBaseManage/model/FriendInfo.h"
-#include "../../Src/utils/utils.h"
+#include "../../src/DataBaseManage/model/FriendInfo.h"
+#include "../../src/utils/utils.h"
 
 namespace Ui {
 class ProfilePage_Main;

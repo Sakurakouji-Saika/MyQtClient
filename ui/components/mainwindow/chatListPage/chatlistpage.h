@@ -2,10 +2,10 @@
 #define CHATLISTPAGE_H
 
 #include <QWidget>
-#include "../../src/utils/StyleLoader.h"
+#include "../../src/utils/styleLoader.h"
 
-#include "../../Src/utils/AutoHideScrollbar/autohidescrollbar.h"
-#include "../../Src/DataBaseManage/model/ChatRecord.h"
+#include "../../src/utils/AutoHideScrollbar/autohidescrollbar.h"
+#include "../../src/DataBaseManage/model/ChatRecord.h"
 
 #include "recent_data.h"
 #include <QMap>

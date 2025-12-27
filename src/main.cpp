@@ -1,7 +1,7 @@
 #include "app/widget.h"
 #include <QtGlobal>
 #include <QProcess>
-#include "utils/StyleLoader.h"
+#include "utils/styleLoader.h"
 #include <QApplication>
 #include "utils/appconfig.h"
 #include "app/mainwindow.h"

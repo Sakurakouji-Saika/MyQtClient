@@ -1,9 +1,10 @@
 #include "rc_line.h"
 #include "ui_rc_line.h"
-#include <qDebug>
+#include <QDebug>
+
 #include <QStyle>
 #include <QDir>
-#include "../../Src/utils/appconfig.h"
+#include "../../src/utils/appconfig.h"
 
 RC_Line::RC_Line(QWidget *parent)
     : QWidget(parent)

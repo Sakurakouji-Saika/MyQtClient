@@ -16,7 +16,7 @@
 
 
 #include "iplineedit.h"
-#include "../utils/StyleLoader.h"
+#include "../utils/styleLoader.h"
 
 
 #include "../app/mainwindow.h"
@@ -25,6 +25,7 @@
 #include "../utils/utils.h"
 
 #include "../Network/Service/avatarservice.h"
+#include "../widgets/hoverbutton.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -89,8 +90,8 @@ void Widget::initProfilePicture()
 
 void Widget::loadStyleCloseBtn()
 {
-    auto btn = ui->closeBtn;
-    auto btn2 = ui->closeBtn_2;
+    HoverButton *btn = ui->closeBtn;
+    HoverButton *btn2 = ui->closeBtn_2;
 
     QIcon icoNormal(":/svg/Close.svg");
     QIcon icoHover( ":/svg/CloseOff.svg");

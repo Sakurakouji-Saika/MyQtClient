@@ -7,7 +7,8 @@
 #include <QPushButton>
 #include <QScrollBar>
 #include <QTimer>
-#include <qDebug>
+#include <QDebug>
+
 
 ChatWidget::ChatWidget(QWidget *parent):
     QWidget(parent),

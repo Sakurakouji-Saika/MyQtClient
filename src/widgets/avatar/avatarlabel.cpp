@@ -1,7 +1,7 @@
 #include "avatarlabel.h"
 
-#include "AvatarLabel.h"
-#include "AvatarManager.h"
+
+#include "avatarmanager.h"
 #include <QPixmap>
 #include <QPixmapCache>
 #include <QFile>
@@ -9,8 +9,8 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QDir>
-#include "../../Src/utils/AppConfig.h"
-#include "../../Src/DataBaseManage/databasemanage.h"
+#include "../../src/utils/appconfig.h"
+#include "../../src/DataBaseManage/databasemanage.h"
 
 AvatarLabel::AvatarLabel(QWidget *parent)
     : QLabel(parent)

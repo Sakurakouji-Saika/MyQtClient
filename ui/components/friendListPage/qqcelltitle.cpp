@@ -2,7 +2,7 @@
 #include "ui_qqcelltitle.h"
 #include <QEvent>
 #include <QMouseEvent>
-#include "../../Src/utils/StyleLoader.h"
+#include "../../src/utils/styleLoader.h"
 
 QQCellTitle::QQCellTitle(const QString &groupName, QWidget *parent)
     : QWidget(parent)

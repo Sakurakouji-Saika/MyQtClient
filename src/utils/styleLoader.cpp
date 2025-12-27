@@ -1,4 +1,4 @@
-#include "StyleLoader.h"
+#include "styleLoader.h"
 
 QString StyleLoader::s_debugResourceRoot = "";
 bool StyleLoader::s_debugEnabled = false; // 默认关闭调试输出

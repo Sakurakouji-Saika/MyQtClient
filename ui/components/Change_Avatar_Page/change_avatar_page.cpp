@@ -3,7 +3,7 @@
 
 #include "dragscrollarea.h"
 #include <QRandomGenerator>
-#include "../../Src/utils/AppConfig.h"
+#include "../../src/utils/appconfig.h"
 
 // 辅助函数：安全地获取 QLabel 中的 QPixmap
 static QPixmap getLabelPixmap(const QLabel* label)

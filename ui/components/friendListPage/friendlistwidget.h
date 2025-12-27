@@ -5,12 +5,15 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QMap>
-#include "QQCellTitle.h"
-#include "../../Src/DataBaseManage/model/FriendInfo.h"
+#include "qqcellline.h"
+
+#include "../../src/DataBaseManage/model/FriendInfo.h"
 #include <QScrollArea>
 #include <QVariant>
 #include <QStyle>     // 为 style()->unpolish()/polish() 提供完整定义
 #include "qqcellline.h"
+
+class QQCellTitle;   // ← 前向声明
 
 class FriendListWidget : public QScrollArea {
     Q_OBJECT
