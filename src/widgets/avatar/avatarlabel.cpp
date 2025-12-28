@@ -27,16 +27,18 @@ void AvatarLabel::setAvatar(qint64 userId,const int window_size) {
 
     m_window_size = window_size;
     m_userId = userId;
-    QString url = AppConfig::instance().imagesDirectory() + QDir::separator() +
-        AvatarManager::instance().avatarUrl(userId);
+    QString url = AvatarManager::instance().avatarUrl(userId);
 
     qDebug() << "AvatarLabel::setUserId:" << url;
+
     if (!url.isEmpty()) loadLocalAvatar(url);
 }
 
 void AvatarLabel::onAvatarUpdated(qint64 userId, const QString &localPath) {
     if (userId != m_userId) return;
     loadLocalAvatar(localPath);
+
+    qDebug() << "AvatarLabel::onAvatarUpdated::localPath" << localPath;
 }
 
 void AvatarLabel::loadLocalAvatar(const QString &localPath) {
@@ -45,9 +47,7 @@ void AvatarLabel::loadLocalAvatar(const QString &localPath) {
         return;
     }
 
-
-    QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
-                DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar);
+    QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +  localPath);
 
     const int size = m_window_size;
     QPixmap scaled = src.scaled(size, size,

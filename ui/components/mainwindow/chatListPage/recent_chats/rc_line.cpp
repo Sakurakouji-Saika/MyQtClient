@@ -26,8 +26,10 @@ void RC_Line::setData(const Recent_Data &m_data)
     QSize avatarSize;
     avatarSize.setWidth(40);
     avatarSize.setHeight(40);
+
+    qDebug() << "RC_Line::setData::m_data.user_id::" << m_data.user_id;
     ui->RCL_Avatar->setAvatar(m_data.user_id,40);
-    // ui->RCL_Avatar->setPixmap(scaledRoundedPixmap(QPixmap(AppConfig::instance().imagesDirectory() + QDir::separator() + m_data.avatarPath ),avatarSize,40));
+
 
     // 设置其他属性
 
@@ -35,11 +37,6 @@ void RC_Line::setData(const Recent_Data &m_data)
 
     QString s = ui->RCL_MessagePreview->fontMetrics().elidedText(m_data.msg,Qt::ElideRight,ui->RCL_MessagePreview->width());
     ui->RCL_MessagePreview->setText(s);
-    // ui->RCL_MessagePreview->adjustSize();
-
-
-
-
 
     // 设置未读数
     int unread = m_data.UnreadCount;
@@ -55,23 +52,14 @@ void RC_Line::setData(const Recent_Data &m_data)
         ui->groupBox->setProperty("class", "no-unread");
     }
 
-
-
     // 设置现实时间
     ui->RCL_LastMsgTime->setText(formatMessageTimeSmart(m_data.msg_time));
-
-
-
-
 
 
     // 强制刷新样式
     ui->groupBox->style()->unpolish(ui->groupBox);
     ui->groupBox->style()->polish(ui->groupBox);
     ui->groupBox->update();
-
-
-
 }
 
 void RC_Line::setData(QVariant m_var)
@@ -94,19 +82,13 @@ Recent_Data RC_Line::recentDataFromVariant(const QVariant &v)
     if (!v.isValid())
         return rd;
 
-    // 1) 如果 QVariant 直接包含 Recent_Data（通过 QVariant::fromValue）
-    //    需要先确保元类型 id 已存在
     if (v.canConvert<Recent_Data>()) {
-        // 直接取出
         rd = v.value<Recent_Data>();
         return rd;
     }
 
-    // 2) 如果 QVariant 是一个 map（QVariantMap / JS 对象）
-    //    支持 v.toMap()（对 QVariantMap 安全）
     if (v.canConvert<QVariantMap>()) {
         QVariantMap m = v.toMap();
-        // 根据你 map 的 key 名称来取值（下面用之前建议的 key）
         rd.avatarPath  = m.value("avatarPath").toString();
         rd.msg         = m.value("msg").toString();
         rd.user_id     = m.value("user_id").toInt();
@@ -117,10 +99,6 @@ Recent_Data RC_Line::recentDataFromVariant(const QVariant &v)
         return rd;
     }
 
-    // 3) 若 QVariant 本身就是字符串（可能是 JSON），可考虑解析（可选）
-    // if (v.type() == QVariant::String) { ... parse JSON ... }
-
-    // 4) 其他情况：尝试按常见键转换（健壮性补充）
     if (v.type() == QVariant::Map) { // 兼容旧 Qt
         QVariantMap m = v.toMap();
         rd.avatarPath  = m.value("avatarPath").toString();
@@ -133,6 +111,5 @@ Recent_Data RC_Line::recentDataFromVariant(const QVariant &v)
         return rd;
     }
 
-    // 若仍不能转换，返回默认构造的 rd（所有字段为默认）
     return rd;
 }

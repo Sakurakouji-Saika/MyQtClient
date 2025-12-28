@@ -232,7 +232,7 @@ void AvatarService::avatarUploadSucceeded(const QJsonObject &packet)
         QMessageBox::information(nullptr,tr("提示"),tr("修改本地临时上传头像文件名失败！"));
     }
 
-    qDebug() << "更新用户头像失败"
+    qDebug() << "更新用户头像信息"
              << "\t uid:" << uid
              << "\t file_id" << file_id
              << "\t file_name" << file_name;
@@ -242,8 +242,6 @@ void AvatarService::avatarUploadSucceeded(const QJsonObject &packet)
     }
 
     AvatarManager::instance().avatarUpdated(uid,file_name);
-
-
 
 }
 

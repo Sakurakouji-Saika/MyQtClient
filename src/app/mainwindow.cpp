@@ -133,37 +133,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::initProfilePicture()
 {
-
-    // QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
-    //             DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar);
-
-    // // 2. 缩放到目标大小（假设 85×85）
-    // const int size = 40;
-    // QPixmap scaled = src.scaled(size, size,
-    //                             Qt::KeepAspectRatioByExpanding,
-    //                             Qt::SmoothTransformation);
-
-    // // 3. 准备一个透明底的 QPixmap 来绘制圆形剪裁结果
-    // QPixmap result(size, size);
-    // result.fill(Qt::transparent);
-
-    // QPainter painter(&result);
-    // painter.setRenderHint(QPainter::Antialiasing, true);
-    // painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-
-    // // 4. 用 QPainterPath 定义一个圆形区域，并裁剪
-    // QPainterPath path;
-    // path.addEllipse(0, 0, size, size);
-    // painter.setClipPath(path);
-
-    // // 5. 把缩放后的原图画上去
-    // painter.drawPixmap(0, 0, scaled);
-    // painter.end();
-
-
-    // ui->avatar->setPixmap(result);
-    // // 6. 设置到 QLabel
-
     ui->avatar->setAvatar(AppConfig::instance().getUserID(),40);
 }
 

@@ -26,7 +26,6 @@ signals:
 private:
     explicit AvatarManager(QObject *parent = nullptr);
 
-    Q_DISABLE_COPY(AvatarManager)
 
     mutable QReadWriteLock m_lock;
     QHash<qint64, QString> m_map;

@@ -53,31 +53,15 @@ void friendListPage::init()
 
     friendList->setFriendsForGroup("家人", friendsFamily);
 
-    // 4. 连接信号示例（可选）
     QObject::connect(friendList, &FriendListWidget::friendClicked,
                      [this](const FriendInfo &fi){
                          qDebug() << "你点击了：" << fi.username << "(ID:" << fi.friendId << ")";
 
                          emit signals_open_profile_page(fi);
-
-                         // if(m_profile_main != nullptr){
-                         //     delete m_profile_main;
-                         // }
-
-                         // m_profile_main = new ProfilePage_Main(this);
-                         // m_profile_main->addInfo(fi);
-                         // m_profile_main->show();
-
-                         // connect(m_profile_main,&ProfilePage_Main::open_friend_chat_page,[]{
-                         //     qDebug() << "12312312312";
-                         // });
-
                      });
 
     QObject::connect(friendList, &FriendListWidget::groupToggled,
                      [&](const QString &grp, bool open){
                          qDebug() << (open ? "展开了分组：" : "收起了分组：") << grp;
-                         // 如果你想在展开时再动态加载：
-                         // if (open) { 调用后台接口，然后 friendList->setFriendsForGroup(grp, list); }
                      });
 }
