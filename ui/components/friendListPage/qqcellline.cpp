@@ -7,7 +7,7 @@
 #include <QMouseEvent>
 #include "../../src/utils/utils.h"
 
-QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLine, QWidget *parent,const int _id)
+QQCellLine::QQCellLine(const qint64 &uid,const QString &name, bool isOnLine, QWidget *parent,const int _id)
     : QWidget(parent)
     , ui(new Ui::QQCellLine)
     , m_user_id(_id)
@@ -37,7 +37,7 @@ QQCellLine::QQCellLine(const QString &avatarUrl,const QString &name, bool isOnLi
     //自动缩放图片内容
     ui->labHeadeImg->setScaledContents(true);
 
-    setAvatar(avatarUrl);
+    setAvatar(uid);
 
     ui->labFriendName->setText(name);
 
@@ -53,51 +53,9 @@ QQCellLine::~QQCellLine()
     delete ui;
 }
 
-void QQCellLine::setAvatar(const QString &avatarUrl)
+void QQCellLine::setAvatar(const qint64 &uid)
 {
-
-    QString FileAvatarUrl = AppConfig::instance().imagesDirectory() +"/" +avatarUrl;
-
-
-    // 如果是本地文件
-    if (QFile::exists(FileAvatarUrl)) {
-        QPixmap px(FileAvatarUrl);
-
-        int cornerRadius = 18;  // 圆角半径，根据你的需求调整
-
-        QSize s;
-        s.setHeight(40);
-        s.setWidth(40);
-
-
-        QPixmap rounded = scaledRoundedPixmap(px,s ,cornerRadius);
-
-        ui->labHeadeImg->setPixmap(rounded);
-    } else {
-        // 简单示例：如果是 URL，可异步加载
-        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        connect(mgr, &QNetworkAccessManager::finished, this, [this,mgr](QNetworkReply *reply){
-            if (reply->error() == QNetworkReply::NoError) {
-                QByteArray data = reply->readAll();
-                QPixmap px;
-                px.loadFromData(data);
-
-
-                QSize s;
-                s.setHeight(40);
-                s.setWidth(40);
-
-
-                int cornerRadius = 20;  // 圆角半径，根据你的需求调整
-                QPixmap rounded = scaledRoundedPixmap(px,s, cornerRadius);
-
-                ui->labHeadeImg->setPixmap(rounded);
-            }
-            reply->deleteLater();
-            mgr->deleteLater();
-        });
-        mgr->get(QNetworkRequest(QUrl(avatarUrl)));
-    }
+    ui->labHeadeImg->setAvatar(uid,40);
 }
 
 void QQCellLine::setName(const QString &name)

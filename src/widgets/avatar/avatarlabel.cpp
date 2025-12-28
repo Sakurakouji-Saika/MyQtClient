@@ -23,8 +23,9 @@ AvatarLabel::AvatarLabel(QWidget *parent)
     setAlignment(Qt::AlignCenter);
 }
 
-void AvatarLabel::setUserId(qint64 userId) {
+void AvatarLabel::setAvatar(qint64 userId,const int window_size) {
 
+    m_window_size = window_size;
     m_userId = userId;
     QString url = AppConfig::instance().imagesDirectory() + QDir::separator() +
         AvatarManager::instance().avatarUrl(userId);
@@ -48,13 +49,11 @@ void AvatarLabel::loadLocalAvatar(const QString &localPath) {
     QPixmap src(AppConfig::instance().imagesDirectory() + QDir::separator() +
                 DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar);
 
-    // 2. 缩放到目标大小（假设 85×85）
-    const int size = 40;
+    const int size = m_window_size;
     QPixmap scaled = src.scaled(size, size,
                                 Qt::KeepAspectRatioByExpanding,
                                 Qt::SmoothTransformation);
 
-    // 3. 准备一个透明底的 QPixmap 来绘制圆形剪裁结果
     QPixmap result(size, size);
     result.fill(Qt::transparent);
 
@@ -62,12 +61,10 @@ void AvatarLabel::loadLocalAvatar(const QString &localPath) {
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
-    // 4. 用 QPainterPath 定义一个圆形区域，并裁剪
     QPainterPath path;
     path.addEllipse(0, 0, size, size);
     painter.setClipPath(path);
 
-    // 5. 把缩放后的原图画上去
     painter.drawPixmap(0, 0, scaled);
     painter.end();
 

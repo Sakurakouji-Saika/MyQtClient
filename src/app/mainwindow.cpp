@@ -164,7 +164,7 @@ void MainWindow::initProfilePicture()
     // ui->avatar->setPixmap(result);
     // // 6. 设置到 QLabel
 
-    ui->avatar->setUserId(AppConfig::instance().getUserID());
+    ui->avatar->setAvatar(AppConfig::instance().getUserID(),40);
 }
 
 void MainWindow::initStackedWidgetPages()

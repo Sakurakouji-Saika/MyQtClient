@@ -26,7 +26,8 @@ void RC_Line::setData(const Recent_Data &m_data)
     QSize avatarSize;
     avatarSize.setWidth(40);
     avatarSize.setHeight(40);
-    ui->RCL_Avatar->setPixmap(scaledRoundedPixmap(QPixmap(AppConfig::instance().imagesDirectory() + QDir::separator() + m_data.avatarPath ),avatarSize,40));
+    ui->RCL_Avatar->setAvatar(m_data.user_id,40);
+    // ui->RCL_Avatar->setPixmap(scaledRoundedPixmap(QPixmap(AppConfig::instance().imagesDirectory() + QDir::separator() + m_data.avatarPath ),avatarSize,40));
 
     // 设置其他属性
 

@@ -144,7 +144,7 @@
       <item>
        <widget class="QSlider" name="sliderScale">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Orientation::Horizontal</enum>
         </property>
        </widget>
       </item>

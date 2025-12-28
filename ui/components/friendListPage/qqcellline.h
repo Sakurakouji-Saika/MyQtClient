@@ -12,11 +12,11 @@ class QQCellLine : public QWidget
     Q_OBJECT
 
 public:
-    explicit QQCellLine(const QString &avatarUrl,const QString &name,bool isOnLine = true,QWidget *parent = nullptr,const int user_id = 0);
+    explicit QQCellLine(const qint64 &uid,const QString &name,bool isOnLine = true,QWidget *parent = nullptr,const int user_id = 0);
     ~QQCellLine();
 
     // 接口：设置头像（传入本地路径或网络 URL）
-    void setAvatar(const QString &avatarUrl);
+    void setAvatar(const qint64 &uid);
     // 接口：设置好友名称
     void setName(const QString &name);
     // 接口：设置在线状态

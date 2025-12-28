@@ -30,7 +30,8 @@ void ProfilePage_Main::addInfo(FriendInfo info)
     QSize avatarSize;
     avatarSize.setWidth(90);
     avatarSize.setHeight(90);
-    ui->Avatar->setPixmap(scaledRoundedPixmap(QPixmap(AppConfig::instance().imagesDirectory() + QDir::separator() + info.avatar),avatarSize,100));
+    ui->Avatar->setAvatar(info.id,90);
+    // ui->Avatar->setPixmap(scaledRoundedPixmap(QPixmap(AppConfig::instance().imagesDirectory() + QDir::separator() + info.avatar),avatarSize,100));
 
     m_info = info;
 
