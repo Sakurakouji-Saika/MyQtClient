@@ -43,21 +43,15 @@ MainWindow::MainWindow(QWidget *parent)
     //
     initProfilePicture();
 
-
-
     //初始化 stack 页面(聊天和好友页)
     initStackedWidgetPages();
 
     //设置关闭按钮样式
     loadStyleCloseBtn();
 
-
     m_bQuit = false;
 
-
     InitSysTrayIcon();
-
-
 
     //``````````````````````````````````````````````````````````
     m_blankPage = new QWidget(this);
@@ -78,6 +72,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(friendList,&friendListPage::signals_open_profile_page,[this](const FriendInfo &fi){
         ui->chatDetailStack->setCurrentIndex(1);
         m_profile_main_page->addInfo(fi);
+
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: white; }");
     });
 
@@ -100,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     connect(m_chatlist_page, &chatList_Main::MY_SeedMsg, this, [this](const ChatRecord &_CR){
-        // QString peerId = (_CR.fromId == AppConfig::UserID()) ? _CR.toId : _CR.fromId;
+
         int peerId = _CR.toId;
         Recent_Data r;
         r.user_id = peerId;
@@ -108,20 +103,16 @@ MainWindow::MainWindow(QWidget *parent)
         r.msg_time = QDateTime::fromSecsSinceEpoch(_CR.timestamp);
         r.timestamp = _CR.timestamp;
         r.avatarPath = DataBaseManage::instance()->GetFriendAvatarById(peerId)->avatar;
+        r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + AvatarManager::instance().avatarUrl(r.user_id);
+
+        qDebug() << "connect(m_chatlist_page, &chatList_Main::MY_SeedMsg::" <<  r.avatarPath;
+
         r.userName = DataBaseManage::instance()->getDisplayNameByFriendId(peerId);
-        // r.UnreadCount = (_CR.fromId == AppConfig::UserID()) ? 0 : DataBaseManage::instance()->getTotalUnreadCount();
         r.UnreadCount = 0;
 
         chatList->receiveMessage(r);
     });
-
-
-
-
-
 }
-
-
 
 MainWindow::~MainWindow()
 {
@@ -172,8 +163,6 @@ void MainWindow::initAvatarManager()
     for(auto &t : avatarData){
         AvatarManager::instance().updateAvatar(t.uid,t.fileName);
     }
-
-
 }
 
 void MainWindow::loadStyleCloseBtn()
@@ -241,9 +230,6 @@ void MainWindow::SltTrayIcoClicked(QSystemTrayIcon::ActivationReason reason)
             break;
     }
 }
-
-
-
 
 void MainWindow::SltTrayIconMenuClicked(QAction *action)
 {

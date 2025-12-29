@@ -155,7 +155,6 @@ void chatListPage::on_showListContextMenu(const QPoint &pos)
                 w->deleteLater();
             }
 
-
             // 3) 从 model 删除行
             if (m_model) {
                 m_model->removeRow(row);
@@ -164,8 +163,6 @@ void chatListPage::on_showListContextMenu(const QPoint &pos)
     }else if(act == aCopy){
         QClipboard *clip = QApplication::clipboard();
         clip->setText(index.data(user_id_Role).toString());
-
-
 
     }else if(act == aCustom){
 
@@ -225,15 +222,20 @@ void chatListPage::onModelDataChanged(const QModelIndex &topLeft, const QModelIn
 
     int start = topLeft.row();
     int end = bottomRight.row();
+
     for (int r = start; r <= end; ++r) {
+
         QModelIndex idx = m_model->index(r, 0);
         if (!idx.isValid()) continue;
 
         QVariant v = m_model->data(idx, all_data_Role);
         RC_Line *w = qobject_cast<RC_Line*>(ui->listView->indexWidget(idx));
+
         if (w) {
+
             w->setData(v);
         } else {
+
             // 如果没有 widget，则创建并绑定，确保 UI 始终与 model 一致
             RC_Line *nw = new RC_Line;
             nw->setFixedHeight(72);

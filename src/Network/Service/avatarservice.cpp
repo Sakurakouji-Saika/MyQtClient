@@ -238,10 +238,10 @@ void AvatarService::avatarUploadSucceeded(const QJsonObject &packet)
              << "\t file_name" << file_name;
 
     if(!DataBaseManage::instance()->updateUserAvatarById(uid,file_id,file_name)){
-
+        qDebug() << "sql faill::[DataBaseManage::instance()->updateUserAvatarById]::" << uid;
     }
 
-    AvatarManager::instance().avatarUpdated(uid,file_name);
+    AvatarManager::instance().updateAvatar(uid,file_name);
 
 }
 

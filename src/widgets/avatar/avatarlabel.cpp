@@ -16,7 +16,7 @@ AvatarLabel::AvatarLabel(QWidget *parent)
     : QLabel(parent)
 {
     // 订阅 AvatarManager 的广播（QueuedConnection 跨线程安全）
-    connect(&AvatarManager::instance(), &AvatarManager::avatarUpdated,
+    connect(&AvatarManager::instance(), &AvatarManager::signalsAvatarUpdated,
             this, &AvatarLabel::onAvatarUpdated, Qt::QueuedConnection);
 
     setScaledContents(false);
@@ -27,6 +27,7 @@ void AvatarLabel::setAvatar(qint64 userId,const int window_size) {
 
     m_window_size = window_size;
     m_userId = userId;
+
     QString url = AvatarManager::instance().avatarUrl(userId);
 
     qDebug() << "AvatarLabel::setUserId:" << url;
@@ -42,6 +43,7 @@ void AvatarLabel::onAvatarUpdated(qint64 userId, const QString &localPath) {
 }
 
 void AvatarLabel::loadLocalAvatar(const QString &localPath) {
+
     if (localPath.isEmpty()) {
         clear();
         return;
@@ -68,34 +70,6 @@ void AvatarLabel::loadLocalAvatar(const QString &localPath) {
     painter.drawPixmap(0, 0, scaled);
     painter.end();
 
-
-
-
     setPixmap(result);
 
-
-
-
-
-
-
-    // // 2) 直接从文件按字节读取，避免某些平台/驱动的文件缓存问题
-    // QFile f(localPath);
-    // if (!f.open(QIODevice::ReadOnly)) {
-    //     // 无法打开，显示默认或清空
-    //     clear();
-    //     return;
-    // }
-    // QByteArray data = f.readAll();
-    // f.close();
-
-    // QPixmap pix;
-    // if (pix.loadFromData(data)) {
-    //     // 可同时把渲染后的 pix 存入 QPixmapCache（以便复用）
-    //     QPixmap scaled = pix.scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    //     QPixmapCache::insert(scaled);
-    //     setPixmap(scaled);
-    // } else {
-    //     clear();
-    // }
 }

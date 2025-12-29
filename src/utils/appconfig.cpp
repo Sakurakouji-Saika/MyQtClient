@@ -38,7 +38,7 @@ void AppConfig::initialize(const QString &iniFilePath)
     databaseDir     = QDir(dataDir).filePath("database");
     filesDir        = QDir(dataDir).filePath(QStringLiteral("files"));
     imagesDir       = QDir(dataDir).filePath(QStringLiteral("images"));
-
+    Resources       = QDir(dataDir).filePath(QStringLiteral("resources"));
 
     ensureDirectories();
 
@@ -164,6 +164,7 @@ void AppConfig::ensureDirectories()
     ensure(databaseDir);
     ensure(imagesDir);
     ensure(filesDir);
+    ensure(Resources);
 }
 
 void AppConfig::extractAvatarImages() const
@@ -232,4 +233,9 @@ void AppConfig::extractAvatarImages() const
             qDebug() << "解压头像到:" << targetPath;
         }
     }
+}
+
+QString AppConfig::resourcesDirectory() const
+{
+    return Resources;
 }

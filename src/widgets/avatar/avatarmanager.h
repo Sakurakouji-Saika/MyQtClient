@@ -2,7 +2,7 @@
 #define AVATARMANAGER_H
 
 #include <QObject>
-#include <QHash>
+#include <QMap>
 #include <QString>
 #include <QReadWriteLock>
 
@@ -17,18 +17,17 @@ public:
     QString avatarUrl(qint64 userId) const;
     void updateAvatar(qint64 userId, const QString &localPath);
 
-
-
 signals:
 
-    void avatarUpdated(qint64 userId, const QString &newLocalPath);
+    void signalsAvatarUpdated(qint64 userId, const QString &newLocalPath);
 
 private:
     explicit AvatarManager(QObject *parent = nullptr);
 
 
     mutable QReadWriteLock m_lock;
-    QHash<qint64, QString> m_map;
+
+    QMap<qint64, QString> m_map;
 };
 
 

@@ -85,19 +85,9 @@ void Model::my_diy_sort(bool descending)
 
     // 通知视图刷新
     endResetModel();
-
-
-
 }
 
-// void Model::update_Item_At(int row, const Recent_Data &newData)
-// {
-//     if (row < 0 || row >= m_list_data.size()) return;
-//     m_list_data[row] = newData;
-//     // 通知视图该行数据已更改
-//     QModelIndex idx = index(row, 0);
-//     emit dataChanged(idx, idx, { all_data_Role, msg_Role, unread_count_Role, timestamp_Role });
-// }
+
 
 void Model::addItemFront(const Recent_Data &data)
 {
@@ -111,6 +101,7 @@ void Model::addItemFront(const Recent_Data &data)
             return;
         }
     }
+
 
     beginInsertRows(QModelIndex(), 0, 0);
     m_list_data.insert(0, data);

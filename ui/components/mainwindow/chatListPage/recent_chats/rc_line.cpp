@@ -32,7 +32,6 @@ void RC_Line::setData(const Recent_Data &m_data)
 
 
     // 设置其他属性
-
     ui->RCL_UserName->setText(m_data.userName);
 
     QString s = ui->RCL_MessagePreview->fontMetrics().elidedText(m_data.msg,Qt::ElideRight,ui->RCL_MessagePreview->width());

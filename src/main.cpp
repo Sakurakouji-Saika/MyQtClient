@@ -22,10 +22,10 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    qWarning() << "Test warning message";
+    AppConfig::instance();
 
     StyleLoader::setDebugEnabled(false);
-    StyleLoader::setDebugResourceRoot("C:/Users/Moe/Desktop/MyClient/src/resources");
+    StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
 
     AppConfig::instance().initialize();
 

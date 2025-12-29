@@ -37,6 +37,7 @@ public:
     QString databaseDirectory() const;
     QString imagesDirectory() const;
     QString filesDirectory() const;
+    QString resourcesDirectory() const;
 
     // === 文件操作 ===
     bool save() const;
@@ -62,6 +63,7 @@ private:
     QString databaseDir;    // 存放用户数据的目录
     QString imagesDir;      // 存放用户图片的目录
     QString filesDir;       // 存放用户文件的目录
+    QString Resources;      //
 
     bool initialized;       // 是否已初始化
     bool dbInitialized;     // 数据库是否初始化

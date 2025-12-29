@@ -113,8 +113,9 @@ void chatList_Main::on_btn_pushMsg_clicked()
         emit MY_SeedMsg(cr);
         qDebug() << "chatlist_main: emitted SeedMsg -> peer:" << cr.toId << " msg:" << cr.content;
 
+
     } else {
-        // QMessageBox::warning(this, tr("发送失败"), tr("消息发送失败，请检查网络或重试。"));
+
         qDebug() << "chatlist_main: addChatMessageAndUpdateRecent failed for peer:" << m_user_id << " msg:" << t;
     }
 
