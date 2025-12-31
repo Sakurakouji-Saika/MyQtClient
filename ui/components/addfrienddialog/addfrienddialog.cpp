@@ -44,16 +44,22 @@ void addfrienddialog::on_add_friend_btn_clicked()
         return;
     }
 
-
-
-
     // 如果想隐藏整个 AF_userInfo：
     if (!ui->AF_userInfo) return;
     ui->AF_userInfo->setVisible(true);
 
+    
+
+
 
 }
 
+
+
+
+
+
+// bu zhi dao you shen men yong de han shu
 void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info)
 {
     qDebug() << "void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info) 触发";
@@ -64,17 +70,11 @@ void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info)
     int status = dataObj.value("status").toInt();
 
 
-
-
-
     QString headAvatar = dataObj.value("head").toString();
 
     QJsonObject json;
     json.insert("from", name);
     json.insert("id", -2);
-
-
-
 
 
 

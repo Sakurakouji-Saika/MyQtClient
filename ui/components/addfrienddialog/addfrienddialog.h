@@ -39,6 +39,7 @@ private slots:
 private:
 
 
+
     Ui::addfrienddialog *ui;
 
 };
