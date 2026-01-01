@@ -194,6 +194,7 @@ if (QT_VERSION_MAJOR GREATER_EQUAL 6)
     qt_add_executable(MyClient
         MANUAL_FINALIZATION
         ${COMMON_SOURCES}
+        src/Network/Service/friendservice.h src/Network/Service/friendservice.cpp
     )
 
     # 如果有 .qrc，推荐使用 qt_add_resources（Qt6）

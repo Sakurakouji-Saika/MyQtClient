@@ -1,7 +1,8 @@
 #include "addfrienddialog.h"
 #include "ui_addfrienddialog.h"
 #include <QMessageBox>
-
+#include "../../src/Network/Service/servicemanager.h"
+#include "../../Network/Service/friendservice.h"
 
 addfrienddialog::addfrienddialog(QWidget *parent)
     : QWidget(parent)
@@ -21,6 +22,11 @@ addfrienddialog::addfrienddialog(QWidget *parent)
 addfrienddialog::~addfrienddialog()
 {
     delete ui;
+}
+
+void addfrienddialog::setNetWork(ServiceManager *_sm)
+{
+    m_sm =_sm;
 }
 
 
@@ -48,9 +54,14 @@ void addfrienddialog::on_add_friend_btn_clicked()
     if (!ui->AF_userInfo) return;
     ui->AF_userInfo->setVisible(true);
 
-    
+    FriendService *m_fs = m_sm->friendApi();
+    m_fs->search_friends(user_id.toLongLong());
 
+    connect(m_fs,&FriendService::SearchFriednSuccessSignals,this,[this](qint64 uid, QString userName, QString nickname, qint64 avatar_file_id, QString avatar){
+        qDebug() << "addfrienddialog::on_add_friend_btn_clicked::username::" << userName;
+        ui->Af_userName->setText(userName);
 
+    });
 
 }
 
@@ -78,8 +89,8 @@ void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info)
 
 
 
-    ui->Af_user_2_lab->setText(name);
-    ui->Af_user_2_lab_2->setText("ID:" + QString::number(id));
+    ui->Af_userName->setText(name);
+    ui->Af_userID->setText("ID:" + QString::number(id));
 
 
 

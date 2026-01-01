@@ -1,6 +1,7 @@
 #include "servicemanager.h"
 #include "../socketclient.h"
 #include "authservice.h"
+#include "friendservice.h"
 #include "../PacketProcessor/packetprocessor.h"
 
 #include "../../utils/appconfig.h"
@@ -25,6 +26,7 @@ void ServiceManager::init()
     m_processor = new PacketProcessor(m_socket,this);
     m_auth = new AuthService(m_processor,this);
     m_as = new AvatarService(m_processor,this);
+    m_fs = new FriendService(m_processor,this);
 
 }
 

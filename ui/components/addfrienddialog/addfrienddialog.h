@@ -12,7 +12,7 @@
 #include "../../src/DataBaseManage/databasemanage.h"
 
 
-
+class ServiceManager;
 namespace Ui {
 class addfrienddialog;
 }
@@ -25,8 +25,7 @@ public:
     explicit addfrienddialog(QWidget *parent = nullptr);
     ~addfrienddialog();
 
-
-
+    void setNetWork(ServiceManager *_sm);
 
     void on_return_addFriend_Info(const QJsonValue &info);
 
@@ -38,9 +37,9 @@ private slots:
 
 private:
 
-
-
     Ui::addfrienddialog *ui;
+
+    ServiceManager *m_sm;
 
 };
 

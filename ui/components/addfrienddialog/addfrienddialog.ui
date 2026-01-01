@@ -157,14 +157,14 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QLabel" name="Af_user_2_lab">
+             <widget class="QLabel" name="Af_userName">
               <property name="text">
                <string>用户名</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="Af_user_2_lab_2">
+             <widget class="QLabel" name="Af_userID">
               <property name="text">
                <string>QQ号</string>
               </property>
