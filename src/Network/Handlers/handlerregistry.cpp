@@ -3,6 +3,7 @@
 
 #include "../Service/servicemanager.h"
 #include "../Service/avatarservice.h"
+#include "../Service/friendservice.h"
 #include "../PacketProcessor/packetprocessor.h"
 #include "../../src/utils/comapi/Protocol.h"
 
@@ -29,6 +30,12 @@ void handlerregistry::registerAll()
     registerHandler(static_cast<int>(Protocol::MessageType::avatarUploadFailed),[this](const QJsonObject& json){
         m_sm->avatar()->avatarUploadFailed(json);
     });
+
+
+    // registerHandler(static_cast<int>(Protocol::MessageType::SearchFriend),[this](const QJsonObject& json){
+    //     m_sm->friendApi()
+    // });
+
 
 
 }

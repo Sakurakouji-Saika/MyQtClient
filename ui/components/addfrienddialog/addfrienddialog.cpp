@@ -43,12 +43,12 @@ void addfrienddialog::on_add_friend_btn_clicked()
         return;
     }
 
-    if(DataBaseManage::instance()->isFriend(user_id.toInt())){
-        QMessageBox msgBox;
-        msgBox.setText("该账号已是好友");
-        msgBox.exec();
-        return;
-    }
+    // if(DataBaseManage::instance()->isFriend(user_id.toInt())){
+    //     QMessageBox msgBox;
+    //     msgBox.setText("该账号已是好友");
+    //     msgBox.exec();
+    //     return;
+    // }
 
     // 如果想隐藏整个 AF_userInfo：
     if (!ui->AF_userInfo) return;

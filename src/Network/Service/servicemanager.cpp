@@ -24,6 +24,8 @@ void ServiceManager::init()
 
     m_socket = new SocketClient(this);
     m_processor = new PacketProcessor(m_socket,this);
+
+
     m_auth = new AuthService(m_processor,this);
     m_as = new AvatarService(m_processor,this);
     m_fs = new FriendService(m_processor,this);

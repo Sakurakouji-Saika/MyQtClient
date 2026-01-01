@@ -372,7 +372,7 @@ void MainWindow::on_searchBtn_clicked()
 
         if (!m_addfriend) {
             m_addfriend = new addfrienddialog();
-
+            m_addfriend->setNetWork(m_sm);
 
             m_addfriend->setAttribute(Qt::WA_DeleteOnClose);
 

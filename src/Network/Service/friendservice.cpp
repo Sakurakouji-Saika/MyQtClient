@@ -23,7 +23,10 @@ void FriendService::search_friends(qint64 uid)
     request["uid"] = uid;
 
     m_pp->sendRequest(request,[this](const QJsonObject &resp){
+
+
         bool ok = resp.value("ok").toBool();
+
 
         if(ok){
             qint64 uid = resp.value("uid").toString().toLongLong();
@@ -36,6 +39,6 @@ void FriendService::search_friends(qint64 uid)
         }else{
             emit SearchFriednErrorSignals(resp.value("err").toString());
         }
-    });
+    },-1);
 
 }
