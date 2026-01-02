@@ -4,6 +4,7 @@
 #include "recent_chats/rc_line.h"
 
 #include "../../src/DataBaseManage/databasemanage.h"
+#include "../../src/DataBaseManage/model/FriendInfo.h"
 
 #include <QTimer>
 #include <QThread>
@@ -67,7 +68,23 @@ void chatListPage::test()
         qDebug()  << "temp[i].peer_id" << temp[i].peer_id;
         Recent_Data t;
         t.UnreadCount = temp[i].unread_count;
-        t.avatarPath = mgr->GetFriendAvatarById(temp[i].peer_id)->avatar;
+
+        std::optional<FriendInfo> _temp_avatar_data = mgr->GetFriendAvatarById(temp[i].peer_id);
+
+        if(_temp_avatar_data.has_value()){
+            if(!_temp_avatar_data.value().avatar.isEmpty()){
+                t.avatarPath = _temp_avatar_data.value().avatar;
+            }else{
+                t.avatarPath = QString();
+            }
+        }else{
+            t.avatarPath = QString();
+        }
+
+
+
+
+
 
         qDebug() << "chatListPage::test()::t.avatarPath::" << t.avatarPath;
         qDebug() << "chatListPage::test()::t.avatarPath::用户ID：" << temp[i].peer_id;

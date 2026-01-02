@@ -108,7 +108,7 @@ public:
                       const QString &username,
                       const QString &nickname,
                       const QString &email,
-                      const QString &avatar_file_id,
+                      const qint64 &avatar_file_id,
                       const QString &avatar,
                       const int &status,
                       qint64 createdAt = 0,

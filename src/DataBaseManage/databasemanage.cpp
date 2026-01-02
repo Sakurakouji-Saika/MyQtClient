@@ -135,7 +135,7 @@ Add_Friend_Type DataBaseManage::checkAndAddFriend(const int &friendId, const QSt
                            /*username*/ QString(),
                            /*nickname*/ nickname,
                            /*email*/ QString(),
-                           /*avatar_file_id*/ QString(),
+                           /*avatar_file_id*/ qint64(),
                            /*avatar*/ avatar,
                            /*status*/ status,
                            /*createdAt*/ QDateTime::currentSecsSinceEpoch(),
@@ -200,7 +200,7 @@ bool DataBaseManage::isFriend(const QString &friendId) const
 
 }
 
-bool DataBaseManage::upsertFriend(qint64 friendId, const QString &username, const QString &nickname, const QString &email, const QString &avatar_file_id, const QString &avatar, const int &status, qint64 createdAt, qint64 updatedAt)
+bool DataBaseManage::upsertFriend(qint64 friendId, const QString &username, const QString &nickname, const QString &email, const qint64 &avatar_file_id, const QString &avatar, const int &status, qint64 createdAt, qint64 updatedAt)
 {
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return false;

@@ -102,8 +102,15 @@ MainWindow::MainWindow(QWidget *parent)
         r.msg = _CR.content;
         r.msg_time = QDateTime::fromSecsSinceEpoch(_CR.timestamp);
         r.timestamp = _CR.timestamp;
-        r.avatarPath = DataBaseManage::instance()->GetFriendAvatarById(peerId)->avatar;
-        r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + AvatarManager::instance().avatarUrl(r.user_id);
+        // 用数据库中的头像优先；若无则回退到 AvatarManager
+        {
+            auto opt = DataBaseManage::instance()->GetFriendAvatarById(peerId);
+            if (opt.has_value() && !opt->avatar.isEmpty()) {
+                r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
+            } else {
+                r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + AvatarManager::instance().avatarUrl(r.user_id);
+            }
+        }
 
         qDebug() << "connect(m_chatlist_page, &chatList_Main::MY_SeedMsg::" <<  r.avatarPath;
 

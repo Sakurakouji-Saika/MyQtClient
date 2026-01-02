@@ -242,7 +242,12 @@ void Widget::setNetwork(ServiceManager *_sm)
         qint64 uid = idStr.toLongLong();
 
         // 服务端字段
-        QString avatar_file_id = resp.value("avatar_file_id").toString();
+        qint64 avatar_file_id = resp.value("avatar_file_id").toVariant().toLongLong();
+
+        if(avatar_file_id == 0){
+            avatar_file_id = -1;
+        }
+
         QString nickname = resp.value("nickname").toString();   // 服务端 nickname
         QString username = resp.value("username").toString();   // 服务端 username
         QString email = resp.value("email").toString();
@@ -250,6 +255,7 @@ void Widget::setNetwork(ServiceManager *_sm)
         qint64 updatedAt = resp.value("updated_at").toString().toLongLong();
         qint64 lastSeen = resp.value("last_seen").toString().toLongLong();
         QString statusStr = resp.value("status").toString().toLower();
+        QString avatar = resp.value("avatar").toString();
 
         AppConfig::instance().setUserID(uid);
 
@@ -267,7 +273,7 @@ void Widget::setNetwork(ServiceManager *_sm)
         qDebug() << "statusCode::" << statusCode;
 
 
-        QString Avatar = DataBaseManage::instance()->GetFriendAvatarById(uid)->avatar;
+        // QString Avatar = DataBaseManage::instance()->GetFriendAvatarById(uid)->avatar;
 
         // 调用 upsertFriend（用服务端的 username/nickname/email 等字段）
         bool ok = DataBaseManage::instance()->upsertFriend(
@@ -276,7 +282,7 @@ void Widget::setNetwork(ServiceManager *_sm)
             nickname,
             email,
             avatar_file_id,
-            Avatar,
+            avatar,
             statusCode,
             createdAt,
             updatedAt

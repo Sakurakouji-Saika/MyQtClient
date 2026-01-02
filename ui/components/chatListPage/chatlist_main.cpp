@@ -45,17 +45,22 @@ void chatList_Main::openChatPage(const int _id)
     ui->labelContactNickname->setText(m_user_name);
 
     QList<ChatRecord> m_list = DataBaseManage::instance()->getChatRecords(AppConfig::instance().getUserID(),_id);
-    QString m_avatar_url;
-    for(int i=0;i<m_list.size();i++){
+    // helper: get avatar path safely (may be empty)
+    auto safeAvatarPath = [&](qint64 uid)->QString {
+        auto opt = DataBaseManage::instance()->GetFriendAvatarById(uid);
+        if (opt.has_value() && !opt->avatar.isEmpty()) {
+            return AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
+        }
+        return QString();
+    };
 
-        if(AppConfig::instance().getUserID() == m_list[i].fromId ){
-            m_avatar_url = AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar;
-
-            addChatLeft(true,m_avatar_url,m_list[i].content);
-        }else{
-            m_avatar_url = AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->GetFriendAvatarById(_id)->avatar;
-
-            addChatLeft(false,m_avatar_url,m_list[i].content);
+    for (int i = 0; i < m_list.size(); ++i) {
+        if (AppConfig::instance().getUserID() == m_list[i].fromId) {
+            QString m_avatar_url = safeAvatarPath(AppConfig::instance().getUserID());
+            addChatLeft(true, m_avatar_url, m_list[i].content);
+        } else {
+            QString m_avatar_url = safeAvatarPath(_id);
+            addChatLeft(false, m_avatar_url, m_list[i].content);
         }
     }
 
@@ -100,7 +105,12 @@ void chatList_Main::on_btn_pushMsg_clicked()
 
     if (ok) {
         // 只有在数据库写入成功后再更新 UI，确保 UI 与持久层一致
-        chat->addMessage(true, AppConfig::instance().imagesDirectory() + QDir::separator() + DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID())->avatar, t);
+        QString senderAvatar = [&]{
+            auto opt = DataBaseManage::instance()->GetFriendAvatarById(AppConfig::instance().getUserID());
+            if (opt.has_value() && !opt->avatar.isEmpty()) return AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
+            return QString();
+        }();
+        chat->addMessage(true, senderAvatar, t);
         ui->CLM_plainTextEdit->clear();
 
         ChatRecord cr;
