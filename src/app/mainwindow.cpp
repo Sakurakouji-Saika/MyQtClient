@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(m_profile_main_page,&ProfilePage_Main::open_friend_chat_page,[this](const FriendInfo &fi){
         m_chatlist_page->MsgALLClear();
+
         m_chatlist_page->openChatPage(fi.friendId);
 
         ui->chatDetailStack->setCurrentIndex(2);
@@ -89,6 +90,8 @@ MainWindow::MainWindow(QWidget *parent)
         m_chatlist_page->MsgALLClear();
 
         m_chatlist_page->openChatPage(user_id);
+
+
         ui->chatDetailStack->setCurrentIndex(2);
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
     });
@@ -102,14 +105,8 @@ MainWindow::MainWindow(QWidget *parent)
         r.msg = _CR.content;
         r.msg_time = QDateTime::fromSecsSinceEpoch(_CR.timestamp);
         r.timestamp = _CR.timestamp;
-        // 用数据库中的头像优先；若无则回退到 AvatarManager
         {
-            auto opt = DataBaseManage::instance()->GetFriendAvatarById(peerId);
-            if (opt.has_value() && !opt->avatar.isEmpty()) {
-                r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
-            } else {
-                r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + AvatarManager::instance().avatarUrl(r.user_id);
-            }
+            r.avatarPath = AppConfig::instance().imagesDirectory() + QDir::separator() + AvatarManager::instance().avatarUrl(r.user_id);
         }
 
         qDebug() << "connect(m_chatlist_page, &chatList_Main::MY_SeedMsg::" <<  r.avatarPath;

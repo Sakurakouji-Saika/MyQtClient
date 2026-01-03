@@ -94,19 +94,17 @@ void FriendListWidget::setFriendsForGroup(const QString &groupName, const QList<
         delete child;
     }
 
+
     // 填充新好友
     for (auto &fi : friends) {
-        auto cell = new QQCellLine(fi.id,fi.displayName(),fi.status,this,fi.friendId);
-        // 假设 QQCellMain 有这些接口，你酌情调整
-            // cell->setAvatar(fi.avatarUrl);
-            // cell->setName(fi.name);
-            // cell->setOnline(fi.isOnline);
-            // cell->setId(fi.id); // 如果需要
+        auto cell = new QQCellLine(fi.friendId,fi.displayName(),fi.status,this,fi.friendId);
+
 
         blk.contentLayout->addWidget(cell);
 
         // 连接点击信号
         connect(cell, &QQCellLine::clicked, this, &FriendListWidget::onFriendCellClicked);
+
         // 用 lambda 捕获 fi
         connect(cell, &QQCellLine::clicked, [this,fi](){
             emit friendClicked(fi);

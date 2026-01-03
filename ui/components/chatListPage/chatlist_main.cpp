@@ -45,21 +45,30 @@ void chatList_Main::openChatPage(const int _id)
     ui->labelContactNickname->setText(m_user_name);
 
     QList<ChatRecord> m_list = DataBaseManage::instance()->getChatRecords(AppConfig::instance().getUserID(),_id);
-    // helper: get avatar path safely (may be empty)
+
     auto safeAvatarPath = [&](qint64 uid)->QString {
+
         auto opt = DataBaseManage::instance()->GetFriendAvatarById(uid);
+
         if (opt.has_value() && !opt->avatar.isEmpty()) {
             return AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
         }
+
+        qDebug();
         return QString();
+
     };
 
     for (int i = 0; i < m_list.size(); ++i) {
         if (AppConfig::instance().getUserID() == m_list[i].fromId) {
+
             QString m_avatar_url = safeAvatarPath(AppConfig::instance().getUserID());
             addChatLeft(true, m_avatar_url, m_list[i].content);
+            qDebug();
+
         } else {
             QString m_avatar_url = safeAvatarPath(_id);
+
             addChatLeft(false, m_avatar_url, m_list[i].content);
         }
     }

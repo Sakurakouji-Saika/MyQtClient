@@ -20,11 +20,6 @@ QQCellLine::QQCellLine(const qint64 &uid,const QString &name, bool isOnLine, QWi
     setMouseTracking(true);
 
 
-
-
-
-
-
     // 打开样式背景支持
     this->setAttribute(Qt::WA_StyledBackground, true);
 
@@ -55,6 +50,9 @@ QQCellLine::~QQCellLine()
 
 void QQCellLine::setAvatar(const qint64 &uid)
 {
+
+    qDebug() << "QQCellLine::setAvatar(const qint64 &uid)::uid" <<  uid;
+
     ui->labHeadeImg->setAvatar(uid,40);
 }
 

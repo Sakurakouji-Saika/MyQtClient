@@ -419,7 +419,7 @@ std::optional<FriendInfo> DataBaseManage::GetFriendAvatarById(qint64 uid)
     q.prepare(R"(
         SELECT id, avatar_file_id, avatar
         FROM friend_info
-        WHERE id = :uid
+        WHERE friend_id = :uid
         LIMIT 1;
     )");
     q.bindValue(":uid", uid);

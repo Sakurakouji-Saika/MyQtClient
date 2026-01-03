@@ -31,8 +31,7 @@ void ProfilePage_Main::addInfo(FriendInfo info)
     avatarSize.setWidth(90);
     avatarSize.setHeight(90);
 
-    ui->Avatar->setAvatar(info.id,90);
-
+    ui->Avatar->setAvatar(info.friendId,90);
     m_info = info;
 
 }

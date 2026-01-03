@@ -257,7 +257,11 @@ void Widget::setNetwork(ServiceManager *_sm)
         QString statusStr = resp.value("status").toString().toLower();
         QString avatar = resp.value("avatar").toString();
 
+
+        qDebug() << "登录用户头像文件名：：" << avatar;
+
         AppConfig::instance().setUserID(uid);
+
 
         InitDataBaseMange();
 
@@ -308,6 +312,7 @@ void Widget::setNetwork(ServiceManager *_sm)
     // 为登录用户设置头像
     // 1.如果本地数据库存在头像路径，就判断返回数据 和 本地数据的头像数据是否一致，如果一直就不下载头像文件,如果不一致就下载头像文件.
     // 2.如果本地数据库不存在头像路径，就插入到本地数据库中，然后下载头像文件。
+
     connect(m_avatarService,&AvatarService::avatarNicknameFetched,this,[this](const qint64 uid,const qint64 file_id, const QString fileName){
 
         std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(uid);
