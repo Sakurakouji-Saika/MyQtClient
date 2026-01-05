@@ -17,7 +17,7 @@ public:
     explicit AvatarService(PacketProcessor *processor,QObject *parent = nullptr);
 
     // 主动
-    void requestAvatarById(QString file_avatarID);
+    void requestAvatarByFileId(QString file_avatarID);
 
     void RequestAvatarInfoByUserID(qint64 uid);
 

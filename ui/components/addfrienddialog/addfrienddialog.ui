@@ -120,7 +120,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QLabel" name="af_user_2_avatar">
+          <widget class="AvatarLabel" name="af_user_2_avatar">
            <property name="minimumSize">
             <size>
              <width>40</width>
@@ -200,6 +200,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AvatarLabel</class>
+   <extends>QLabel</extends>
+   <header location="global">avatarlabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../../../src/resources/Resource.qrc"/>
  </resources>

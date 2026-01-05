@@ -313,16 +313,28 @@ void Widget::setNetwork(ServiceManager *_sm)
     // 1.如果本地数据库存在头像路径，就判断返回数据 和 本地数据的头像数据是否一致，如果一直就不下载头像文件,如果不一致就下载头像文件.
     // 2.如果本地数据库不存在头像路径，就插入到本地数据库中，然后下载头像文件。
 
-    connect(m_avatarService,&AvatarService::avatarNicknameFetched,this,[this](const qint64 uid,const qint64 file_id, const QString fileName){
+    connect(m_avatarService,&AvatarService::avatarNicknameFetched,this,[this](const qint64 user_id,const qint64 file_id, const QString fileName){
 
-        std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(uid);
-        if(info.has_value()){
-            if(info.value().avatarFileId.toLongLong() != file_id || info.value().avatar != fileName){
+        std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
 
-                qDebug() << "触发下载头像:: " << uid << "\t" << fileName;
-                m_sm->avatar()->requestAvatarById(QString::number(uid));
+
+        // 判断本地文件是否存在
+        QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName; // 当前路径下的 test.txt
+        QFileInfo fileInfo(fileName);
+        bool isFileExist = (fileInfo.exists() && fileInfo.isFile()) ? true : false;
+
+        if(!isFileExist){
+            // 加载本地头像路径到头像管理类里面去？
+
+        }else{
+            if(info.value().avatarFileId.toLongLong() != file_id || info.value().avatar != fileName || !isFileExist){
+                qDebug() << "触发下载头像:: " << file_id << "\t" << fileName;
+                m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
             }
         }
+
+
+
 
     });
 
@@ -360,7 +372,7 @@ void Widget::setNetwork(ServiceManager *_sm)
                 if(!fileExistsInDir(AppConfig::instance().imagesDirectory(),fr.friends.at(i).avatarPath) && fr.friends.at(i).avatar_file_id !=-1){
 
                     qDebug() << "触发下载头像:: " << i << "\t fr.friends.at(i).avatarPath::" << fr.friends.at(i).avatarPath;
-                    m_sm->avatar()->requestAvatarById(QString::number(fr.friends.at(i).avatar_file_id));
+                    m_sm->avatar()->requestAvatarByFileId(QString::number(fr.friends.at(i).avatar_file_id));
                 }
             }
         }
@@ -401,12 +413,15 @@ void Widget::on_registerBtn_clicked()
 void Widget::on_forgotPasswordBtn_clicked()
 {
 
+    // 这里 是测试 一些接口忘记改了，对应的按钮是忘记密码的按钮。
 
+
+    // 获取登录头像信息
     m_sm->avatar()->RequestAvatarInfoByUserID(1);
 
 
     // 获取登录头像
-    m_sm->avatar()->requestAvatarById("1");
+    m_sm->avatar()->requestAvatarByFileId("1");
 
 }
 

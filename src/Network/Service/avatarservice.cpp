@@ -26,7 +26,7 @@ AvatarService::AvatarService(PacketProcessor *processor,QObject *parent)
 
 
 // 主动请求
-void AvatarService::requestAvatarById(QString file_avatarID)
+void AvatarService::requestAvatarByFileId(QString file_avatarID)
 {
     if(!m_pp){
         emit requestAvatarByIdFailed(QStringLiteral("AvatarService::requestAvatarById:: 包处理器不存在"));
@@ -62,17 +62,14 @@ void AvatarService::RequestAvatarInfoByUserID(qint64 uid)
             qint64 file_id = resp.value("file_id").toDouble();
             QString fileName = resp.value("path").toString();
 
-
-
             emit avatarNicknameFetched(user_id,file_id,fileName);
-            return;
 
+            return;
         }else{
 
             QString error = resp.value("error").toString();
             emit avatarNicknameFetchFailed(error);
             return;
-
         }
     });
 }
@@ -157,6 +154,7 @@ void AvatarService::DownloadAvatarStart(const QJsonObject &packet)
 
     int code = packet["code"].toInt();
     int type = packet["type"].toInt();
+
 
     if (filename.isEmpty() || uuid.isEmpty() || chunkSize <= 0 || chunkNum <= 0) {
         qDebug() << "AvatarService::DownloadAvatarStart:: 无效参数.";

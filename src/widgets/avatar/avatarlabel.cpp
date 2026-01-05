@@ -30,16 +30,25 @@ void AvatarLabel::setAvatar(qint64 userId,const int window_size) {
 
     QString url = AvatarManager::instance().avatarUrl(userId);
 
-    qDebug() << "AvatarLabel::setUserId:" << url;
+    qDebug() << "AvatarLabel::setUserId:"<< userId <<"\t url:" << url;
 
-    if (!url.isEmpty()) loadLocalAvatar(url);
+    if (!url.isEmpty()){
+        loadLocalAvatar(url);
+        return;
+    }
 }
 
 void AvatarLabel::onAvatarUpdated(qint64 userId, const QString &localPath) {
     if (userId != m_userId) return;
-    loadLocalAvatar(localPath);
 
+    // // 判断文件存不存在.
+    // QString fileName = AppConfig::instance().imagesDirectory() + QDir::separator() + localPath;
+    // QFileInfo fileInfo(fileName);
+
+
+    loadLocalAvatar(localPath);
     qDebug() << "AvatarLabel::onAvatarUpdated::localPath" << localPath;
+
 }
 
 void AvatarLabel::loadLocalAvatar(const QString &localPath) {
