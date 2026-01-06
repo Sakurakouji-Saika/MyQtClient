@@ -91,7 +91,7 @@ void addfrienddialog::on_add_friend_btn_clicked()
 
     // 请求头像信息
     if (m_sm && m_sm->avatar()) {
-        m_sm->avatar()->RequestAvatarInfoByUserID(user_id.toLongLong());
+        m_sm->avatar()->RequestAvatarInfoByUserID(user_id.toLongLong(),true);
     }
 
     ui->Af_userID->setText(user_id);

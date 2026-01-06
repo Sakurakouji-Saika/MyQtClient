@@ -17,9 +17,9 @@ public:
     explicit AvatarService(PacketProcessor *processor,QObject *parent = nullptr);
 
     // 主动
-    void requestAvatarByFileId(QString file_avatarID);
+    void requestAvatarByFileId(QString file_avatarID,bool loadAvatarDynamically = false);
 
-    void RequestAvatarInfoByUserID(qint64 uid);
+    void RequestAvatarInfoByUserID(qint64 uid, bool loadAvatarDynamically =false);
 
 
     void UpoadLoadAvatarStart(const QString &fullFilePath);
@@ -48,8 +48,10 @@ private:
 signals:
     void requestAvatarByIdFailed(const QString &err);
 
-    void avatarNicknameFetched(const qint64 uid,const qint64 file_id, const QString fileName);
+    void avatarNicknameFetched(const qint64 uid, const qint64 file_id, const QString fileName);
     void avatarNicknameFetchFailed(const QString err);
+
+    void loadAvatarDynamicallySignals(const qint64 uid,const qint64 file_id, const QString fileName);
 
 
 private:

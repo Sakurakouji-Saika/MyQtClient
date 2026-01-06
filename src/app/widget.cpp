@@ -27,6 +27,8 @@
 #include "../Network/Service/avatarservice.h"
 #include "../widgets/hoverbutton.h"
 
+#include "../widgets/avatar/avatarmanager.h"
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LoginPage)
@@ -309,43 +311,60 @@ void Widget::setNetwork(ServiceManager *_sm)
 
     });
 
+    // 动态加载头像
+    connect(m_avatarService,&AvatarService::loadAvatarDynamicallySignals, this,
+            [this](const qint64 user_id, const qint64 file_id, const QString fileName) {
+
+            // 查看本地是否存在文件
+            QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
+            QFileInfo fileInfo(localFileName);
+            bool isFileExist = fileInfo.exists() && fileInfo.isFile();
+
+            if(isFileExist){
+                AvatarManager::instance().updateAvatar(user_id, fileName);
+            }else{
+
+                qDebug() << "loadAvatarDynamicallySignals::首次动态加载头像,需要下载文件:: " << fileName;
+                m_sm->avatar()->requestAvatarByFileId(QString::number(file_id),true);
+            }
+
+
+        });
+
+
     // 为登录用户设置头像
     // 1.如果本地数据库存在头像路径，就判断返回数据 和 本地数据的头像数据是否一致，如果一直就不下载头像文件,如果不一致就下载头像文件.
     // 2.如果本地数据库不存在头像路径，就插入到本地数据库中，然后下载头像文件。
-
     connect(m_avatarService, &AvatarService::avatarNicknameFetched, this,
             [this](const qint64 user_id, const qint64 file_id, const QString fileName) {
 
-                std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
+        // 查看本地是否存在文件
+        QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
+        QFileInfo fileInfo(localFileName);
+        bool isFileExist = fileInfo.exists() && fileInfo.isFile();
 
-                // 判断本地文件是否存在
-                QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
-                QFileInfo fileInfo(localFileName);
-                bool isFileExist = fileInfo.exists() && fileInfo.isFile();
 
-                // 决定是否需要下载的逻辑：
-                // 1. 如果文件不存在，肯定需要下载
-                // 2. 如果数据库中没有记录，需要下载
-                // 3. 如果有记录但信息不匹配，也需要下载
+        std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
 
-                bool needDownload = !isFileExist ||
-                                    !info ||
-                                    (info && (info->avatarFileId.toLongLong() != file_id ||
-                                              info->avatar != fileName));
+        // 决定是否需要下载的逻辑：
+        // 1. 如果文件不存在，肯定需要下载
+        // 2. 如果数据库中没有记录，需要下载
+        // 3. 如果有记录但信息不匹配，也需要下载
 
-                if (needDownload) {
-                    qDebug() << "需要下载头像:: user_id:" << user_id
-                             << ", file_id:" << file_id
-                             << ", fileName:" << fileName
-                             << ", 文件存在:" << isFileExist
-                             << ", 数据库有记录:" << (info ? "是" : "否");
+        bool needDownload = !isFileExist ||
+                            !info ||
+                            (info && (info->avatarFileId.toLongLong() != file_id ||
+                                      info->avatar != fileName));
 
-                    m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
+        if (needDownload) {
+            qDebug() << "需要下载头像:: user_id:" << user_id << ", file_id:" << file_id << ", fileName:" << fileName << ", 文件存在:" << isFileExist << ", 数据库有记录:" << (info ? "是" : "否");
+            m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
 
-                } else {
-                    qDebug() << "头像已存在且信息匹配，无需下载";
+        } else {
+            qDebug() << "头像已存在且信息匹配，无需下载";
+            AvatarManager::instance().updateAvatar(user_id, fileName);
+        }
 
-                }
     });
 
 

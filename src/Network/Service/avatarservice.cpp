@@ -26,7 +26,7 @@ AvatarService::AvatarService(PacketProcessor *processor,QObject *parent)
 
 
 // 主动请求
-void AvatarService::requestAvatarByFileId(QString file_avatarID)
+void AvatarService::requestAvatarByFileId(QString file_avatarID,bool loadAvatarDynamically)
 {
     if(!m_pp){
         emit requestAvatarByIdFailed(QStringLiteral("AvatarService::requestAvatarById:: 包处理器不存在"));
@@ -41,7 +41,7 @@ void AvatarService::requestAvatarByFileId(QString file_avatarID)
 
 }
 
-void AvatarService::RequestAvatarInfoByUserID(qint64 uid)
+void AvatarService::RequestAvatarInfoByUserID(qint64 uid, bool loadAvatarDynamically)
 {
     if(!m_pp){
         emit requestAvatarByIdFailed(QStringLiteral("AvatarService::RequestAvatarInfoByUserID:: 包处理器不存在"));
@@ -52,7 +52,7 @@ void AvatarService::RequestAvatarInfoByUserID(qint64 uid)
     request["type"] = static_cast<int>(Protocol::MessageType::AvatarFilename);
     request["user_id"] = uid;
 
-    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+    m_pp->sendRequest(request,[this,loadAvatarDynamically](const QJsonObject &resp){
         bool ok = resp["ok"].toBool();
 
         if(ok){
@@ -65,9 +65,13 @@ void AvatarService::RequestAvatarInfoByUserID(qint64 uid)
             qint64 file_id = fileIdVal.toDouble();
             QString fileName = pathVal.toString();
 
-
             try {
-                emit avatarNicknameFetched(user_id, file_id, fileName);
+                if(loadAvatarDynamically){
+                    emit loadAvatarDynamicallySignals(user_id, file_id, fileName);
+                }else{
+                    emit avatarNicknameFetched(user_id, file_id, fileName);
+                }
+
             } catch (const std::exception& e) {
                 throw; // 重新抛出
             }
@@ -186,6 +190,8 @@ void AvatarService::DownloadAvatarChunk(const QJsonObject &packet)
     qint64  chunkId     = packet.value("chunk_id").toString().toLongLong();
     qint64  chunkSize   = packet.value("chunk_size").toString().toLongLong(); // 报告的分片长度（字符串或数字）
     bool    isLast      = packet.value("is_last").toBool();
+    qint64  owner_id         = packet.value("owner_id").toVariant().toLongLong();
+    qDebug() << "下载用户头像 owner_id::" <<  owner_id;
 
     QByteArray contentBase64 = packet.value("content").toString().toUtf8();
     QByteArray content = QByteArray::fromBase64(contentBase64);
@@ -217,6 +223,10 @@ void AvatarService::DownloadAvatarChunk(const QJsonObject &packet)
         if (!saveAvatarFile(fileId, filename, fileData, fileId, error)) {
             return;
         }
+
+        // 下载头像完成后，更新头像文件到程序中。
+
+        AvatarManager::instance().updateAvatar(owner_id,filename);
     }
 }
 
