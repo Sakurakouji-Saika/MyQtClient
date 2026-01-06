@@ -56,22 +56,29 @@ void AvatarService::RequestAvatarInfoByUserID(qint64 uid)
         bool ok = resp["ok"].toBool();
 
         if(ok){
-            qDebug() << "AvatarService::RequestAvatarInfoByUserID::resp:: " << resp << "\n";
+            // 检查每个字段
+            QJsonValue userIdVal = resp.value("user_id");
+            QJsonValue fileIdVal = resp.value("file_id");
+            QJsonValue pathVal = resp.value("path");
 
-            qint64 user_id = resp.value("user_id").toDouble();
-            qint64 file_id = resp.value("file_id").toDouble();
-            QString fileName = resp.value("path").toString();
+            qint64 user_id = userIdVal.toDouble();
+            qint64 file_id = fileIdVal.toDouble();
+            QString fileName = pathVal.toString();
 
-            emit avatarNicknameFetched(user_id,file_id,fileName);
 
+            try {
+                emit avatarNicknameFetched(user_id, file_id, fileName);
+            } catch (const std::exception& e) {
+                throw; // 重新抛出
+            }
             return;
-        }else{
-
+        } else {
             QString error = resp.value("error").toString();
             emit avatarNicknameFetchFailed(error);
             return;
         }
     });
+
 }
 
 void AvatarService::UpoadLoadAvatarStart(const QString &fullFilePath)

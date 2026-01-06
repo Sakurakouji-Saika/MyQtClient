@@ -41,9 +41,10 @@ void AvatarLabel::setAvatar(qint64 userId,const int window_size) {
 void AvatarLabel::onAvatarUpdated(qint64 userId, const QString &localPath) {
     if (userId != m_userId) return;
 
-    // // 判断文件存不存在.
+    // 判断文件存不存在.
     // QString fileName = AppConfig::instance().imagesDirectory() + QDir::separator() + localPath;
     // QFileInfo fileInfo(fileName);
+
 
 
     loadLocalAvatar(localPath);
