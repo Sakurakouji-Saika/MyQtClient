@@ -213,9 +213,9 @@ void Widget::InitDataBaseMange()
 {
     int accountId = AppConfig::instance().getUserID();
 
-    // QString basePath = QCoreApplication::applicationDirPath() + "/data";
+    QString basePath = QCoreApplication::applicationDirPath() + "/data";
 
-    QString basePath =  "C:\\Users\\Moe\\Desktop\\MyClient\\data\\";
+    // QString basePath =  "C:\\Users\\Moe\\Desktop\\MyClient\\datz`a\\";
 
     if (!DataBaseManage::instance()->init(accountId, basePath)) {
         qWarning() << "初始化数据库失败";
@@ -313,29 +313,39 @@ void Widget::setNetwork(ServiceManager *_sm)
     // 1.如果本地数据库存在头像路径，就判断返回数据 和 本地数据的头像数据是否一致，如果一直就不下载头像文件,如果不一致就下载头像文件.
     // 2.如果本地数据库不存在头像路径，就插入到本地数据库中，然后下载头像文件。
 
-    connect(m_avatarService,&AvatarService::avatarNicknameFetched,this,[this](const qint64 user_id,const qint64 file_id, const QString fileName){
+    connect(m_avatarService, &AvatarService::avatarNicknameFetched, this,
+            [this](const qint64 user_id, const qint64 file_id, const QString fileName) {
 
-        std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
+                std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
 
+                // 判断本地文件是否存在
+                QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
+                QFileInfo fileInfo(localFileName);
+                bool isFileExist = fileInfo.exists() && fileInfo.isFile();
 
-        // 判断本地文件是否存在
-        QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName; // 当前路径下的 test.txt
-        QFileInfo fileInfo(fileName);
-        bool isFileExist = (fileInfo.exists() && fileInfo.isFile()) ? true : false;
+                // 决定是否需要下载的逻辑：
+                // 1. 如果文件不存在，肯定需要下载
+                // 2. 如果数据库中没有记录，需要下载
+                // 3. 如果有记录但信息不匹配，也需要下载
 
-        if(!isFileExist){
-            // 加载本地头像路径到头像管理类里面去？
+                bool needDownload = !isFileExist ||
+                                    !info ||
+                                    (info && (info->avatarFileId.toLongLong() != file_id ||
+                                              info->avatar != fileName));
 
-        }else{
-            if(info.value().avatarFileId.toLongLong() != file_id || info.value().avatar != fileName || !isFileExist){
-                qDebug() << "触发下载头像:: " << file_id << "\t" << fileName;
-                m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
-            }
-        }
+                if (needDownload) {
+                    qDebug() << "需要下载头像:: user_id:" << user_id
+                             << ", file_id:" << file_id
+                             << ", fileName:" << fileName
+                             << ", 文件存在:" << isFileExist
+                             << ", 数据库有记录:" << (info ? "是" : "否");
 
+                    m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
 
+                } else {
+                    qDebug() << "头像已存在且信息匹配，无需下载";
 
-
+                }
     });
 
 

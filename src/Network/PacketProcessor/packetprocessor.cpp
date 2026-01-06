@@ -224,6 +224,7 @@ void PacketProcessor::onFrame(const QByteArray &payload)
     if (err.error == QJsonParseError::NoError && doc.isObject()) {
         QJsonObject obj = doc.object();
 
+
         // seq matching
         qint64 seq = (qint64)obj.value("seq").toDouble(0);
 
@@ -240,8 +241,12 @@ void PacketProcessor::onFrame(const QByteArray &payload)
                     m_pending.remove(seq);
                 }
             }
+
             if (cb) {
-                try { cb(obj); } catch(...) { qDebug() << "PacketProcessor: pending callback threw"; }
+                try { cb(obj); } catch(...) {
+                    qDebug() << "PacketProcessor: pending callback threw";
+                }
+
                 return; // handled as response
             }
             // else continue to type dispatch (maybe it's a pushed event carrying seq)
