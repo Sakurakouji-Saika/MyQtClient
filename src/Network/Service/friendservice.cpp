@@ -67,7 +67,7 @@ void FriendService::add_friend(qint64 requester_uid, qint64 target_uid)
             emit AddFriendSuccessSignals();
             return;
         }else{
-            emit AddFriendErrorSignals(resp.value("err").toString());
+            emit AddFriendErrorSignals(resp.value("error").toString());
         }
     },-1);
 

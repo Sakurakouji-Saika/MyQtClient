@@ -28,6 +28,7 @@
 #include "../widgets/hoverbutton.h"
 
 #include "../widgets/avatar/avatarmanager.h"
+#include "../Network/Service/friendservice.h"
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
@@ -405,6 +406,19 @@ void Widget::setNetwork(ServiceManager *_sm)
                 }
             }
         }
+
+
+        connect(m_sm->friendApi(),&FriendService::AddFriendSuccessSignals,this,[this](){
+            QMessageBox::information(this, QStringLiteral("添加好友"),
+                                     QStringLiteral("申请成功！"));
+
+        });
+
+        connect(m_sm->friendApi(),&FriendService::AddFriendErrorSignals,this,[this](QString error){
+            QMessageBox::information(this, QStringLiteral("添加好友"),
+                                     QStringLiteral("提示： %1").arg(error));
+
+        });
 
         m_mw = new MainWindow();
         m_mw->setAttribute(Qt::WA_DeleteOnClose);
