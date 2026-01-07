@@ -14,11 +14,15 @@ public:
     explicit FriendService(PacketProcessor *processor, QObject *parent = nullptr);
 
     void search_friends(qint64 uid);
+    void add_friend(qint64 requester_uid, qint64 target_uid);
 
 signals:
     void SearchFriednErrorSignals(QString error);
     void SearchFriednSuccessSignals(qint64 uid, QString userName, QString nickname, qint64 avatar_file_id, QString avatar);
 
+
+    void AddFriendErrorSignals(QString error);
+    void AddFriendSuccessSignals();
 
 private:
 

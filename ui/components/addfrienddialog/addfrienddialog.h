@@ -23,7 +23,6 @@ public:
     ~addfrienddialog();
 
     void setNetWork(ServiceManager *_sm);
-    void on_return_addFriend_Info(const QJsonValue &info);
 
 private slots:
     void on_add_friend_btn_clicked();

@@ -49,7 +49,10 @@ addfrienddialog #add_friend_btn:pressed{
     background-color: #F2F2F2;
     max-height: 100px;
     min-height: 100px;
+}
 
+#Af_userName{
+    color: #1E90FF;
 }
 
 #AF_hear{

@@ -6,13 +6,15 @@
 #include "../../Network/Service/friendservice.h"
 #include "../../Network/Service/avatarservice.h"
 #include <QString>
+#include "../utils/appconfig.h"
+
 
 addfrienddialog::addfrienddialog(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::addfrienddialog)
     , m_sm(nullptr)
     , m_fs(nullptr)
-    , isConnected(false)  // 初始化连接标志
+    , isConnected(false)  // 初始化连接标志`
 {
     ui->setupUi(this);
     StyleLoader::loadWidgetStyle(this, ":/styles/addfrienddialog.css");
@@ -99,27 +101,11 @@ void addfrienddialog::on_add_friend_btn_clicked()
     // 移除了重复的 connect 调用
 }
 
-// 不知道有什么用的函数
-void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info)
-{
-    qDebug() << "void addfrienddialog::on_return_addFriend_Info(const QJsonValue &info) 触发";
-    QJsonObject dataObj = info.toObject();
-    int id = dataObj.value("id").toInt();
-    QString name = dataObj.value("name").toString();
-    QString avatar = dataObj.value("head").toString();
-    int status = dataObj.value("status").toInt();
-
-    QString headAvatar = dataObj.value("head").toString();
-
-    QJsonObject json;
-    json.insert("from", name);
-    json.insert("id", -2);
-
-    ui->Af_userName->setText(name);
-    ui->Af_userID->setText("ID:" + QString::number(id));
-}
-
 void addfrienddialog::on_AF_use_2_btn_clicked()
 {
-    // 添加好友按钮点击逻辑
+
+    qint64 requester_uid = AppConfig::instance().getUserID();
+    qint64 target_uid = ui->Af_userID->text().toLongLong();
+
+    m_fs->add_friend(requester_uid,target_uid);
 }

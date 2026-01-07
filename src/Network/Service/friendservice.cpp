@@ -42,3 +42,33 @@ void FriendService::search_friends(qint64 uid)
     },-1);
 
 }
+
+void FriendService::add_friend(qint64 requester_uid, qint64 target_uid)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::add_friend:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::AddFriend);
+
+    // requester_uid：表示申请好友的用户ID（即发起请求的用户）。
+    // target_uid：表示被添加的用户ID（即好友请求的目标用户）。
+
+
+    request["requester_uid"] = requester_uid;
+    request["target_uid"] = target_uid;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+
+        bool ok = resp.value("ok").toBool();
+        if(ok){
+            emit AddFriendSuccessSignals();
+            return;
+        }else{
+            emit AddFriendErrorSignals(resp.value("err").toString());
+        }
+    },-1);
+
+}
