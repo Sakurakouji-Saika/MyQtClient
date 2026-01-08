@@ -34,7 +34,7 @@
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
@@ -135,13 +135,9 @@
              <property name="spacing">
               <number>0</number>
              </property>
-             <item>
-              <widget class="QLabel" name="messagePrefix">
-               <property name="text">
-                <string>留言:</string>
-               </property>
-              </widget>
-             </item>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
              <item>
               <widget class="QLabel" name="qqNumber">
                <property name="text">
@@ -155,12 +151,15 @@
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="decisionStatus">
-          <property name="text">
-           <string>已同意</string>
+         <widget class="QPushButton" name="btn_ok">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="text">
+           <string>同意</string>
           </property>
          </widget>
         </item>
@@ -170,7 +169,7 @@
      <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
-        <enum>Qt::Horizontal</enum>
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>

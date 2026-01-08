@@ -79,3 +79,23 @@ QScrollBar::sub-page:horizontal {
     width: 0px;
     background: transparent;
 }
+
+
+#btn_ok{
+    background-color: #006eff;
+    color: white;
+    border-radius: 6px;
+    min-width: 60px;
+    max-width: 60px;
+    height: 23px;
+    margin-right: 20px;
+    margin-left: 10px;
+}
+
+#btn_ok:hover{
+    background-color: #0051cc;
+}
+
+#btn_ok:pressed{
+    background-color: #003d99;
+}

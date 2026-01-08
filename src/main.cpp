@@ -24,12 +24,15 @@ int main(int argc, char *argv[])
 
     AppConfig::instance();
 
-    StyleLoader::setDebugEnabled(false);
-    StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
+    StyleLoader::setDebugEnabled(true);
+    // StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
+    StyleLoader::setDebugResourceRoot("C:\\Users\\Moe\\Desktop\\MyClient\\src\\resources");
+
 
     AppConfig::instance().initialize();
 
     ServiceManager *services = new ServiceManager();
+
     services->init();
     services->start();
 
