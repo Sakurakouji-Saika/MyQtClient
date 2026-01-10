@@ -22,6 +22,7 @@ enum class MessageType: int   {
     GetMyFriends     = 2006,  // 获取好友列表及状态
     RefreshFriends   = 2007,  // 刷新好友状态
     SearchFriend     = 2008,  // 搜索好友
+    FriendRequestList    = 2009,  // 好友申请列表信息
 
     // ===== 文本传输相关 =====
     SendText         = 3001,  // 发送文本消息

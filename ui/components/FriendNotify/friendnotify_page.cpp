@@ -1,6 +1,7 @@
 #include "friendnotify_page.h"
 #include "ui_friendnotify_page.h"
 #include "../../src/utils/styleLoader.h"
+#include "../../utils/appconfig.h"
 
 FriendNotify_Page::FriendNotify_Page(QWidget *parent)
     : QWidget(parent)
@@ -21,8 +22,26 @@ FriendNotify_Page::~FriendNotify_Page()
     delete ui;
 }
 
+void FriendNotify_Page::setNetWork(ServiceManager *_sm)
+{
+    m_sm = _sm;
+    m_fs= m_sm->friendApi();
+}
+
+void FriendNotify_Page::GetData(qint64 uid)
+{
+    m_fs->get_Friend_request(uid);
+
+    connect(m_fs,&FriendService::GetFriendRequestListSuccessSignals,this,[](){
+
+    });
+}
+
 void FriendNotify_Page::test()
 {
+
+    GetData(AppConfig::instance().getUserID());
+
     // 1. 准备数据（可从文件、数据库或网络读取）
     std::vector<FNPData> dataList;
     dataList.emplace_back("://picture/avatar/1.jpg", "10001", "张三", "2025-09-19 15:00");

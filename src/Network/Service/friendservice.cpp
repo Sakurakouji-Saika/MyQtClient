@@ -72,3 +72,34 @@ void FriendService::add_friend(qint64 requester_uid, qint64 target_uid)
     },-1);
 
 }
+
+void FriendService::get_Friend_request(qint64 uid)
+{
+    if(!m_pp){
+        emit SearchFriednErrorSignals(QStringLiteral("FriendService::get_Friend_request:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::FriendRequestList);
+    request["uid"] = uid;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+
+        bool ok = resp.value("ok").toBool();
+
+        qDebug() << "FriendService::get_Friend_request(qint64 uid)::sendRequest" << resp;
+
+        if(ok){
+            qint64 uid = resp.value("uid").toString().toLongLong();
+            QString username = resp.value("username").toString();
+
+            emit GetFriendRequestListSuccessSignals();
+            return;
+
+        }else{
+            emit GetFriendRequestListErrorSignals();
+        }
+    },-1);
+
+}
