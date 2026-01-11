@@ -195,6 +195,7 @@ if (QT_VERSION_MAJOR GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${COMMON_SOURCES}
         src/Network/Service/friendservice.h src/Network/Service/friendservice.cpp
+        src/Network/models/userinfo.h
     )
 
     # 如果有 .qrc，推荐使用 qt_add_resources（Qt6）

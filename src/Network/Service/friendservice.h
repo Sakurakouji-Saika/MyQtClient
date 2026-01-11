@@ -6,6 +6,7 @@
 #include <QJsonArray>
 
 class PacketProcessor;
+class UserInfo;
 
 class FriendService : public QObject
 {
@@ -26,7 +27,7 @@ signals:
     void AddFriendErrorSignals(QString error);
     void AddFriendSuccessSignals();
 
-    void GetFriendRequestListSuccessSignals();
+    void GetFriendRequestListSuccessSignals(QList<UserInfo> datalists);
     void GetFriendRequestListErrorSignals();
 
 private:

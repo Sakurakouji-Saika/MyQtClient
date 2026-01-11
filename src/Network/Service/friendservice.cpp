@@ -4,6 +4,7 @@
 
 #include "../PacketProcessor/packetprocessor.h"
 #include "../../src/utils/comapi/Protocol.h"
+#include "../models/userinfo.h"
 
 FriendService::FriendService(PacketProcessor *processor, QObject *parent)
     : QObject{parent}
@@ -94,10 +95,30 @@ void FriendService::get_Friend_request(qint64 uid)
         if(ok){
 
             int friendCount = resp.value("count").toInt();
-            QJsonValue data;
-            data = resp.value("data").toVariant().toJsonValue();
 
-            emit GetFriendRequestListSuccessSignals();
+            QJsonArray dataArray = resp.value("data").toArray();
+
+
+            QList<UserInfo> listdata;
+
+            for (const QJsonValue &val : dataArray) {
+                if (!val.isObject())
+                    continue;
+
+                UserInfo temp;
+
+                QJsonObject obj = val.toObject();
+
+                temp.avatar     = obj.value("avatar").toString();
+                temp.nickname   = obj.value("nickname").toString();
+                temp.username   = obj.value("username").toString();
+                temp.status     = obj.value("status").toInt();
+                temp.userId     = obj.value("user_id").toInteger(); // Qt 6 推荐
+
+                listdata.append(temp);
+            }
+
+            emit GetFriendRequestListSuccessSignals(listdata);
             return;
 
         }else{
