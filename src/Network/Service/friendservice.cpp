@@ -4,7 +4,8 @@
 
 #include "../PacketProcessor/packetprocessor.h"
 #include "../../src/utils/comapi/Protocol.h"
-#include "../models/userinfo.h"
+
+
 
 FriendService::FriendService(PacketProcessor *processor, QObject *parent)
     : QObject{parent}
@@ -119,7 +120,6 @@ void FriendService::get_Friend_request(qint64 uid)
             }
 
             emit GetFriendRequestListSuccessSignals(listdata);
-            return;
 
         }else{
             emit GetFriendRequestListErrorSignals();

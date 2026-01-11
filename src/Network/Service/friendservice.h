@@ -6,7 +6,8 @@
 #include <QJsonArray>
 
 class PacketProcessor;
-class UserInfo;
+
+#include "../models/userinfo.h"
 
 class FriendService : public QObject
 {

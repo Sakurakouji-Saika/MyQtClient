@@ -3,6 +3,9 @@
 #include "../../src/utils/styleLoader.h"
 #include "../../utils/appconfig.h"
 
+#include <QList>
+#include "../../Src/Network/models/userinfo.h"
+
 FriendNotify_Page::FriendNotify_Page(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::FriendNotify_Page)
@@ -28,7 +31,35 @@ void FriendNotify_Page::GetData(qint64 uid)
 {
     m_fs->get_Friend_request(uid);
 
-    connect(m_fs,&FriendService::GetFriendRequestListSuccessSignals,this,[](){
+    connect(m_fs,&FriendService::GetFriendRequestListSuccessSignals,this,[this](QList<UserInfo> listData){
+        std::vector<FNPData> dataList;
+        for(auto &item : listData){
+            dataList.emplace_back(QString(item.avatar),QString::number(item.userId),QString(item.nickname),"2025-09-19 15:00");
+        }
+
+        ui->FNP_listWidget->clear();
+
+        ui->FNP_listWidget->setSpacing(10);
+        // 1. 禁止选择
+        ui->FNP_listWidget->setSelectionMode(QAbstractItemView::NoSelection);
+
+
+
+        for (const auto &d : dataList) {
+            // 创建自定义 widget
+            FNP_Line *line = new FNP_Line;
+            line->setData(d.avatarPath,d.qq,d.userName,d.timeText);
+            line->setFixedHeight(70); // 固定高度，便于 item->setSizeHint
+
+            // 创建列表项并把 widget 放进去
+            QListWidgetItem *item = new QListWidgetItem(ui->FNP_listWidget);
+            // 设置 item 大小（宽度由 QListWidget 管理）
+            item->setSizeHint(line->sizeHint());
+
+            ui->FNP_listWidget->addItem(item);
+            ui->FNP_listWidget->setItemWidget(item, line);
+        }
+
 
     });
 }
@@ -38,31 +69,31 @@ void FriendNotify_Page::test()
 
     GetData(AppConfig::instance().getUserID());
 
-    // 1. 准备数据（可从文件、数据库或网络读取）
-    std::vector<FNPData> dataList;
-    dataList.emplace_back("://picture/avatar/1.jpg", "10001", "张三", "2025-09-19 15:00");
-    dataList.emplace_back("://picture/avatar/1.jpg", "10002", "李四AA", "2025-09-19 15:10");
-    dataList.emplace_back("D://Documents//Tencent Files//211949940//nt_qq//nt_data//Pic//2025-09//Ori//e4d8aa49f1cd6751c9575f58079acdf8.jpg", "10003", "王五", "2025-09-19 15:20");
+    // // 1. 准备数据（可从文件、数据库或网络读取）
+    // std::vector<FNPData> dataList;
+    // dataList.emplace_back("://picture/avatar/1.jpg", "10001", "张三", "2025-09-19 15:00");
+    // dataList.emplace_back("://picture/avatar/1.jpg", "10002", "李四AA", "2025-09-19 15:10");
+    // dataList.emplace_back("D://Documents//Tencent Files//211949940//nt_qq//nt_data//Pic//2025-09//Ori//e4d8aa49f1cd6751c9575f58079acdf8.jpg", "10003", "王五", "2025-09-19 15:20");
 
-    ui->FNP_listWidget->setSpacing(10);
-    // 1. 禁止选择
-    ui->FNP_listWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    // ui->FNP_listWidget->setSpacing(10);
+    // // 1. 禁止选择
+    // ui->FNP_listWidget->setSelectionMode(QAbstractItemView::NoSelection);
 
 
 
-    for (const auto &d : dataList) {
-        // 创建自定义 widget
-        FNP_Line *line = new FNP_Line;
-        line->setData(d.avatarPath,d.qq,d.userName,d.timeText);
-        line->setFixedHeight(70); // 固定高度，便于 item->setSizeHint
+    // for (const auto &d : dataList) {
+    //     // 创建自定义 widget
+    //     FNP_Line *line = new FNP_Line;
+    //     line->setData(d.avatarPath,d.qq,d.userName,d.timeText);
+    //     line->setFixedHeight(70); // 固定高度，便于 item->setSizeHint
 
-        // 创建列表项并把 widget 放进去
-        QListWidgetItem *item = new QListWidgetItem(ui->FNP_listWidget);
-        // 设置 item 大小（宽度由 QListWidget 管理）
-        item->setSizeHint(line->sizeHint());
+    //     // 创建列表项并把 widget 放进去
+    //     QListWidgetItem *item = new QListWidgetItem(ui->FNP_listWidget);
+    //     // 设置 item 大小（宽度由 QListWidget 管理）
+    //     item->setSizeHint(line->sizeHint());
 
-        ui->FNP_listWidget->addItem(item);
-        ui->FNP_listWidget->setItemWidget(item, line);
-    }
+    //     ui->FNP_listWidget->addItem(item);
+    //     ui->FNP_listWidget->setItemWidget(item, line);
+    // }
 
 }
