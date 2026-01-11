@@ -64,7 +64,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->chatDetailStack->addWidget(m_chatlist_page); // index 2
 
     m_friendNotify = new FriendNotify_Page(this);
-    m_friendNotify->setNetWork(m_sm);
+
     ui->chatDetailStack->addWidget(m_friendNotify); // index 3
 
     // 初始显示空白页
@@ -305,6 +305,7 @@ void MainWindow::Open_Edit_Avatar_Page()
 void MainWindow::setNetWork(ServiceManager *_sm)
 {
     m_sm = _sm;
+
 }
 
 
@@ -400,8 +401,11 @@ void MainWindow::on_searchBtn_clicked()
     });
     connect(act2, &QAction::triggered, this, [this](){
         qDebug() << "选项二被点击了";
-        ui->chatDetailStack->setCurrentIndex(3);
 
+        m_friendNotify->setNetWork(m_sm);
+        m_friendNotify->test();
+
+        ui->chatDetailStack->setCurrentIndex(3);
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
 
 

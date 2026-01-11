@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QPointer>
-
+#include <QJsonArray>
 
 class PacketProcessor;
 

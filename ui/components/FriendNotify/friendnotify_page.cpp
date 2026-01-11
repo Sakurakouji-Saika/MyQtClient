@@ -11,10 +11,6 @@ FriendNotify_Page::FriendNotify_Page(QWidget *parent)
     StyleLoader::loadWidgetStyle(this, ":/styles/FriendNotify_Page.css");
 
 
-
-    test();
-
-
 }
 
 FriendNotify_Page::~FriendNotify_Page()

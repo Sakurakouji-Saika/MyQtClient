@@ -82,17 +82,20 @@ void FriendService::get_Friend_request(qint64 uid)
 
     QJsonObject request;
     request["type"] = static_cast<int>(Protocol::MessageType::FriendRequestList);
-    request["uid"] = uid;
+    request["receiver_id"] = uid;
 
     m_pp->sendRequest(request,[this](const QJsonObject &resp){
 
         bool ok = resp.value("ok").toBool();
 
+
         qDebug() << "FriendService::get_Friend_request(qint64 uid)::sendRequest" << resp;
 
         if(ok){
-            qint64 uid = resp.value("uid").toString().toLongLong();
-            QString username = resp.value("username").toString();
+
+            int friendCount = resp.value("count").toInt();
+            QJsonValue data;
+            data = resp.value("data").toVariant().toJsonValue();
 
             emit GetFriendRequestListSuccessSignals();
             return;

@@ -24,9 +24,9 @@ int main(int argc, char *argv[])
 
     AppConfig::instance();
 
-    StyleLoader::setDebugEnabled(true);
-    // StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
-    StyleLoader::setDebugResourceRoot("C:\\Users\\Moe\\Desktop\\MyClient\\src\\resources");
+    StyleLoader::setDebugEnabled(false);
+    StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
+    // StyleLoader::setDebugResourceRoot("C:\\Users\\Moe\\Desktop\\MyClient\\src\\resources");
 
 
     AppConfig::instance().initialize();
