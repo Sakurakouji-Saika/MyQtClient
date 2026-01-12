@@ -2,15 +2,13 @@
 #define FRIENDNOTIFY_PAGE_H
 
 #include <QWidget>
-
 #include "fnp_line.h"
 #include "FNPData.h"
+#include <QListWidget>
 #include "../Network/Service/servicemanager.h"
 #include "../Network/Service/friendservice.h"
 
-namespace Ui {
-class FriendNotify_Page;
-}
+namespace Ui { class FriendNotify_Page; }
 
 class FriendNotify_Page : public QWidget
 {
@@ -21,16 +19,17 @@ public:
     ~FriendNotify_Page();
 
     void setNetWork(ServiceManager *_sm);
-
     void GetData(qint64 uid);
-
     void test();
+    void clearListWidget(QListWidget* listWidget);
+
+private slots:
+    void onGetFriendRequestListSuccess(QList<UserInfo> listData);
 
 private:
     Ui::FriendNotify_Page *ui;
-
-    ServiceManager *m_sm;
-    FriendService *m_fs;
+    ServiceManager *m_sm = nullptr;
+    FriendService *m_fs = nullptr;
 };
 
 #endif // FRIENDNOTIFY_PAGE_H

@@ -14,7 +14,9 @@ FriendNotify_Page::FriendNotify_Page(QWidget *parent)
     ui->setupUi(this);
     StyleLoader::loadWidgetStyle(this, ":/styles/FriendNotify_Page.css");
 
-
+    // 可选：初始设置列表属性（一次）
+    ui->FNP_listWidget->setSpacing(10);
+    ui->FNP_listWidget->setSelectionMode(QAbstractItemView::NoSelection);
 }
 
 FriendNotify_Page::~FriendNotify_Page()
@@ -25,76 +27,65 @@ FriendNotify_Page::~FriendNotify_Page()
 void FriendNotify_Page::setNetWork(ServiceManager *_sm)
 {
     m_sm = _sm;
-    m_fs= m_sm->friendApi();
+    m_fs = m_sm->friendApi();
+
+    // 只连接一次：使用 UniqueConnection 防止重复连接
+    connect(m_fs,
+            &FriendService::GetFriendRequestListSuccessSignals,
+            this,
+            &FriendNotify_Page::onGetFriendRequestListSuccess,
+            Qt::UniqueConnection);
 }
 
 void FriendNotify_Page::GetData(qint64 uid)
 {
+    if (!m_fs) return;
     m_fs->get_Friend_request(uid);
-
-    connect(m_fs,&FriendService::GetFriendRequestListSuccessSignals,this,[this](QList<UserInfo> listData){
-        std::vector<FNPData> dataList;
-        for(auto &item : listData){
-            dataList.emplace_back(QString(item.avatar),QString::number(item.userId),QString(item.username),formatMsToYMDHM(item.created_at),item.userId);
-        }
-
-        ui->FNP_listWidget->clear();
-
-        ui->FNP_listWidget->setSpacing(10);
-        // 1. 禁止选择
-        ui->FNP_listWidget->setSelectionMode(QAbstractItemView::NoSelection);
-
-
-
-        for (const auto &d : dataList) {
-            // 创建自定义 widget
-            FNP_Line *line = new FNP_Line;
-            line->setData(d.avatarPath,d.qq,d.userName,d.timeText);
-            line->setFixedHeight(70); // 固定高度，便于 item->setSizeHint
-
-            // 创建列表项并把 widget 放进去
-            QListWidgetItem *item = new QListWidgetItem(ui->FNP_listWidget);
-            // 设置 item 大小（宽度由 QListWidget 管理）
-            item->setSizeHint(line->sizeHint());
-
-            ui->FNP_listWidget->addItem(item);
-            ui->FNP_listWidget->setItemWidget(item, line);
-        }
-
-
-    });
 }
 
 void FriendNotify_Page::test()
 {
-
     GetData(AppConfig::instance().getUserID());
+}
 
-    // // 1. 准备数据（可从文件、数据库或网络读取）
-    // std::vector<FNPData> dataList;
-    // dataList.emplace_back("://picture/avatar/1.jpg", "10001", "张三", "2025-09-19 15:00");
-    // dataList.emplace_back("://picture/avatar/1.jpg", "10002", "李四AA", "2025-09-19 15:10");
-    // dataList.emplace_back("D://Documents//Tencent Files//211949940//nt_qq//nt_data//Pic//2025-09//Ori//e4d8aa49f1cd6751c9575f58079acdf8.jpg", "10003", "王五", "2025-09-19 15:20");
+void FriendNotify_Page::clearListWidget(QListWidget *listWidget)
+{
+    // 逐个 take，然后删除 widget（deleteLater）和 item（delete）
+    while (listWidget->count() > 0) {
+        QListWidgetItem* item = listWidget->takeItem(0);
+        if (!item) continue;
 
-    // ui->FNP_listWidget->setSpacing(10);
-    // // 1. 禁止选择
-    // ui->FNP_listWidget->setSelectionMode(QAbstractItemView::NoSelection);
+        QWidget* widget = listWidget->itemWidget(item);
+        if (widget) {
+            // 可选：如果想显式断开 widget -> this 的连接
+            // QObject::disconnect(widget, nullptr, this, nullptr);
 
+            widget->deleteLater(); // 安全地在下一次事件循环删除
+        }
+        delete item; // 删除 QListWidgetItem
+    }
+}
 
+// 槽：处理拿到的好友请求列表并刷新 UI
+void FriendNotify_Page::onGetFriendRequestListSuccess(QList<UserInfo> listData)
+{
+    // 1. 先清除旧项目（不再调用 listWidget->clear()）
+    clearListWidget(ui->FNP_listWidget);
 
-    // for (const auto &d : dataList) {
-    //     // 创建自定义 widget
-    //     FNP_Line *line = new FNP_Line;
-    //     line->setData(d.avatarPath,d.qq,d.userName,d.timeText);
-    //     line->setFixedHeight(70); // 固定高度，便于 item->setSizeHint
+    // 2. 构造数据并填充
+    for (const auto &item : listData) {
+        // 直接在这里构造并添加，省去中间 vector（也可保留）
+        FNP_Line *line = new FNP_Line;
+        line->setData(QString(item.avatar),
+                      QString::number(item.userId),
+                      QString(item.username),
+                      formatMsToYMDHM(item.created_at),
+                      item.userId);
+        line->setFixedHeight(70);
 
-    //     // 创建列表项并把 widget 放进去
-    //     QListWidgetItem *item = new QListWidgetItem(ui->FNP_listWidget);
-    //     // 设置 item 大小（宽度由 QListWidget 管理）
-    //     item->setSizeHint(line->sizeHint());
-
-    //     ui->FNP_listWidget->addItem(item);
-    //     ui->FNP_listWidget->setItemWidget(item, line);
-    // }
-
+        QListWidgetItem *wItem = new QListWidgetItem(ui->FNP_listWidget);
+        wItem->setSizeHint(line->sizeHint());
+        ui->FNP_listWidget->addItem(wItem);
+        ui->FNP_listWidget->setItemWidget(wItem, line);
+    }
 }

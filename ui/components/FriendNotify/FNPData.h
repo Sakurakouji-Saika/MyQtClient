@@ -10,8 +10,8 @@ struct FNPData {
     qint64 uid;
 
     FNPData() = default;
-    FNPData(QString a, QString q, QString u, QString t)
-        : avatarPath(std::move(a)), qq(std::move(q)), userName(std::move(u)), timeText(std::move(t)) {}
+    FNPData(QString a, QString q, QString u, QString t,qint64 _uid)
+        : avatarPath(std::move(a)), qq(std::move(q)), userName(std::move(u)), timeText(std::move(t)), uid(_uid) {}
 };
 
 #endif // FNPDATA_H

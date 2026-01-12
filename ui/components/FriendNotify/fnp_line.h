@@ -24,18 +24,23 @@ public:
     void setData(const QPixmap &avatar,
                  const QString &qq,
                  const QString &userName,
-                 const QString &timeText);
+                 const QString &timeText,
+                 const qint64 &_uid
+                 );
 
     // 使用图片路径设置（若加载失败，会清空 avatar）
     void setData(const QString &avatarPath,
                  const QString &qq,
                  const QString &userName,
-                 const QString &timeText);
+                 const QString &timeText,
+                 const qint64 &_uid
+                 );
 
 
 
 private:
     Ui::FNP_Line *ui;
+    qint64 m_uid;
 };
 
 #endif // FNP_LINE_H

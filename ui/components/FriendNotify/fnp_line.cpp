@@ -20,7 +20,7 @@ FNP_Line::~FNP_Line()
     delete ui;
 }
 
-void FNP_Line::setData(const QPixmap &avatar, const QString &qq, const QString &userName, const QString &timeText)
+void FNP_Line::setData(const QPixmap &avatar, const QString &qq, const QString &userName, const QString &timeText, const qint64 &_uid)
 {
     // 确保 QLabel 不自动再额外缩放（避免与我们处理冲突）
     ui->avatarIcon->setScaledContents(false);
@@ -39,14 +39,19 @@ void FNP_Line::setData(const QPixmap &avatar, const QString &qq, const QString &
     ui->qqNumber->setText(qq);
     ui->userName->setText(userName);
     ui->timeText->setText(timeText);
+    m_uid =_uid;
+    ui->avatarIcon->setAvatar(_uid,45);
 }
 
-void FNP_Line::setData(const QString &avatarPath, const QString &qq, const QString &userName, const QString &timeText)
+void FNP_Line::setData(const QString &avatarPath, const QString &qq, const QString &userName, const QString &timeText, const qint64 &_uid)
 {
     QPixmap pix;
     if (!avatarPath.isEmpty() && QFile::exists(avatarPath)) {
         pix.load(avatarPath);
     }
     // 调用上面的重载（即便 pix 为空也会清空 avatar）
-    setData(pix, qq, userName, timeText);
+
+    setData(pix, qq, userName, timeText, _uid);
+
+
 }
