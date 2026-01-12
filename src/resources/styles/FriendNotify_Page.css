@@ -58,9 +58,7 @@ FNP_Line #decisionStatus{
 FNP_Line #messagePrefix{
     max-width: 30px;
 }
-FNP_Line #timeText{
-    margin-left: 10px;
-}
+
 
 /* 把高度设为0、把 handle 隐藏、左右按钮宽度设为0 */
 QScrollBar:horizontal {

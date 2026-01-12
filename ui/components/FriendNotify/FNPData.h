@@ -7,6 +7,7 @@ struct FNPData {
     QString qq;
     QString userName;
     QString timeText;
+    qint64 uid;
 
     FNPData() = default;
     FNPData(QString a, QString q, QString u, QString t)

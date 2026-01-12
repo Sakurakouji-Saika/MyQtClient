@@ -4,7 +4,8 @@
 #include "../../utils/appconfig.h"
 
 #include <QList>
-#include "../../Src/Network/models/userinfo.h"
+#include "../../src/Network/models/userinfo.h"
+#include "../../src/utils/utils.h"
 
 FriendNotify_Page::FriendNotify_Page(QWidget *parent)
     : QWidget(parent)
@@ -34,7 +35,7 @@ void FriendNotify_Page::GetData(qint64 uid)
     connect(m_fs,&FriendService::GetFriendRequestListSuccessSignals,this,[this](QList<UserInfo> listData){
         std::vector<FNPData> dataList;
         for(auto &item : listData){
-            dataList.emplace_back(QString(item.avatar),QString::number(item.userId),QString(item.nickname),"2025-09-19 15:00");
+            dataList.emplace_back(QString(item.avatar),QString::number(item.userId),QString(item.username),formatMsToYMDHM(item.created_at),item.userId);
         }
 
         ui->FNP_listWidget->clear();

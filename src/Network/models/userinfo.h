@@ -9,6 +9,7 @@ struct UserInfo {
     QString nickname;
     QString avatar;
     int status;
+    qint64 created_at;
 };
 
 #endif // USERINFO_H

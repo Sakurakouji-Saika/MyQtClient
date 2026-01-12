@@ -121,13 +121,6 @@
                </property>
               </widget>
              </item>
-             <item>
-              <widget class="QLabel" name="timeText">
-               <property name="text">
-                <string>时间</string>
-               </property>
-              </widget>
-             </item>
             </layout>
            </item>
            <item>
@@ -142,6 +135,13 @@
               <widget class="QLabel" name="qqNumber">
                <property name="text">
                 <string>QQ号</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="timeText">
+               <property name="text">
+                <string>时间</string>
                </property>
               </widget>
              </item>

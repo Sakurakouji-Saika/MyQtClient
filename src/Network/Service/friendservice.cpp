@@ -114,7 +114,8 @@ void FriendService::get_Friend_request(qint64 uid)
                 temp.nickname   = obj.value("nickname").toString();
                 temp.username   = obj.value("username").toString();
                 temp.status     = obj.value("status").toInt();
-                temp.userId     = obj.value("user_id").toInteger(); // Qt 6 推荐
+                temp.userId     = obj.value("user_id").toInteger();
+                temp.created_at = obj.value("created_at").toInteger();
 
                 listdata.append(temp);
             }
