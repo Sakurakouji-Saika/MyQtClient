@@ -28,17 +28,18 @@ void FriendNotify_Page::setNetWork(ServiceManager *_sm)
 {
     m_sm = _sm;
     m_fs = m_sm->friendApi();
+    m_as = m_sm->avatar();
 
     // 只连接一次：使用 UniqueConnection 防止重复连接
     connect(m_fs,
             &FriendService::GetFriendRequestListSuccessSignals,
             this,
-            &FriendNotify_Page::onGetFriendRequestListSuccess,
-            Qt::UniqueConnection);
+            &FriendNotify_Page::onGetFriendRequestListSuccess);
 }
 
 void FriendNotify_Page::GetData(qint64 uid)
 {
+
     if (!m_fs) return;
     m_fs->get_Friend_request(uid);
 }
@@ -50,42 +51,43 @@ void FriendNotify_Page::test()
 
 void FriendNotify_Page::clearListWidget(QListWidget *listWidget)
 {
-    // 逐个 take，然后删除 widget（deleteLater）和 item（delete）
     while (listWidget->count() > 0) {
         QListWidgetItem* item = listWidget->takeItem(0);
         if (!item) continue;
 
         QWidget* widget = listWidget->itemWidget(item);
         if (widget) {
-            // 可选：如果想显式断开 widget -> this 的连接
-            // QObject::disconnect(widget, nullptr, this, nullptr);
-
-            widget->deleteLater(); // 安全地在下一次事件循环删除
+            widget->deleteLater();
         }
-        delete item; // 删除 QListWidgetItem
+        delete item;
     }
 }
 
-// 槽：处理拿到的好友请求列表并刷新 UI
 void FriendNotify_Page::onGetFriendRequestListSuccess(QList<UserInfo> listData)
 {
-    // 1. 先清除旧项目（不再调用 listWidget->clear()）
     clearListWidget(ui->FNP_listWidget);
 
-    // 2. 构造数据并填充
     for (const auto &item : listData) {
-        // 直接在这里构造并添加，省去中间 vector（也可保留）
         FNP_Line *line = new FNP_Line;
-        line->setData(QString(item.avatar),
+
+        line->setData(
                       QString::number(item.userId),
                       QString(item.username),
                       formatMsToYMDHM(item.created_at),
-                      item.userId);
+                      item.userId
+                      );
+
         line->setFixedHeight(70);
+
 
         QListWidgetItem *wItem = new QListWidgetItem(ui->FNP_listWidget);
         wItem->setSizeHint(line->sizeHint());
         ui->FNP_listWidget->addItem(wItem);
+
         ui->FNP_listWidget->setItemWidget(wItem, line);
+
+
+        // yi bu xia zhai tou xiang
+        m_as->RequestAvatarInfoByUserID(item.userId);
     }
 }

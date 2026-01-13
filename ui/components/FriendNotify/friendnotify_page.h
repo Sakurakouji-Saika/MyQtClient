@@ -7,6 +7,7 @@
 #include <QListWidget>
 #include "../Network/Service/servicemanager.h"
 #include "../Network/Service/friendservice.h"
+#include "../Network/Service/avatarservice.h"
 
 namespace Ui { class FriendNotify_Page; }
 
@@ -30,6 +31,7 @@ private:
     Ui::FriendNotify_Page *ui;
     ServiceManager *m_sm = nullptr;
     FriendService *m_fs = nullptr;
+    AvatarService *m_as = nullptr;
 };
 
 #endif // FRIENDNOTIFY_PAGE_H

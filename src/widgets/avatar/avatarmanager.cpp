@@ -33,7 +33,7 @@ void AvatarManager::updateAvatar(qint64 userId, const QString &localPath)
         QWriteLocker locker(&m_lock);
         m_map.insert(userId, localPath);
     }
-    qDebug() << "AvatarManager::updateAvatar::" << userId << "xin di zhi : " << localPath;
+    qDebug() << "AvatarManager::updateAvatar::" << userId << "new path: " << localPath;
 
     emit signalsAvatarUpdated(userId, localPath);
 }

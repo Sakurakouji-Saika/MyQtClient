@@ -65,6 +65,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_friendNotify = new FriendNotify_Page(this);
 
+
+
     ui->chatDetailStack->addWidget(m_friendNotify); // index 3
 
     // 初始显示空白页
@@ -306,6 +308,8 @@ void MainWindow::setNetWork(ServiceManager *_sm)
 {
     m_sm = _sm;
 
+    m_friendNotify->setNetWork(m_sm);
+
 }
 
 
@@ -402,7 +406,7 @@ void MainWindow::on_searchBtn_clicked()
     connect(act2, &QAction::triggered, this, [this](){
         qDebug() << "选项二被点击了";
 
-        m_friendNotify->setNetWork(m_sm);
+        // m_friendNotify->setNetWork(m_sm);
         m_friendNotify->test();
 
         ui->chatDetailStack->setCurrentIndex(3);
@@ -419,6 +423,7 @@ void MainWindow::on_searchBtn_clicked()
             QDateTime::currentDateTime().toMSecsSinceEpoch(),
             3
             );
+
         chatList->receiveMessage(testData);
 
     });

@@ -15,6 +15,7 @@
 AvatarLabel::AvatarLabel(QWidget *parent)
     : QLabel(parent)
 {
+
     // 订阅 AvatarManager 的广播（QueuedConnection 跨线程安全）
     connect(&AvatarManager::instance(), &AvatarManager::signalsAvatarUpdated,
             this, &AvatarLabel::onAvatarUpdated, Qt::QueuedConnection);
@@ -40,12 +41,6 @@ void AvatarLabel::setAvatar(qint64 userId,const int window_size) {
 
 void AvatarLabel::onAvatarUpdated(qint64 userId, const QString &localPath) {
     if (userId != m_userId) return;
-
-    // 判断文件存不存在.
-    // QString fileName = AppConfig::instance().imagesDirectory() + QDir::separator() + localPath;
-    // QFileInfo fileInfo(fileName);
-
-
 
     loadLocalAvatar(localPath);
     qDebug() << "AvatarLabel::onAvatarUpdated::localPath" << localPath;

@@ -19,24 +19,12 @@ public:
     explicit FNP_Line(QWidget *parent = nullptr);
     ~FNP_Line();
 
-
-    // 使用 QPixmap 设置
-    void setData(const QPixmap &avatar,
-                 const QString &qq,
-                 const QString &userName,
-                 const QString &timeText,
-                 const qint64 &_uid
-                 );
-
     // 使用图片路径设置（若加载失败，会清空 avatar）
-    void setData(const QString &avatarPath,
-                 const QString &qq,
+    void setData(const QString &str_uid,
                  const QString &userName,
                  const QString &timeText,
                  const qint64 &_uid
-                 );
-
-
+                );
 
 private:
     Ui::FNP_Line *ui;
