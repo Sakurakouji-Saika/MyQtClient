@@ -27,4 +27,13 @@ void FNP_Line::setData(const QString &str_uid, const QString &userName, const QS
     ui->timeText->setText(timeText);
 
     ui->avatarIcon->setAvatar(_uid,45);
+
+    m_uid = _uid;
 }
+
+void FNP_Line::on_btn_ok_clicked()
+{
+
+    emit agreeFriendClicked(m_uid);
+}
+

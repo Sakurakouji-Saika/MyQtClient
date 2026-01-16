@@ -24,8 +24,16 @@ public:
     void test();
     void clearListWidget(QListWidget* listWidget);
 
+    void removeLinesById(qint64 targetId);
+
 private slots:
     void onGetFriendRequestListSuccess(QList<UserInfo> listData);
+
+    void onSedAgreeFriend(qint64 _agreeUid);
+
+
+signals:
+    void updateFriendList();
 
 private:
     Ui::FriendNotify_Page *ui;

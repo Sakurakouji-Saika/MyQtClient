@@ -14,25 +14,15 @@
 FriendListWidget::FriendListWidget(QWidget *parent)
     : QScrollArea(parent)
 {
-    // 1. 创建真正的内容容器
     QWidget *container = new QWidget(this);
 
-
-    // 在 setWidget(container); 之后
-
-
-
-    // 2. 在容器上创建主布局
     m_mainLayout = new QVBoxLayout(container);
     m_mainLayout->setSpacing(0);
     m_mainLayout->setContentsMargins(0,0,0,0);
 
-    // 3. 设置 QScrollArea 属性
     setWidgetResizable(true); // 跟随宽度自适应
     setWidget(container);     // 把容器塞进滚动区
 
-
-    // 加载样式到 QScrollArea（主要是 viewport、container 的样式）
     StyleLoader::loadWidgetStyle(this, ":/styles/friendlistwidget.css");
     StyleLoader::loadWidgetStyle(verticalScrollBar(), ":/styles/friendlistwidget.css");
 
@@ -43,6 +33,8 @@ FriendListWidget::~FriendListWidget() = default;
 
 void FriendListWidget::setGroups(const QList<std::tuple<QString,int,int>>& groups)
 {
+
+
 
     // 1. 先清理旧分组：删除所有 titleWidget 和 contentWidget
     for (auto it = m_groups.begin(); it != m_groups.end(); ++it) {
@@ -99,7 +91,6 @@ void FriendListWidget::setFriendsForGroup(const QString &groupName, const QList<
     for (auto &fi : friends) {
         auto cell = new QQCellLine(fi.friendId,fi.displayName(),fi.status,this,fi.friendId);
 
-
         blk.contentLayout->addWidget(cell);
 
         // 连接点击信号
@@ -132,7 +123,7 @@ void FriendListWidget::onFriendCellClicked()
     if(!cell)return;
 
     // 把上一次选中的恢复默认
-    if(m_currentSelected &&m_currentSelected !=cell){
+    if(m_currentSelected && m_currentSelected != cell){
         m_currentSelected->setProperty("selected",false);
         m_currentSelected->style()->unpolish(m_currentSelected);
         m_currentSelected->style()->polish(m_currentSelected);
@@ -149,3 +140,44 @@ void FriendListWidget::onFriendCellClicked()
 
 }
 
+
+void FriendListWidget::refreshAllFriends(const QMap<QString, QList<FriendInfo> > &groupFriends)
+{
+    // 清除当前选中状态
+    if (m_currentSelected) {
+        m_currentSelected->setProperty("selected", false);
+        m_currentSelected->style()->unpolish(m_currentSelected);
+        m_currentSelected->style()->polish(m_currentSelected);
+        m_currentSelected = nullptr;
+    }
+
+    // 遍历所有分组，重新设置好友
+    for (auto it = m_groups.begin(); it != m_groups.end(); ++it) {
+        QString groupName = it.key();
+        auto &blk = it.value();
+
+        // 清空该分组的好友列表
+        QLayoutItem *child;
+        while ((child = blk.contentLayout->takeAt(0)) != nullptr) {
+            delete child->widget();
+            delete child;
+
+            qDebug()<< "清空该分组的好友列表";
+        }
+
+        // 如果有新数据，重新填充
+        if (groupFriends.contains(groupName)) {
+            const QList<FriendInfo> &friends = groupFriends[groupName];
+            for (auto &fi : friends) {
+                auto cell = new QQCellLine(fi.friendId, fi.displayName(), fi.status, this, fi.friendId);
+                blk.contentLayout->addWidget(cell);
+
+                // 连接信号
+                connect(cell, &QQCellLine::clicked, this, &FriendListWidget::onFriendCellClicked);
+                connect(cell, &QQCellLine::clicked, [this, fi]() {
+                    emit friendClicked(fi);
+                });
+            }
+        }
+    }
+}

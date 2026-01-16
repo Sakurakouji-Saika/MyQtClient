@@ -23,10 +23,16 @@ public:
 
     // 接口：一次性设置所有分组（仅标题），并给出人数&在线数
     void setGroups(const QList<std::tuple<QString,int,int>>& groups);
+
     // 接口：为指定分组填充好友列表
     void setFriendsForGroup(const QString &groupName, const QList<FriendInfo> &friends);
 
+    // 刷新接口：重新加载所有分组的好友
+    void refreshAllFriends(const QMap<QString, QList<FriendInfo>> &groupFriends);
+
+
 signals:
+
     void friendClicked(const FriendInfo &info);
     void groupToggled(const QString &groupName, bool expanded);
 
@@ -45,6 +51,7 @@ private:
     QQCellLine* m_currentSelected = nullptr;    //当前选中的好友指针
 
 private slots:
+
     void onGroupToggled(bool open);
     void onFriendCellClicked();
 };

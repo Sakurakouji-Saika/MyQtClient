@@ -26,9 +26,21 @@ public:
                  const qint64 &_uid
                 );
 
+
+
+signals:
+    void agreeFriendClicked(qint64 agreeUID);
+
+
+private slots:
+    void on_btn_ok_clicked();
+
+public:
+    qint64 m_uid;
+
 private:
     Ui::FNP_Line *ui;
-    qint64 m_uid;
+
 };
 
 #endif // FNP_LINE_H

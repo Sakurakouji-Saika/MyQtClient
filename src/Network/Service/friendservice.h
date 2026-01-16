@@ -18,6 +18,9 @@ public:
     void search_friends(qint64 uid);
     void add_friend(qint64 requester_uid, qint64 target_uid);
     void get_Friend_request(qint64 uid);
+    void send_agree_friend(qint64 _agree_uid);
+
+    void Delete_friend(qint64 friend_uid);
 
 
 signals:
@@ -30,6 +33,13 @@ signals:
 
     void GetFriendRequestListSuccessSignals(QList<UserInfo> datalists);
     void GetFriendRequestListErrorSignals();
+
+    // void DowloadFriendAvatarSignals(qint64 uid,qint64 file_id);
+    void InsetFriendData(qint64 uid,QString avatar,QString nickname,QString username,qint64 file_avatar_id);
+
+    void DeleteFriendSuccessSignals(qint64 uid);
+    void DeleteFriendErrorSignals(QString error);
+
 
 private:
 

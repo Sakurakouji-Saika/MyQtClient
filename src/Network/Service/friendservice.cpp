@@ -1,6 +1,7 @@
 #include "friendservice.h"
 
 #include <QJsonObject>
+#include <QMessageBox>
 
 #include "../PacketProcessor/packetprocessor.h"
 #include "../../src/utils/comapi/Protocol.h"
@@ -127,4 +128,77 @@ void FriendService::get_Friend_request(qint64 uid)
         }
     },-1);
 
+}
+
+void FriendService::send_agree_friend(qint64 _agree_uid)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::send_agree_friend:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::AgreeFriend);
+    request["agree_uid"] = _agree_uid;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+
+        bool ok = resp.value("ok").toBool();
+
+        if(ok){
+            QMessageBox::critical(
+                nullptr,
+                QObject::tr("程序：添加好友"),
+                QString("添加好友成功"),
+                QMessageBox::Ok
+                );
+
+            qint64 uid = resp.value("uid").toInteger();
+            QString avatar = resp.value("avatar").toString();
+            QString nickname = resp.value("nickname").toString();
+            QString username = resp.value("username").toString();
+            qint64 file_avatar_id = resp.value("file_avatar_id").toInteger();
+
+            emit InsetFriendData(uid,avatar,nickname,username,file_avatar_id);
+
+        }else{
+
+            QString error  = resp.value("error").toString();
+
+            QMessageBox::critical(
+                nullptr,
+                QObject::tr("程序：添加好友：：提示"),
+                QString("添加好友失败 || 出错:") + error,
+                QMessageBox::Ok
+                );
+        }
+    },-1);
+
+}
+
+void FriendService::Delete_friend(qint64 friend_uid)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::Delete_friend:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::DeleteFriend);
+    request["friend_uid"] = friend_uid;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+
+        qDebug() << "FriendService::Delete_friend::" << resp;
+        bool ok = resp.value("ok").toBool();
+
+        if(ok){
+            qint64 uid = resp.value("friend_uid").toInteger();
+            emit DeleteFriendSuccessSignals(uid);
+
+        }else{
+
+
+        }
+    });
 }

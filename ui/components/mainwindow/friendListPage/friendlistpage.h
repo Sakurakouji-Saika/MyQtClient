@@ -20,6 +20,10 @@ public:
 
     void init();
 
+    // 重新加载数据
+    void ReloadData();
+
+
 
 signals:
     void signals_open_profile_page(const FriendInfo &fi);

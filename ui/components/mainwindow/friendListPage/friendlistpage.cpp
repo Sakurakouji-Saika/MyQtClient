@@ -23,17 +23,17 @@ friendListPage::~friendListPage()
 
 void friendListPage::init()
 {
-    FriendListWidget *friendList = new FriendListWidget(this);
+    m_friendListWidget = new FriendListWidget(this);
 
     QLayout *lay = ui->placeHolderWidget->layout();
     if (!lay) {
         lay = new QVBoxLayout(ui->placeHolderWidget);
         lay->setContentsMargins(0,0,0,0);
     }
-    lay->addWidget(friendList);
+    lay->addWidget(m_friendListWidget);
 
 
-    friendList->setGroups({
+    m_friendListWidget->setGroups({
         { "我的好友",   DataBaseManage::instance()->getFriendList().size(), 0  },
         { "同事",      0,  0 },
         { "家人",      0,  0 }
@@ -43,7 +43,7 @@ void friendListPage::init()
     QList<FriendInfo> friendsMy  = DataBaseManage::instance()->getFriendList();
 
 
-    friendList->setFriendsForGroup("我的好友", friendsMy);
+    m_friendListWidget->setFriendsForGroup("我的好友", friendsMy);
 
     QList<FriendInfo> friendsColleagues;  // “同事”
 
@@ -51,16 +51,43 @@ void friendListPage::init()
     QList<FriendInfo> friendsFamily;  // “家人”
 
 
-    friendList->setFriendsForGroup("家人", friendsFamily);
+    m_friendListWidget->setFriendsForGroup("家人", friendsFamily);
 
-    QObject::connect(friendList, &FriendListWidget::friendClicked,
+    connect(m_friendListWidget, &FriendListWidget::friendClicked,
                      [this](const FriendInfo &fi){
                          qDebug() << "你点击了：" << fi.username << "(ID:" << fi.friendId << ")";
 
                          emit signals_open_profile_page(fi);
                      });
 
-    QObject::connect(friendList, &FriendListWidget::groupToggled,
+    connect(m_friendListWidget, &FriendListWidget::groupToggled,
+                     [&](const QString &grp, bool open){
+                         qDebug() << (open ? "展开了分组：" : "收起了分组：") << grp;
+                     });
+}
+
+void friendListPage::ReloadData()
+{
+
+    disconnect(m_friendListWidget,nullptr,nullptr,nullptr);
+
+    QList<FriendInfo> friendsMy  = DataBaseManage::instance()->getFriendList();
+
+    QMap<QString, QList<FriendInfo>> updatedFriends;
+
+    updatedFriends.insert("我的好友",friendsMy);
+
+    m_friendListWidget->refreshAllFriends(updatedFriends);
+
+
+    connect(m_friendListWidget, &FriendListWidget::friendClicked,
+                     [this](const FriendInfo &fi){
+                         qDebug() << "你点击了：" << fi.username << "(ID:" << fi.friendId << ")";
+
+                         emit signals_open_profile_page(fi);
+                     });
+
+    connect(m_friendListWidget, &FriendListWidget::groupToggled,
                      [&](const QString &grp, bool open){
                          qDebug() << (open ? "展开了分组：" : "收起了分组：") << grp;
                      });

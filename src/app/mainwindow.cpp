@@ -119,6 +119,15 @@ MainWindow::MainWindow(QWidget *parent)
 
         chatList->receiveMessage(r);
     });
+
+
+    connect(m_profile_main_page,&ProfilePage_Main::deleteFriendUid,this,[this](){
+        friendList->ReloadData();
+    });
+
+    connect(m_friendNotify,&FriendNotify_Page::updateFriendList,this,[this](){
+        friendList->ReloadData();
+    });
 }
 
 MainWindow::~MainWindow()
@@ -309,6 +318,7 @@ void MainWindow::setNetWork(ServiceManager *_sm)
     m_sm = _sm;
 
     m_friendNotify->setNetWork(m_sm);
+    m_profile_main_page->setNetWork(m_sm);
 
 }
 

@@ -130,6 +130,8 @@ public:
     // 获取用户头像数据
     void GetUserAvatarData(QList<FriendAvatar> &result);
 
+    bool deleteFriendByUID(qint64 friend_uid);
+
 
 private:
     explicit DataBaseManage(QObject *parent = nullptr);

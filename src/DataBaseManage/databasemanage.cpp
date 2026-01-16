@@ -522,6 +522,48 @@ void DataBaseManage::GetUserAvatarData(QList<FriendAvatar> &result)
     }
 }
 
+bool DataBaseManage::deleteFriendByUID(qint64 friend_uid)
+{
+    if (friend_uid <= 0) return false;
+
+    QMutexLocker locker(&m_mutex);
+
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    if (!m_db.transaction()) {
+        qDebug() << "DB transaction start failed:" << m_db.lastError().text();
+        return false;
+    }
+
+    QSqlQuery q(m_db);
+
+    q.prepare("DELETE FROM friend_info WHERE friend_id = :friend_id");
+    q.bindValue(":friend_id", friend_uid);
+
+    if (!q.exec()) {
+        qDebug() << "删除好友失败:" << q.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    q.clear();
+    q.prepare("DELETE FROM recent_messages WHERE peer_id = :friend_uid");
+    q.bindValue(":friend_uid", QString::number(friend_uid));  // 关键修复
+
+    if (!q.exec()) {
+        qDebug() << "删除最近消息失败:" << q.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    if (!m_db.commit()) {
+        qDebug() << "提交事务失败:" << m_db.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    return true;
+}
 
 bool DataBaseManage::addChatMessage(const QString &msgId, const QString &fromId, const QString &toId, const QString &content, int type, qint64 timestamp)
 {
