@@ -20,14 +20,18 @@ class RC_Line : public QWidget
 public:
     explicit RC_Line(QWidget *parent = nullptr);
     ~RC_Line();
+
     void setData(const Recent_Data &m_data);
     void setData(QVariant m_var);
     void setUnReadOnZero();
     Recent_Data recentDataFromVariant(const QVariant &v);
 
+    qint64 getUid();
+
 
 private:
     Ui::RC_Line *ui;
+    qint64 m_uid;
 };
 
 #endif // RC_LINE_H

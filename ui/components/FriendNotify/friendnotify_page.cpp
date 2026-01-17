@@ -38,6 +38,7 @@ void FriendNotify_Page::setNetWork(ServiceManager *_sm)
             this,
             &FriendNotify_Page::onGetFriendRequestListSuccess);
 
+
     connect(m_fs,&FriendService::InsetFriendData,this,[this](qint64 uid,QString avatar,QString nickname,QString username,qint64 file_avatar_id){
 
         // 下载头像
@@ -47,10 +48,15 @@ void FriendNotify_Page::setNetWork(ServiceManager *_sm)
         DataBaseManage *dbm = DataBaseManage::instance();
         dbm->upsertFriend(uid,username,nickname,QString(),file_avatar_id,avatar,0);
 
-        emit updateFriendList();
+        emit updateFriendList(uid);
 
         removeLinesById(uid);
     });
+
+
+
+
+
 }
 
 void FriendNotify_Page::GetData(qint64 uid)

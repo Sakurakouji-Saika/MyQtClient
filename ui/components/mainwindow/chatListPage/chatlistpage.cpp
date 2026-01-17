@@ -83,9 +83,6 @@ void chatListPage::test()
 
 
 
-
-
-
         qDebug() << "chatListPage::test()::t.avatarPath::" << t.avatarPath;
         qDebug() << "chatListPage::test()::t.avatarPath::用户ID：" << temp[i].peer_id;
         t.msg = temp[i].last_msg;
@@ -96,11 +93,7 @@ void chatListPage::test()
         m_list_2.append(t);
     };
 
-
     populateRecentList(m_list_2);
-
-
-
 
 }
 
@@ -170,6 +163,7 @@ void chatListPage::on_showListContextMenu(const QPoint &pos)
             if (w) {
                 ui->listView->setIndexWidget(index, nullptr);
                 w->deleteLater();
+
             }
 
             // 3) 从 model 删除行
@@ -195,6 +189,27 @@ void chatListPage::receiveMessage(const Recent_Data &msg)
 }
 
 
+void chatListPage::deleteItemWidgetByUid(qint64 uid)
+{
+    for (int row = 0; row < m_model->rowCount(); ++row) {
+        QModelIndex idx = m_model->index(row, 0);
+        qint64 itemUid = idx.data(user_id_Role).toLongLong();
+
+        if (itemUid == uid) {
+            QWidget *w = ui->listView->indexWidget(idx);
+            if (w) {
+                ui->listView->setIndexWidget(idx, nullptr);
+                w->deleteLater();
+            }
+            m_model->removeRow(row);
+            qDebug() << "成功删除uid为" << uid << "的聊天项";
+            return;
+        }
+    }
+    qDebug() << "未找到uid为" << uid << "的聊天项";
+}
+
+
 
 void chatListPage::onNewMessage(const Recent_Data &msg)
 {
@@ -207,6 +222,7 @@ void chatListPage::onNewMessage(const Recent_Data &msg)
     w->setFixedHeight(72);
     w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     w->setData(m_model->data(idx, all_data_Role));
+
     ui->listView->setIndexWidget(idx, w);
     ui->listView->update();
 

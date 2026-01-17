@@ -28,7 +28,12 @@ void RC_Line::setData(const Recent_Data &m_data)
     avatarSize.setHeight(40);
 
     qDebug() << "RC_Line::setData::m_data.user_id::" << m_data.user_id;
+
+    m_uid = m_data.user_id;
+
+
     ui->RCL_Avatar->setAvatar(m_data.user_id,40);
+
 
 
     // 设置其他属性
@@ -111,4 +116,9 @@ Recent_Data RC_Line::recentDataFromVariant(const QVariant &v)
     }
 
     return rd;
+}
+
+qint64 RC_Line::getUid()
+{
+    return m_uid;
 }

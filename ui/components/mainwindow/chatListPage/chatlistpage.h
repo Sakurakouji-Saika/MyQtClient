@@ -35,6 +35,8 @@ public:
 
     void receiveMessage(const Recent_Data &msg);
 
+    void deleteItemWidgetByUid(qint64 uid);
+
 
 signals:
     void openChatPage(const int &user_id); // 自定义信号

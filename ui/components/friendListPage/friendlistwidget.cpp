@@ -161,8 +161,6 @@ void FriendListWidget::refreshAllFriends(const QMap<QString, QList<FriendInfo> >
         while ((child = blk.contentLayout->takeAt(0)) != nullptr) {
             delete child->widget();
             delete child;
-
-            qDebug()<< "清空该分组的好友列表";
         }
 
         // 如果有新数据，重新填充

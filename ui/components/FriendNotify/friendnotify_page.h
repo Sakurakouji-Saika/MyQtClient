@@ -33,7 +33,7 @@ private slots:
 
 
 signals:
-    void updateFriendList();
+    void updateFriendList(qint64 uid);
 
 private:
     Ui::FriendNotify_Page *ui;

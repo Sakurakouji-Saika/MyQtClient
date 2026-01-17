@@ -121,11 +121,14 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
-    connect(m_profile_main_page,&ProfilePage_Main::deleteFriendUid,this,[this](){
+    connect(m_profile_main_page,&ProfilePage_Main::deleteFriendUid,this,[this](qint64 friend_uid){
         friendList->ReloadData();
+
+        qDebug()<< "&FriendNotify_Page::updateFriendList::已触发";
+        chatList->deleteItemWidgetByUid(friend_uid);
     });
 
-    connect(m_friendNotify,&FriendNotify_Page::updateFriendList,this,[this](){
+    connect(m_friendNotify,&FriendNotify_Page::updateFriendList,this,[this](qint64 uid){
         friendList->ReloadData();
     });
 }
@@ -435,6 +438,9 @@ void MainWindow::on_searchBtn_clicked()
             );
 
         chatList->receiveMessage(testData);
+
+        // // 测试 用于查看 最近聊天列表数据,可以删除
+        // chatList->deleteItemWidgetByUid(1);
 
     });
 
