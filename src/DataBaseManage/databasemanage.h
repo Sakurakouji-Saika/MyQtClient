@@ -130,7 +130,11 @@ public:
     // 获取用户头像数据
     void GetUserAvatarData(QList<FriendAvatar> &result);
 
+    // 删除好友通过uid
     bool deleteFriendByUID(qint64 friend_uid);
+
+    // 更新好友状态
+    bool updateFriendStateByUid(qint64 friend_uid,int state);
 
 
 private:

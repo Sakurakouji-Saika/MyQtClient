@@ -90,5 +90,10 @@ void friendListPage::ReloadData()
     connect(m_friendListWidget, &FriendListWidget::groupToggled,
                      [&](const QString &grp, bool open){
                          qDebug() << (open ? "展开了分组：" : "收起了分组：") << grp;
-                     });
+    });
+}
+
+void friendListPage::ReloadFriendState(qint64 friend_uid, int state)
+{
+    m_friendListWidget->setFriendState("我的好友",friend_uid,state);
 }

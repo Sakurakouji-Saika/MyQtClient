@@ -6,6 +6,7 @@
 
 #include "../../utils/appconfig.h"
 #include "avatarservice.h"
+#include "../Network/Handlers/appeventbus.h"
 
 ServiceManager::ServiceManager(QObject *parent)
     : QObject{parent}
@@ -29,6 +30,7 @@ void ServiceManager::init()
     m_auth = new AuthService(m_processor,this);
     m_as = new AvatarService(m_processor,this);
     m_fs = new FriendService(m_processor,this);
+    m_aeb = new AppEventBus();
 
 }
 

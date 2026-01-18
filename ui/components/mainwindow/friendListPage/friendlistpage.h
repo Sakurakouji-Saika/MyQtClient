@@ -23,6 +23,9 @@ public:
     // 重新加载数据
     void ReloadData();
 
+    // 重新加载好友状态
+    void ReloadFriendState(qint64 friend_uid, int state);
+
 
 
 signals:
@@ -31,8 +34,6 @@ signals:
 private:
 
     FriendListWidget *m_friendListWidget; // 好友列表控件
-
-
 
     Ui::friendListPage *ui;
 

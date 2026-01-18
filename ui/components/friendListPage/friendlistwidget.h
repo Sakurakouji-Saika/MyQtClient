@@ -10,7 +10,7 @@
 #include "../../src/DataBaseManage/model/FriendInfo.h"
 #include <QScrollArea>
 #include <QVariant>
-#include <QStyle>     // 为 style()->unpolish()/polish() 提供完整定义
+#include <QStyle>
 #include "qqcellline.h"
 
 class QQCellTitle;   // ← 前向声明
@@ -30,6 +30,8 @@ public:
     // 刷新接口：重新加载所有分组的好友
     void refreshAllFriends(const QMap<QString, QList<FriendInfo>> &groupFriends);
 
+    void setFriendState(const QString &groupName, const qint64 friendUid, int state);
+
 
 signals:
 
@@ -43,10 +45,9 @@ private:
         QVBoxLayout*        contentLayout;
     };
 
-    QWidget    *m_container;    // 真正放标题和列表的 QWidget
-    QVBoxLayout*           m_mainLayout;    // 放到 container 里的主布局
-    QMap<QString,GroupBlock> m_groups;
-
+    QWidget*                    m_container;    // 真正放标题和列表的 QWidget
+    QVBoxLayout*                m_mainLayout;   // 放到 container 里的主布局
+    QMap<QString,GroupBlock>    m_groups;
 
     QQCellLine* m_currentSelected = nullptr;    //当前选中的好友指针
 

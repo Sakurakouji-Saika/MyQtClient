@@ -6,11 +6,12 @@
 #include "../Service/friendservice.h"
 #include "../PacketProcessor/packetprocessor.h"
 #include "../../src/utils/comapi/Protocol.h"
-
+#include "appeventbus.h"
 
 handlerregistry::handlerregistry(ServiceManager *_sm)
     :m_sm{_sm}
-{}
+{
+}
 
 void handlerregistry::registerAll()
 {
@@ -31,12 +32,20 @@ void handlerregistry::registerAll()
         m_sm->avatar()->avatarUploadFailed(json);
     });
 
+    registerHandler(static_cast<int>(Protocol::MessageType::avatarUploadFailed),[this](const QJsonObject& json){
+        m_sm->avatar()->avatarUploadFailed(json);
+    });
 
-    // registerHandler(static_cast<int>(Protocol::MessageType::SearchFriend),[this](const QJsonObject& json){
-    //     m_sm->friendApi()
-    // });
 
+    // 广播好友上线事件
+    registerHandler(static_cast<int>(Protocol::MessageType::FriendOnline),[this](const QJsonObject& json){
+        m_sm->broadcastAPI()->friendStatusChanged(json);
+    });
 
+    // 广播好友下载线事件
+    registerHandler(static_cast<int>(Protocol::MessageType::FriendOffline),[this](const QJsonObject& json){
+        m_sm->broadcastAPI()->friendStatusChanged(json);
+    });
 
 }
 

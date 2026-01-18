@@ -9,6 +9,7 @@ class SocketClient;
 class AuthService;
 class AvatarService;
 class FriendService;
+class AppEventBus;
 
 
 class ServiceManager : public QObject
@@ -31,7 +32,8 @@ public:
 
     AuthService* auth() const { return m_auth; }
     AvatarService  *avatar() const { return m_as; }
-    FriendService *friendApi() const {return m_fs; }
+    FriendService *friendApi() const { return m_fs; }
+    AppEventBus *broadcastAPI() const { return m_aeb;}
 
 
 private:
@@ -43,6 +45,7 @@ private:
     AuthService* m_auth = nullptr;
     AvatarService *m_as = nullptr;
     FriendService *m_fs = nullptr;
+    AppEventBus *m_aeb = nullptr;
 
 };
 

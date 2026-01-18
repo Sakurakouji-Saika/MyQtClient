@@ -61,6 +61,9 @@ private slots:
     void on_searchBtn_clicked();
 
 
+    void on_Friend_OnlineSignal(qint64 friend_uid,int state);
+
+
 
 private:
     Ui::MainWindow *ui;

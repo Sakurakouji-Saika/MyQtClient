@@ -5,6 +5,7 @@
 
 
 class ServiceManager;
+class AppEventBus;
 
 using JsonHandler = std::function<void(const QJsonObject&)>;
 
@@ -21,6 +22,7 @@ public:
 
 private:
     ServiceManager *m_sm;
+
 };
 
 #endif // HANDLERREGISTRY_H

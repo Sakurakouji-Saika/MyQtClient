@@ -36,11 +36,7 @@ QQCellLine::QQCellLine(const qint64 &uid,const QString &name, bool isOnLine, QWi
 
     ui->labFriendName->setText(name);
 
-    if(isOnLine){
-        ui->labStatus->setText(QString("[ 在线 🟢 ]"));
-    }else{
-        ui->labStatus->setText(QString("[ 离线 ]"));
-    }
+    setOnlineState(isOnLine);
 }
 
 QQCellLine::~QQCellLine()
@@ -61,12 +57,12 @@ void QQCellLine::setName(const QString &name)
     ui->labFriendName->setText(name);
 }
 
-void QQCellLine::setOnline(bool online)
+void QQCellLine::setOnlineState(bool online)
 {
     if(online){
-        ui->labStatus->setText(QString("当前用户状态：在线"));
+        ui->labStatus->setText(QString("[ 在线 🟢 ]"));
     }else{
-        ui->labStatus->setText(QString("当前用户状态：离线"));
+        ui->labStatus->setText(QString("[ 离线 ]"));
     }
 }
 

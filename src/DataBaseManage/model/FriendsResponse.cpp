@@ -54,6 +54,7 @@ FriendsResponse parseFriendsResponse(const QJsonObject &_resp)
 
         fi.avatarPath = fo.value("avatarPath").toString();
         fi.unreadCount = fo.value("unreadCount").toInt(0);
+        fi.state = fo.value("state").toBool();
 
         fi.lastMessage = _parseLastMessage(fo.value("LastMessageInfo"));
 

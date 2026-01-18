@@ -14,6 +14,7 @@
 #include "../Network/Service/avatarservice.h"
 #include "../widgets/avatar/avatarmanager.h"
 #include "../DataBaseManage/ViewModel/FriendAvatarDTO.h"
+#include "../Network/Handlers/appeventbus.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -323,6 +324,9 @@ void MainWindow::setNetWork(ServiceManager *_sm)
     m_friendNotify->setNetWork(m_sm);
     m_profile_main_page->setNetWork(m_sm);
 
+    connect(m_sm->broadcastAPI(),&AppEventBus::Friend_OnlineSignal,this,&MainWindow::on_Friend_OnlineSignal);
+
+
 }
 
 
@@ -444,9 +448,6 @@ void MainWindow::on_searchBtn_clicked()
 
     });
 
-
-
-
     // 显示菜单
     QPoint pos = ui->searchBtn->mapToGlobal(QPoint(0, ui->searchBtn->height() + 5));
     menu.exec(pos);
@@ -457,7 +458,11 @@ void MainWindow::on_searchBtn_clicked()
 
 }
 
-
+// 好友上线通知
+void MainWindow::on_Friend_OnlineSignal(qint64 friend_uid, int state)
+{
+    friendList->ReloadFriendState(friend_uid,state);
+}
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {

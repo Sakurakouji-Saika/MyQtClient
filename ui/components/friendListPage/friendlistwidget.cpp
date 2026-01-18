@@ -63,8 +63,6 @@ void FriendListWidget::setGroups(const QList<std::tuple<QString,int,int>>& group
         container->setVisible(false);
         m_mainLayout->addWidget(container);
 
-
-
         m_groups.insert(name, { title, container, vlay });
 
         connect(title, &QQCellTitle::sigCellStatusChange,
@@ -176,6 +174,38 @@ void FriendListWidget::refreshAllFriends(const QMap<QString, QList<FriendInfo> >
                     emit friendClicked(fi);
                 });
             }
+        }
+    }
+}
+
+void FriendListWidget::setFriendState(const QString &groupName, const qint64 friendUid, int state)
+{
+    if(!m_groups.contains(groupName)) return;
+    auto &blk = m_groups[groupName];
+
+    QLayout *layout = blk.contentLayout;
+    if(!layout) return;
+
+    for(int i = 0; i < layout->count(); ++i){
+        QLayoutItem *item = layout->itemAt(i);
+        if(!item) return;
+
+        QWidget *w = item->widget();
+        if(!w) continue;
+
+        QQCellLine *cell = qobject_cast<QQCellLine*>(w);
+        if(!cell) continue;
+
+        if(static_cast<qint64>(cell->getUserId()) == friendUid){
+
+            bool online = (state != 0);
+
+            cell->setOnlineState(online);
+            cell->update();
+            cell->style()->unpolish(cell);
+            cell->style()->polish(cell);
+
+            break;
         }
     }
 }

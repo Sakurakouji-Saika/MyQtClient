@@ -257,7 +257,6 @@ void Widget::setNetwork(ServiceManager *_sm)
         qint64 createdAt = resp.value("created_at").toString().toLongLong();
         qint64 updatedAt = resp.value("updated_at").toString().toLongLong();
         qint64 lastSeen = resp.value("last_seen").toString().toLongLong();
-        QString statusStr = resp.value("status").toString().toLower();
         QString avatar = resp.value("avatar").toString();
 
 
@@ -265,22 +264,7 @@ void Widget::setNetwork(ServiceManager *_sm)
 
         AppConfig::instance().setUserID(uid);
 
-
         InitDataBaseMange();
-
-        int statusCode = 0; // 0 = offline
-        if (statusStr == "online")      statusCode = 1;
-        else if (statusStr == "away")   statusCode = 2;
-        else if (statusStr == "busy")   statusCode = 3;
-        else if (statusStr == "offline")statusCode = 0;
-        else {
-            statusCode = 0;
-        }
-
-        qDebug() << "statusCode::" << statusCode;
-
-
-        // QString Avatar = DataBaseManage::instance()->GetFriendAvatarById(uid)->avatar;
 
         // 调用 upsertFriend（用服务端的 username/nickname/email 等字段）
         bool ok = DataBaseManage::instance()->upsertFriend(
@@ -290,7 +274,7 @@ void Widget::setNetwork(ServiceManager *_sm)
             email,
             avatar_file_id,
             avatar,
-            statusCode,
+            1,  //登录状态
             createdAt,
             updatedAt
             );
@@ -382,6 +366,19 @@ void Widget::setNetwork(ServiceManager *_sm)
     });
 
 
+    connect(m_sm->friendApi(),&FriendService::AddFriendSuccessSignals,this,[this](){
+        QMessageBox::information(this, QStringLiteral("添加好友"),
+                                 QStringLiteral("申请成功！"));
+
+    });
+
+    connect(m_sm->friendApi(),&FriendService::AddFriendErrorSignals,this,[this](QString error){
+        QMessageBox::information(this, QStringLiteral("添加好友"),
+                                 QStringLiteral("提示： %1").arg(error));
+
+    });
+
+
     // 绑定获取好友列表
     connect(auth, &AuthService::GetMyFriendsSucceeded, this, [this](const QJsonObject &resp){
 
@@ -406,19 +403,6 @@ void Widget::setNetwork(ServiceManager *_sm)
                 }
             }
         }
-
-
-        connect(m_sm->friendApi(),&FriendService::AddFriendSuccessSignals,this,[this](){
-            QMessageBox::information(this, QStringLiteral("添加好友"),
-                                     QStringLiteral("申请成功！"));
-
-        });
-
-        connect(m_sm->friendApi(),&FriendService::AddFriendErrorSignals,this,[this](QString error){
-            QMessageBox::information(this, QStringLiteral("添加好友"),
-                                     QStringLiteral("提示： %1").arg(error));
-
-        });
 
         m_mw = new MainWindow();
         m_mw->setAttribute(Qt::WA_DeleteOnClose);

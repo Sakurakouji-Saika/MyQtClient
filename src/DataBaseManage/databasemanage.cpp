@@ -228,7 +228,11 @@ bool DataBaseManage::upsertFriend(qint64 friendId, const QString &username, cons
     q.bindValue(":email", email);
     q.bindValue(":avatar_file_id", avatar_file_id);
     q.bindValue(":avatar", avatar);
+
     q.bindValue(":status", status);
+
+
+
     q.bindValue(":created_at", createdAt ? createdAt : QDateTime::currentSecsSinceEpoch());
     q.bindValue(":updated_at", updatedAt);
 
@@ -259,14 +263,16 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
     // 预编译语句（使用 UPDATE -> INSERT 的可移植 upsert）
     QSqlQuery qUpdateFriend(m_db);
     qUpdateFriend.prepare(
-        "UPDATE friend_info SET username = :username, nickname = :nickname, avatar = :avatar, updated_at = :updated_at, avatar_file_id = :avatar_file_id "
+        "UPDATE friend_info SET username = :username, nickname = :nickname, "
+        "avatar = :avatar, updated_at = :updated_at, avatar_file_id = :avatar_file_id, "
+        "status = :status "
         "WHERE friend_id = :friend_id;"
         );
 
     QSqlQuery qInsertFriend(m_db);
     qInsertFriend.prepare(
-        "INSERT INTO friend_info (friend_id, username, nickname, avatar, created_at, updated_at, avatar_file_id) "
-        "VALUES (:friend_id, :username, :nickname, :avatar, :created_at, :updated_at, :avatar_file_id);"
+        "INSERT INTO friend_info (friend_id, username, nickname, avatar, created_at, updated_at, avatar_file_id, status) "
+        "VALUES (:friend_id, :username, :nickname, :avatar, :created_at, :updated_at, :avatar_file_id, :status);"
         );
 
     QSqlQuery qUpdateRecent(m_db);
@@ -287,8 +293,13 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
         "VALUES (:msg_id, :from_id, :to_id, :content, :type, :timestamp, :status);"
         );
 
+
+    qDebug()<< "DataBaseManage::saveFriendListToDb::好友列表数量::" <<r.friends.size();
+
     // 遍历好友数组
     for (const FriendInfo_sever &fi : r.friends) {
+
+
         int friendId = fi.id;
         QString username = fi.username;
         QString nickname = fi.nickname;
@@ -296,6 +307,11 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
         int unread = fi.unreadCount;
         qint64 avatar_file_id = fi.avatar_file_id;
         qint64 nowSec = QDateTime::currentSecsSinceEpoch();
+        bool status = fi.state;
+
+        qDebug() << "DataBaseManage::saveFriendListToDb::好友状态:UID" << friendId << " || NAME:"  << username << status;
+
+
 
         // 1) friend_info: update first
         qUpdateFriend.bindValue(":username", username);
@@ -306,6 +322,7 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
         qUpdateFriend.bindValue(":avatar_file_id", avatar_file_id);
 
         qUpdateFriend.bindValue(":friend_id", friendId);
+        qUpdateFriend.bindValue(":status", status);
 
 
         if (!qUpdateFriend.exec()) {
@@ -325,6 +342,10 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
             qUpdateFriend.bindValue(":avatar_file_id", avatar_file_id);
 
             qInsertFriend.bindValue(":updated_at", nowSec);
+
+            qInsertFriend.bindValue(":status", status);
+
+
             if (!qInsertFriend.exec()) {
                 qWarning() << "INSERT friend_info failed for" << friendId << ":" << qInsertFriend.lastError().text();
                 m_db.rollback();
@@ -349,13 +370,16 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
             QString fromIdStr = QString::number(lm.senderId);
             QString toIdStr = QString::number((lm.senderId == myUserId) ? friendId : myUserId);
 
+
+
             qInsertChat.bindValue(":msg_id", msgIdStr);
             qInsertChat.bindValue(":from_id", fromIdStr);
             qInsertChat.bindValue(":to_id", toIdStr);
             qInsertChat.bindValue(":content", lm.content);
             qInsertChat.bindValue(":type", messageTypeToInt(lm.type));
             qInsertChat.bindValue(":timestamp", lastMsgTime);
-            qInsertChat.bindValue(":status", 0);
+            qInsertChat.bindValue(":status", status);
+
 
             if (!qInsertChat.exec()) {
                 qWarning() << "INSERT chat_records failed for msg" << msgIdStr << ":" << qInsertChat.lastError().text();
@@ -396,7 +420,7 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
             }
         }
 
-    } // end for friends
+    }
 
     // 提交事务
     if (!m_db.commit()) {
@@ -560,6 +584,32 @@ bool DataBaseManage::deleteFriendByUID(qint64 friend_uid)
         qDebug() << "提交事务失败:" << m_db.lastError().text();
         m_db.rollback();
         return false;
+    }
+
+    return true;
+}
+
+bool DataBaseManage::updateFriendStateByUid(qint64 friend_uid, int state)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) return false;
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        UPDATE friend_info
+        SET status = :state
+        WHERE friend_id = :friend_id;
+    )");
+
+    q.bindValue(":state", state);
+    q.bindValue(":friend_id", friend_uid);
+
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseManage::updateFriendStateByUid failed:" << q.lastError().text();
+        return false;
+    } else {
+        qDebug() << "updateFriendStateByUid ok, rowsAffected =" << q.numRowsAffected();
     }
 
     return true;
@@ -1022,7 +1072,7 @@ bool DataBaseManage::createTables()
             email TEXT,                                -- 邮箱
             avatar_file_id TEXT,                       -- 服务端的头像文件 id（字符串）
             avatar TEXT,                               -- 客户端使用的头像 URL 或本地缓存路径
-            status TEXT DEFAULT 'offline',             -- 好友状态（'online'/'offline'...）
+            status INTEGER DEFAULT 0,                  -- 好友状态：0=false, 1=true
             created_at INTEGER DEFAULT (strftime('%s','now')), -- 本地记录创建时间（UNIX 秒）
             updated_at INTEGER                         -- 服务端最后更新时间（UNIX 秒）
         );

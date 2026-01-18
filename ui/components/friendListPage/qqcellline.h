@@ -17,12 +17,12 @@ public:
 
     // 接口：设置头像（传入本地路径或网络 URL）
     void setAvatar(const qint64 &uid);
-    // 接口：设置好友名称
-    void setName(const QString &name);
-    // 接口：设置在线状态
-    void setOnline(bool online);
 
-    // 接口:设置用户ID
+    void setName(const QString &name);
+
+    // 接口：设置在线状态
+    void setOnlineState(bool online);
+
     void setUserId(int _id);
 
     int getUserId();

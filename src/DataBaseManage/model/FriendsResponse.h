@@ -31,6 +31,7 @@ struct FriendInfo_sever {
     QDateTime lastSeen;
     QDateTime friendedAt;
     qint64 avatar_file_id;
+    bool state;
     int unreadCount = 0;
 
     std::optional<LastMessageInfo> lastMessage;
