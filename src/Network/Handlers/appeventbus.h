@@ -23,9 +23,27 @@ public:
     // 好友更新头像
     void UpdateAvatar(const QJsonObject& json);
 
+    // 添加好友成功信号
+    void friendAdded(const QJsonObject& json);
+
+    // 删除好友成功信号
+    void RemovedByFriend(const QJsonObject& json);
+
+    // 收到好友发来的消息(const QJsonObject& json);
+    void ReceiveMessage(const QJsonObject& json);
+
 signals:
     void Friend_OnlineSignal(qint64 friend_uid,int state);
 
+    void UpdateAvatarSignal(qint64 uid, qint64 file_id);
+
+    void RemovedByFriendSignal(qint64 uid);
+
+    void friendAddedSignal(qint64 uid, QString avatarName, qint64 avatar_file_id, QString nickname, int status, QString username);
+
+    void ReceiveNewMessageSignals(qint64 file_id, QString msgContent, int msgType, qint64 send_at, qint64 sender_id, qint64 msgId, qint64 receiver_id);
+
+    void ReceiveNewMsgSuccessSignals(qint64 msgID);
 };
 
 #endif // APPEVENTBUS_H

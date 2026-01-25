@@ -47,6 +47,26 @@ void handlerregistry::registerAll()
         m_sm->broadcastAPI()->friendStatusChanged(json);
     });
 
+    // 广播好友更新头像事件
+    registerHandler(static_cast<int>(Protocol::MessageType::UpdateAvatarFriend),[this](const QJsonObject& json){
+        m_sm->broadcastAPI()->UpdateAvatar(json);
+    });
+
+    // 广播被好友删除事件
+    registerHandler(static_cast<int>(Protocol::MessageType::RemovedByFriend),[this](const QJsonObject& json){
+        m_sm->broadcastAPI()->RemovedByFriend(json);
+    });
+
+    // 广播申请好友成功事件
+    registerHandler(static_cast<int>(Protocol::MessageType::friendAddedByRequest),[this](const QJsonObject& json){
+        m_sm->broadcastAPI()->friendAdded(json);
+    });
+
+    // 广播收到好友发来的消息
+    registerHandler(static_cast<int>(Protocol::MessageType::SendText),[this](const QJsonObject& json){
+        m_sm->broadcastAPI()->ReceiveMessage(json);
+    });
+
 }
 
 void handlerregistry::registerHandler(int messageType, JsonHandler handler)

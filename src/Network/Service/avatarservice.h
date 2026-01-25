@@ -40,7 +40,7 @@ public:
 private:
 
     // 保存文件到磁盘并插入 files 表
-    bool saveAvatarFile(qint64 userId, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError);
+    bool saveAvatarFile(qint64 owner_id, qint64 userId, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError);
 
     bool readAvatarFile(const QString &fileName, QByteArray &fileData, const qint64 &chunk_size, qint64 &chunk_num);
 

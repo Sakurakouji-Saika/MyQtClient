@@ -23,10 +23,18 @@ enum class MessageType: int   {
     RefreshFriends   = 2007,  // 刷新好友状态
     SearchFriend     = 2008,  // 搜索好友
     FriendRequestList    = 2009,  // 好友申请列表信息
+    RemovedByFriend  = 2010,  // 被好友删除（别人删自己）
+    friendAddedByRequest = 2011,  // 你的好友请求被某个好友接受
+
+
 
     // ===== 文本传输相关 =====
-    SendText         = 3001,  // 发送文本消息
-    ReceiveText      = 3002,  // 接收文本消息
+    SendText            = 3001,  // 发送文本消息
+    ReceiveText         = 3002,  // 接收文本消息
+    MessageAck          = 3003,  // 表示设备已接受消息
+    MessageReadReceipt  = 3004,  // 消息已读
+    OfflineMessage      = 3005,  // 离线消息
+
 
     // ===== 文件传输相关 =====
     SendFileStart    = 3005,  // 发送文件开始
@@ -58,15 +66,15 @@ enum class MessageType: int   {
 };
 
 
-// 聊天对话中的消息类型
-enum class MessageKind : int {
-    Text    = 0,
-    Image   = 1,
-    File    = 2,
-    Audio   = 3,
-    Video   = 4,
-    Unknown = -1   // 如果需要区分未识别类型可使用 Unknown
-};
+    // 聊天对话中的消息类型
+    enum class MessageKind : int {
+        Text    = 1,
+        Image   = 2,
+        File    = 3,
+        Audio   = 4,
+        Video   = 5,
+        Unknown = -1   // 如果需要区分未识别类型可使用 Unknown
+    };
 }
 
 #endif // PROTOCOL_H

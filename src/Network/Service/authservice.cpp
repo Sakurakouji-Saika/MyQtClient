@@ -97,3 +97,32 @@ void AuthService::GetMyFriends(qint64 &id, int timeoutMs)
 
     },timeoutMs);
 }
+
+void AuthService::GetOfflineMessage(qint64 &id, int timeoutMs)
+{
+    if(!m_processor){
+        emit GetOfflineMessageFailed(QStringLiteral("AuthService::GetOfflineMessage::内部错误:没有PacketProcessor"));
+        qDebug() << "AuthService::GetOfflineMessage::内部错误:没有PacketProcessor";
+        return;
+    }
+
+    QJsonObject req;
+    req["type"] = static_cast<int>(Protocol::MessageType::OfflineMessage);
+    req["userID"] = id;
+
+    m_processor->sendRequest(req,[this](const QJsonObject &resp){
+
+
+        bool ok = resp.value("ok").toBool(false);
+
+        if(!ok){
+            QString reason = resp.value("error").toString("服务端错误信息提示为空");
+            qDebug() << "AuthService::GetOfflineMessage::error::" << reason;
+            // emit GetOfflineMessageFailed(reason);
+            return;
+        }
+
+        emit GetOfflineMessageSucceeded(resp);
+
+    },timeoutMs);
+}

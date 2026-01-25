@@ -41,7 +41,7 @@ public:
     // 插入或更新最近会话信息（peerId 唯一）
     bool upsertRecentMessage(const QString &peerId,const QString &lastMsg,qint64 lastTime,int unreadCount,int direction);
 
-    // 原子地插入聊天消息并更新最近会话（在同一事务中执行）
+    // 插入聊天消息并更新最近会话（在同一事务中执行）
     bool addChatMessageAndUpdateRecent(const QString &msgId,
                                        const int &fromId,
                                        const int &toId,
@@ -100,8 +100,6 @@ public:
     // 判断是不是已经是好友了(字符串)
     bool isFriend(const QString &friendid) const;
 
-    // 基本写接口（返回是否成功）
-    // bool addFriend(const int &friendId,const QString &displayName,const QString &avatar = QString(),int status = 0,const QString &remark = QString());
 
     // 插入单个好友
     bool upsertFriend(qint64 friendId,
@@ -122,7 +120,7 @@ public:
 
 
     // 更新用户头像数据
-    bool UpdateFriendAvatarByAvatarID(const qint64 avatar_file_id, const QString avatar);
+    bool UpdateFriendAvatarByAvatarID(const qint64 owner_id,const qint64 avatar_file_id, const QString avatar);
 
     // 更新用户头像完成,将新的文件id 和 文件名 写入到用户表.
     bool updateUserAvatarById(qint64 userId, qint64 avatarFileId, const QString &avatarFileName);
@@ -135,6 +133,18 @@ public:
 
     // 更新好友状态
     bool updateFriendStateByUid(qint64 friend_uid,int state);
+
+    // 删除最近聊天表中的数据
+    bool deleteRecentMessagesByUid(qint64 friend_uid);
+
+    // 获取 最近聊天列表 对象的未读数
+    int getUnreadCountForPeerID(qint64 peerId);
+
+    // 获取 指定用户名
+    QString getFreindNameByUID(qint64 uid);
+
+    // 设置指定用户未读数了为0
+    bool setUnreadCountToZeroByUid(qint64 uid);
 
 
 private:

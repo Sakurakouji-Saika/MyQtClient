@@ -191,14 +191,81 @@ void FriendService::Delete_friend(qint64 friend_uid)
 
         qDebug() << "FriendService::Delete_friend::" << resp;
         bool ok = resp.value("ok").toBool();
-
         if(ok){
             qint64 uid = resp.value("friend_uid").toInteger();
             emit DeleteFriendSuccessSignals(uid);
-
         }else{
 
+        }
+    });
+}
 
+void FriendService::SendMessage(qint64 sender_id, qint64 receiver_id, int msgType, QString msgContent, qint64 file_id, qint64 send_at)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::SendMessage:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::SendText);
+
+    request["sender_id"] = sender_id;
+    request["receiver_id"] = receiver_id;
+    request["msgType"] = msgType;
+    request["msgContent"] = msgContent;
+    request["file_id"] = file_id;
+    request["send_at"] = send_at;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+        qDebug() << "FriendService::SendMessage::" << resp;
+        bool ok = resp.value("ok").toBool();
+        if(ok){
+            qint64 msgID = resp.value("msgID").toInteger();
+        }
+    });
+
+}
+
+void FriendService::SendReceivedMsgACK(qint64 msgID)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::SendMessage:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::MessageAck);
+    request["msgID"] = msgID;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+        qDebug() << "FriendService::SendReceivedMsg::" << resp;
+        bool ok = resp.value("ok").toBool();
+        if(!ok){
+            qDebug()<< "服务器修改指定 消息状态为 已接收 -> 失败";
+        }
+    });
+
+}
+
+void FriendService::SendMessageReadReceipt(qint64 friendID, qint64 userID, qint64 msgID)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::SendMessage:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::MessageReadReceipt);
+    request["friendID"] = friendID;
+    request["userID"] = userID;
+    request["msgID"] = msgID;
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+        qDebug() << "FriendService::SendMessageReadReceipt::" << resp;
+        bool ok = resp.value("ok").toBool();
+        if(!ok){
+            qDebug()<< "服务器修改指定消息状态为 已读取 -> 失败";
         }
     });
 }

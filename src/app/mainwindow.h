@@ -24,9 +24,6 @@
 
 
 
-
-
-
 namespace Ui {
 class MainWindow;
 }
@@ -46,8 +43,6 @@ public:
 
     void loadStyleCloseBtn();
     void Open_Edit_Avatar_Page();
-    // 测试下载头像
-    void DownloadAvatarTest();
 
     void setNetWork(ServiceManager *_sm);
 
@@ -61,8 +56,14 @@ private slots:
     void on_searchBtn_clicked();
 
 
-    void on_Friend_OnlineSignal(qint64 friend_uid,int state);
 
+
+    void on_Friend_OnlineSignal(qint64 friend_uid,int state);
+    void on_UpdateAvatarSignal(qint64 uid,qint64 file_id);
+    void on_RemovedByFriendSignal(qint64 uid);
+    void on_friendAddedSignal(qint64 uid, QString avatarName, qint64 avatar_file_id, QString nickname, int status, QString username);
+    void on_ReceiveNewMessageSignals(qint64 file_id, QString msgContent, int msgType, qint64 send_at, qint64 sender_id, qint64 msgId, qint64 receiver_id);
+    void on_ReceiveNewMsgSuccessSignals(qint64 msgID);
 
 
 private:

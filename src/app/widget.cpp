@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QFileSystemWatcher>
 #include <QDebug>
+#include <QJsonArray>
 
 #include <QMessageBox>
 
@@ -166,9 +167,6 @@ void Widget::addWidget_IPInput()
 }
 
 
-
-
-
 void Widget::on_setupBtn_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
@@ -235,8 +233,6 @@ void Widget::setNetwork(ServiceManager *_sm)
 
     if (!auth) return;
 
-    // AvatarService* avatar = m_sm->avatar();
-
     // 登录成功：显示信息并恢复登录按钮
     connect(auth, &AuthService::loginSucceeded, this, [this](const QJsonObject &resp){
         ui->loginBtn->setEnabled(false);
@@ -283,9 +279,14 @@ void Widget::setNetwork(ServiceManager *_sm)
             qDebug() << "upsterFriend 更新数据失败" << uid;
         }
 
+        // 获取离线消息
+        qint64 userId = AppConfig::instance().getUserID();
+        m_sm->auth()->GetOfflineMessage(userId,5000);
+
         // 其余 UI 流程
         QMessageBox::information(this, QStringLiteral("登录成功"),
                                  QStringLiteral("用户 %1 登录成功").arg(uid));
+
 
 
         m_sm->avatar()->RequestAvatarInfoByUserID(uid);
@@ -381,10 +382,7 @@ void Widget::setNetwork(ServiceManager *_sm)
 
     // 绑定获取好友列表
     connect(auth, &AuthService::GetMyFriendsSucceeded, this, [this](const QJsonObject &resp){
-
-
         qDebug() << "widget::app::setNetwork::&AuthService::GetMyFriendsSucceeded::resp" << resp << "\n\n";
-
 
         QString err;
         FriendsResponse fr = parseFriendsResponse(resp);
@@ -395,14 +393,16 @@ void Widget::setNetwork(ServiceManager *_sm)
         if(ok){
             for(int i=0;i< fr.friends.size();i++){
                 // 理论上这里还要读取本地客户端中关于存储头像的目录是否存在这个头像文件，存在就不用下载了
-
                 if(!fileExistsInDir(AppConfig::instance().imagesDirectory(),fr.friends.at(i).avatarPath) && fr.friends.at(i).avatar_file_id !=-1){
-
                     qDebug() << "触发下载头像:: " << i << "\t fr.friends.at(i).avatarPath::" << fr.friends.at(i).avatarPath;
                     m_sm->avatar()->requestAvatarByFileId(QString::number(fr.friends.at(i).avatar_file_id));
                 }
             }
         }
+
+
+
+
 
         m_mw = new MainWindow();
         m_mw->setAttribute(Qt::WA_DeleteOnClose);
@@ -413,6 +413,27 @@ void Widget::setNetwork(ServiceManager *_sm)
 
     });
 
+
+    connect(auth,&AuthService::GetOfflineMessageSucceeded,this,[this](const QJsonObject &resp){
+        qDebug() << "auth,&AuthService::GetOfflineMessageSucceeded::resp" << resp;
+
+        QJsonArray list = resp.value("data").toArray();
+        for(const QJsonValue &val : list){
+            if (val.isObject()) {
+                QJsonObject obj = val.toObject();
+                qint64 ID = obj.value("ID").toInteger();
+                qint64 Type = obj.value("Type").toInteger();
+                QString content = obj.value("content").toString();
+                qint64 fileID = obj.value("fileID").toInteger();
+                qint64 msgID = obj.value("msgID").toInteger();                    qint64 receiver_id = obj.value("receiver_id").toInteger();
+                qint64 senderId = obj.value("senderId").toInteger();
+                qint64 sentAt = obj.value("sentAt").toInteger();
+                DataBaseManage *dbm = DataBaseManage::instance();
+                bool ok = dbm->addChatMessageAndUpdateRecent(QString::number(msgID),senderId,receiver_id,content,Type,sentAt,senderId,content,sentAt,1,0);
+                qDebug() << "&AuthService::GetOfflineMessageSucceeded::for(const QJsonValue &val : list)";
+            }
+        }
+    });
 
 
 

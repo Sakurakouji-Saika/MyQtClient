@@ -88,6 +88,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->chatDetailStack->setCurrentIndex(2);
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
 
+
     });
 
     connect(chatList,&chatListPage::openChatPage,[this](const int &user_id){
@@ -267,13 +268,6 @@ void MainWindow::SltTrayIconMenuClicked(QAction *action)
     }
 }
 
-
-
-
-
-
-
-
 void MainWindow::Open_Edit_Avatar_Page()
 {
     if(m_CAvatarPG == nullptr){
@@ -323,10 +317,14 @@ void MainWindow::setNetWork(ServiceManager *_sm)
 
     m_friendNotify->setNetWork(m_sm);
     m_profile_main_page->setNetWork(m_sm);
+    m_chatlist_page->SetNetWork(m_sm);
 
-    connect(m_sm->broadcastAPI(),&AppEventBus::Friend_OnlineSignal,this,&MainWindow::on_Friend_OnlineSignal);
-
-
+    connect(m_sm->broadcastAPI(),&AppEventBus::Friend_OnlineSignal,         this, &MainWindow::on_Friend_OnlineSignal);
+    connect(m_sm->broadcastAPI(),&AppEventBus::UpdateAvatarSignal,          this, &MainWindow::on_UpdateAvatarSignal);
+    connect(m_sm->broadcastAPI(),&AppEventBus::RemovedByFriendSignal,       this, &MainWindow::on_RemovedByFriendSignal);
+    connect(m_sm->broadcastAPI(),&AppEventBus::friendAddedSignal,           this, &MainWindow::on_friendAddedSignal);
+    connect(m_sm->broadcastAPI(),&AppEventBus::ReceiveNewMessageSignals,    this, &MainWindow::on_ReceiveNewMessageSignals);
+    connect(m_sm->broadcastAPI(),&AppEventBus::ReceiveNewMsgSuccessSignals, this, &MainWindow::on_ReceiveNewMsgSuccessSignals);
 }
 
 
@@ -335,23 +333,16 @@ void MainWindow::on_MinBtn_clicked()
     this->hide();
 }
 
-
-
 void MainWindow::SltQuitApp()
 {
     qApp->quit();
 }
 
 
-
-
-
 void MainWindow::on_searchBtn_clicked()
 {
 
     QMenu menu(this); // 栈对象，不会泄漏
-
-
 
     QAction *act1 = menu.addAction("添加好友");
     act1->setIcon(QIcon("://svg/add_group_24.svg"));
@@ -406,20 +397,14 @@ void MainWindow::on_searchBtn_clicked()
             connect(m_addfriend, &QObject::destroyed, this, [this](){
                 m_addfriend = nullptr;
             });
-
-
-
         }
 
         m_addfriend->show();
         m_addfriend->raise();
         m_addfriend->activateWindow();
 
-
-
-
-
     });
+
     connect(act2, &QAction::triggered, this, [this](){
         qDebug() << "选项二被点击了";
 
@@ -430,18 +415,18 @@ void MainWindow::on_searchBtn_clicked()
         ui->centralwidget->setStyleSheet("#centralwidget { background-color: #F2F2F2; }");
 
 
-        // 测试：模拟收到新消息
-        Recent_Data testData(
-            ":/picture/avatar/11.jpg",
-            "我喜欢你",
-            1111,
-            "薇婷",
-            QDateTime::currentDateTime(),
-            QDateTime::currentDateTime().toMSecsSinceEpoch(),
-            3
-            );
+        // // 测试：模拟收到新消息
+        // Recent_Data testData(
+        //     ":/picture/avatar/11.jpg",
+        //     "我喜欢你",
+        //     1111,
+        //     "薇婷",
+        //     QDateTime::currentDateTime(),
+        //     QDateTime::currentDateTime().toMSecsSinceEpoch(),
+        //     3
+        //     );
 
-        chatList->receiveMessage(testData);
+        // chatList->receiveMessage(testData);
 
         // // 测试 用于查看 最近聊天列表数据,可以删除
         // chatList->deleteItemWidgetByUid(1);
@@ -462,6 +447,99 @@ void MainWindow::on_searchBtn_clicked()
 void MainWindow::on_Friend_OnlineSignal(qint64 friend_uid, int state)
 {
     friendList->ReloadFriendState(friend_uid,state);
+}
+
+// 好友更新头像
+void MainWindow::on_UpdateAvatarSignal(qint64 uid, qint64 file_id)
+{
+    m_sm->avatar()->RequestAvatarInfoByUserID(uid);
+}
+
+void MainWindow::on_RemovedByFriendSignal(qint64 uid)
+{
+    // 删除好友列表中的好友.
+    DataBaseManage::instance()->deleteFriendByUID(uid);
+    friendList->ReloadData();
+
+    // 删除 最近列表中 删除我这个好友的对话.
+    chatList->deleteItemWidgetByUid(uid);
+
+}
+
+void MainWindow::on_friendAddedSignal(qint64 uid, QString avatarName, qint64 avatar_file_id, QString nickname, int status, QString username)
+{
+    bool ok = DataBaseManage::instance()->upsertFriend(uid,username,nickname,QString(),avatar_file_id,avatarName,status);
+    if(ok){
+        qDebug() << "MainWindow::on_friendAddedSignal::已触发";
+        friendList->ReloadData();
+    }
+
+
+}
+
+void MainWindow::on_ReceiveNewMessageSignals(qint64 file_id, QString msgContent, int msgType, qint64 send_at, qint64 sender_id, qint64 msgId, qint64 receiver_id)
+{
+    std::optional<FriendInfo> avatarInfo = DataBaseManage::instance()->GetFriendAvatarById(sender_id);
+
+    bool isChatWindowOpen = (ui->chatDetailStack->currentIndex() == 2);
+    bool isCurrentChat = isChatWindowOpen && (m_chatlist_page->getUserID() == sender_id);
+
+    QString avatarFileName;
+    if (avatarInfo.has_value()) {
+        avatarFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + avatarInfo->avatar;
+    } else {
+        avatarFileName = QString();
+    }
+
+    if (isCurrentChat) {
+        m_chatlist_page->addChatLeft(false, avatarFileName, msgContent);
+        m_sm->friendApi()->SendMessageReadReceipt(sender_id,AppConfig::instance().getUserID(),msgId);
+
+    }
+
+    int unreadCount = isCurrentChat ? 0 : 1;
+
+    DataBaseManage::instance()->addChatMessageAndUpdateRecent(
+        QString::number(msgId),
+        sender_id,
+        receiver_id,
+        msgContent,
+        msgType,
+        send_at,
+        sender_id,
+        msgContent,
+        send_at,
+        unreadCount,
+        0
+        );
+
+    int unread = DataBaseManage::instance()->getUnreadCountForPeerID(sender_id);
+
+
+    if (unread > 99) unread = 99;
+
+    QString userName = DataBaseManage::instance()->getFreindNameByUID(sender_id);
+
+    QDateTime now = QDateTime::currentDateTime();
+    Recent_Data recent(
+        avatarFileName,
+        msgContent,
+        sender_id,
+        userName,
+        now,
+        now.toMSecsSinceEpoch(),
+        unread
+        );
+
+    chatList->receiveMessage(recent);
+
+
+
+}
+
+void MainWindow::on_ReceiveNewMsgSuccessSignals(qint64 msgID)
+{
+    m_sm->friendApi()->SendReceivedMsgACK(msgID);
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)

@@ -17,6 +17,7 @@ public:
     void registration(const QString &username,const QString &password,const QString &email,int timeoutMs = 5000);
 
     void GetMyFriends(qint64 &id,int timeoutMs = 5000);
+    void GetOfflineMessage(qint64 &id,int timeoutMs = 5000);
 
 
 signals:
@@ -29,6 +30,9 @@ signals:
 
     void GetMyFriendsSucceeded(QJsonObject friends);
     void GetMyFriendsFailed(const QString &reason);
+
+    void GetOfflineMessageSucceeded(QJsonObject friends);
+    void GetOfflineMessageFailed(const QString &reason);
 
 
 private:

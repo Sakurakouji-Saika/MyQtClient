@@ -246,12 +246,11 @@ bool DataBaseManage::upsertFriend(qint64 friendId, const QString &username, cons
     return true;
 }
 
-bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
-{
-    QMutexLocker locker(&m_mutex);
+bool DataBaseManage::saveFriendListToDb(const FriendsResponse & resp) {
+    QMutexLocker locker( & m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return false;
 
-    const FriendsResponse &r = resp;
+    const FriendsResponse & r = resp;
     int myUserId = r.userId;
 
     // 开事务
@@ -287,30 +286,18 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
         "VALUES (:peer_id, :last_msg, :last_time, :unread_count, :direction);"
         );
 
-    QSqlQuery qInsertChat(m_db);
-    qInsertChat.prepare(
-        "INSERT OR IGNORE INTO chat_records (msg_id, from_id, to_id, content, type, timestamp, status) "
-        "VALUES (:msg_id, :from_id, :to_id, :content, :type, :timestamp, :status);"
-        );
-
-
-    qDebug()<< "DataBaseManage::saveFriendListToDb::好友列表数量::" <<r.friends.size();
 
     // 遍历好友数组
-    for (const FriendInfo_sever &fi : r.friends) {
-
-
+    for (const FriendInfo_sever & fi: r.friends) {
         int friendId = fi.id;
         QString username = fi.username;
         QString nickname = fi.nickname;
         QString avatar = fi.avatarPath;
-        int unread = fi.unreadCount;
         qint64 avatar_file_id = fi.avatar_file_id;
         qint64 nowSec = QDateTime::currentSecsSinceEpoch();
         bool status = fi.state;
 
-        qDebug() << "DataBaseManage::saveFriendListToDb::好友状态:UID" << friendId << " || NAME:"  << username << status;
-
+        qDebug() << "DataBaseManage::saveFriendListToDb::好友状态:UID" << friendId << " || NAME:" << username << status;
 
 
         // 1) friend_info: update first
@@ -352,84 +339,15 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse &resp)
                 return false;
             }
         }
-
-        // 2) 解析 last message（可能为 null）
-        QString lastMsgStr;
-        qint64 lastMsgTime = 0;
-        int direction = 0; // 0 = 对方发来, 1 = 我发出
-
-        if (fi.lastMessage.has_value()) {
-            const LastMessageInfo &lm = *fi.lastMessage;
-            lastMsgStr = lm.content;
-            if (lm.sentAt.isValid()) lastMsgTime = lm.sentAt.toSecsSinceEpoch();
-            else lastMsgTime = 0;
-            direction = (lm.senderId == myUserId) ? 1 : 0;
-
-            // 3) 尝试插入 chat_records（忽略重复 msg_id）
-            QString msgIdStr = QString::number(lm.id);
-            QString fromIdStr = QString::number(lm.senderId);
-            QString toIdStr = QString::number((lm.senderId == myUserId) ? friendId : myUserId);
-
-
-
-            qInsertChat.bindValue(":msg_id", msgIdStr);
-            qInsertChat.bindValue(":from_id", fromIdStr);
-            qInsertChat.bindValue(":to_id", toIdStr);
-            qInsertChat.bindValue(":content", lm.content);
-            qInsertChat.bindValue(":type", messageTypeToInt(lm.type));
-            qInsertChat.bindValue(":timestamp", lastMsgTime);
-            qInsertChat.bindValue(":status", status);
-
-
-            if (!qInsertChat.exec()) {
-                qWarning() << "INSERT chat_records failed for msg" << msgIdStr << ":" << qInsertChat.lastError().text();
-                m_db.rollback();
-                return false;
-            }
-        } else {
-            // 没有 last message
-            lastMsgStr = "";
-            lastMsgTime = 0;
-            direction = 0;
-        }
-
-        // 4) recent_messages: update then insert
-        QString peerIdStr = QString::number(friendId);
-        qUpdateRecent.bindValue(":last_msg", lastMsgStr);
-        qUpdateRecent.bindValue(":last_time", lastMsgTime);
-        qUpdateRecent.bindValue(":unread_count", unread);
-        qUpdateRecent.bindValue(":direction", direction);
-        qUpdateRecent.bindValue(":peer_id", peerIdStr);
-
-        if (!qUpdateRecent.exec()) {
-            qWarning() << "UPDATE recent_messages failed for peer" << peerIdStr << ":" << qUpdateRecent.lastError().text();
+        // 提交事务
+        if (!m_db.commit()) {
+            qWarning() << "DB commit failed:" << m_db.lastError().text();
             m_db.rollback();
             return false;
         }
 
-        if (qUpdateRecent.numRowsAffected() == 0) {
-            qInsertRecent.bindValue(":peer_id", peerIdStr);
-            qInsertRecent.bindValue(":last_msg", lastMsgStr);
-            qInsertRecent.bindValue(":last_time", lastMsgTime);
-            qInsertRecent.bindValue(":unread_count", unread);
-            qInsertRecent.bindValue(":direction", direction);
-            if (!qInsertRecent.exec()) {
-                qWarning() << "INSERT recent_messages failed for peer" << peerIdStr << ":" << qInsertRecent.lastError().text();
-                m_db.rollback();
-                return false;
-            }
-        }
-
+        return true;
     }
-
-    // 提交事务
-    if (!m_db.commit()) {
-        qWarning() << "DB commit failed:" << m_db.lastError().text();
-        m_db.rollback();
-        return false;
-    }
-
-    return true;
 }
 
 std::optional<FriendInfo> DataBaseManage::GetFriendAvatarById(qint64 uid)
@@ -468,24 +386,28 @@ std::optional<FriendInfo> DataBaseManage::GetFriendAvatarById(qint64 uid)
     return info;
 }
 
-bool DataBaseManage::UpdateFriendAvatarByAvatarID(const qint64 avatar_file_id, const QString avatar)
+bool DataBaseManage::UpdateFriendAvatarByAvatarID(const qint64 owner_id, const qint64 avatar_file_id, const QString avatar)
 {
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return false;
 
     QSqlQuery q(m_db);
     q.prepare(R"(
-        UPDATE friend_info SET avatar = :avatar WHERE avatar_file_id = :avatar_file_id
+        UPDATE friend_info
+        SET avatar = :avatar, updated_at = strftime('%s','now') , avatar_file_id = :avatar_file_id
+        WHERE friend_id = :friend_id
     )");
-
-    q.bindValue(":avatar_file_id", avatar_file_id);
     q.bindValue(":avatar", avatar);
+    q.bindValue(":avatar_file_id", avatar_file_id);
+    q.bindValue(":friend_id",owner_id);
 
     if (!q.exec()) {
         qDebug() << "DataBaseMgr::UpdateFriendAvatarByID failed:" << q.lastError().text();
         return false;
     }
-    return true;
+
+    qDebug() << "DataBaseManage::UpdateFriendAvatarByAvatarID::affected rows:" << q.numRowsAffected();
+    return q.numRowsAffected() > 0;
 }
 
 bool DataBaseManage::updateUserAvatarById(qint64 userId, qint64 avatarFileId, const QString &avatarFileName)
@@ -571,8 +493,9 @@ bool DataBaseManage::deleteFriendByUID(qint64 friend_uid)
     }
 
     q.clear();
+
     q.prepare("DELETE FROM recent_messages WHERE peer_id = :friend_uid");
-    q.bindValue(":friend_uid", QString::number(friend_uid));  // 关键修复
+    q.bindValue(":friend_uid", QString::number(friend_uid));
 
     if (!q.exec()) {
         qDebug() << "删除最近消息失败:" << q.lastError().text();
@@ -613,6 +536,91 @@ bool DataBaseManage::updateFriendStateByUid(qint64 friend_uid, int state)
     }
 
     return true;
+}
+
+QString DataBaseManage::getFreindNameByUID(qint64 uid)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) {
+        return QString("查询错误:1");
+    }
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        SELECT username
+        FROM friend_info
+        WHERE friend_id = :friend_id;
+    )");
+
+    q.bindValue(":friend_id", uid);
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseManage::getUnreadCountForPeer:" << q.lastError().text();
+        return QString("查询错误:2");
+    }
+
+    if (!q.next()) {
+        // 没查到记录
+        return QString("查询错误:3");
+    }
+
+    return q.value(0).toString();
+}
+
+bool DataBaseManage::setUnreadCountToZeroByUid(qint64 uid)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) {
+        return false;
+    }
+
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        UPDATE recent_messages
+        SET unread_count = 0
+        WHERE peer_id = :peer_id;
+    )");
+
+    q.bindValue(":peer_id", uid);
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseManage::setUnreadCountToZeroByUid failed:" << q.lastError().text();
+        return false;
+    } else {
+        qDebug() << "setUnreadCountToZeroByUid ok, rowsAffected =" << q.numRowsAffected();
+    }
+
+    return true;
+}
+
+int DataBaseManage::getUnreadCountForPeerID(qint64 peerId)
+{
+    QMutexLocker locker(&m_mutex);
+    if (!m_db.isValid() || !m_db.isOpen()) {
+        return -1;
+    }
+
+    QSqlQuery q(m_db);
+    q.prepare(R"(
+        SELECT unread_count
+        FROM recent_messages
+        WHERE peer_id = :peerId;
+    )");
+
+    q.bindValue(":peerId", peerId);
+
+    if (!q.exec()) {
+        qDebug() << "DataBaseManage::getUnreadCountForPeer:" << q.lastError().text();
+        return -1;
+    }
+
+    if (!q.next()) {
+        // 没查到记录
+        return -1;
+    }
+
+    return q.value(0).toInt();
 }
 
 bool DataBaseManage::addChatMessage(const QString &msgId, const QString &fromId, const QString &toId, const QString &content, int type, qint64 timestamp)
@@ -820,11 +828,9 @@ bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
                                                    int unreadCount,
                                                    int direction)
 {
-
     QMutexLocker locker(&m_mutex);
     if (!m_db.isValid() || !m_db.isOpen()) return false;
 
-    // 使用事务保证两条写入的一致性
     if (!m_db.transaction()) {
         qWarning() << "addChatMessageAndUpdateRecent: failed to start transaction:" << m_db.lastError().text();
         return false;
@@ -848,18 +854,16 @@ bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
         return false;
     }
 
-    // upsert recent_messages
+    // upsert recent_messages：若已存在 peer_id，则累加 unread_count 并更新 last_time
     QSqlQuery q2(m_db);
     q2.prepare(R"(
         INSERT INTO recent_messages (peer_id, last_msg, last_time, unread_count, direction)
         VALUES (:peer, :msg, :time, :unread, :dir)
         ON CONFLICT(peer_id) DO UPDATE SET
-            last_msg = excluded.last_msg,
-            last_time = excluded.last_time,
-            unread_count = excluded.unread_count,
-            direction = excluded.direction
+            unread_count = unread_count + excluded.unread_count,
+            last_time = excluded.last_time
     )");
-    q2.bindValue(":peer", peerId);
+    q2.bindValue(":peer", QString::number(peerId));
     q2.bindValue(":msg", lastMsg);
     q2.bindValue(":time", lastTime);
     q2.bindValue(":unread", unreadCount);

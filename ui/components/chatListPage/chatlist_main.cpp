@@ -5,6 +5,8 @@
 #include <QDir>
 #include <QVBoxLayout>
 
+#include "../../../src/Network/Service/servicemanager.h"
+#include "../../../src/Network/Service/friendservice.h"
 
 
 chatList_Main::chatList_Main(QWidget *parent)
@@ -38,6 +40,16 @@ chatList_Main::~chatList_Main()
 
 void chatList_Main::openChatPage(const int _id)
 {
+    // 1.打开聊天对话框就要清理最近聊天未读记录，同时发送网络请求表示 已读
+
+    DataBaseManage::instance()->setUnreadCountToZeroByUid(_id);
+
+    m_sm->friendApi()->SendMessageReadReceipt(_id,AppConfig::instance().getUserID());
+
+
+    // 2.打开聊天对话框就要清理最近聊天未读记录，同时发送网络请求表示 已读
+
+
 
     m_user_name = DataBaseManage::instance()->getDisplayNameByFriendId(_id);
     m_user_id = _id;
@@ -86,27 +98,37 @@ void chatList_Main::MsgALLClear()
     chat->clearAllMsg();
 }
 
+void chatList_Main::SetNetWork(ServiceManager *_sm)
+{
+    m_sm = _sm;
+}
+
 void chatList_Main::on_btn_pushMsg_clicked()
 {
-    QString t = ui->CLM_plainTextEdit->toPlainText().trimmed();
-    if (t.isEmpty()) return;
+    QString textContent = ui->CLM_plainTextEdit->toPlainText().trimmed();
+    if (textContent.isEmpty()) return;
 
     // 防止重复发送：临时禁用发送按钮
     ui->btn_pushMsg->setEnabled(false);
 
-    const QString msgId = QUuid::createUuid().toString();
     const qint64 ts = QDateTime::currentSecsSinceEpoch();
+
+
+    // 网络发送
+    m_sm->friendApi()->SendMessage(AppConfig::instance().getUserID(),m_user_id,1,textContent,0,ts);
+
+    const QString msgId = QUuid::createUuid().toString();
 
     // 原子地写入聊天记录并更新最近会话（事务内）
     bool ok = DataBaseManage::instance()->addChatMessageAndUpdateRecent(
                 msgId,
                 AppConfig::instance().getUserID(),
                 m_user_id,
-                t,
+                textContent,
                 0,
                 ts,
                 m_user_id,
-                t,
+                textContent,
                 ts,
                 0,
                 1  // direction: 1 表示 outgoing（发送）
@@ -119,12 +141,12 @@ void chatList_Main::on_btn_pushMsg_clicked()
             if (opt.has_value() && !opt->avatar.isEmpty()) return AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
             return QString();
         }();
-        chat->addMessage(true, senderAvatar, t);
+        chat->addMessage(true, senderAvatar, textContent);
         ui->CLM_plainTextEdit->clear();
 
         ChatRecord cr;
         cr.msgId = msgId;
-        cr.content = t;
+        cr.content = textContent;
         cr.fromId = AppConfig::instance().getUserID();
         cr.toId = m_user_id;
         cr.timestamp = ts;
@@ -132,10 +154,8 @@ void chatList_Main::on_btn_pushMsg_clicked()
         emit MY_SeedMsg(cr);
         qDebug() << "chatlist_main: emitted SeedMsg -> peer:" << cr.toId << " msg:" << cr.content;
 
-
     } else {
-
-        qDebug() << "chatlist_main: addChatMessageAndUpdateRecent failed for peer:" << m_user_id << " msg:" << t;
+        qDebug() << "chatlist_main: addChatMessageAndUpdateRecent failed for peer:" << m_user_id << " msg:" << textContent;
     }
 
     ui->btn_pushMsg->setEnabled(true);

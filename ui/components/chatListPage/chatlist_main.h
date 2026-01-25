@@ -6,6 +6,9 @@
 #include "../../src/DataBaseManage/databasemanage.h"
 #include "../../src/DataBaseManage/model/ChatRecord.h"
 #include "../../src/utils/appconfig.h"
+
+class ServiceManager;
+
 namespace Ui {
 class chatList_Main;
 }
@@ -21,6 +24,8 @@ public:
     void openChatPage(const int _id);
     void addChatLeft(bool isMy,const QString avatar,const QString msg);
     void MsgALLClear();
+    void SetNetWork(ServiceManager *_sm);
+    int getUserID(){ return m_user_id;}
 
 
 signals:
@@ -36,6 +41,8 @@ private:
 
 private:
     ChatWidget *chat;
+
+    ServiceManager *m_sm;
     Ui::chatList_Main *ui;
 };
 

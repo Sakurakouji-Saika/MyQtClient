@@ -22,6 +22,13 @@ public:
 
     void Delete_friend(qint64 friend_uid);
 
+    // 发送消息(重要)
+    void SendMessage(qint64 sender_id, qint64 receiver_id,int msgType, QString msgContent, qint64 file_id, qint64 send_at);
+
+    void SendReceivedMsgACK(qint64 msgID);
+
+    void SendMessageReadReceipt(qint64 friendID, qint64 userID, qint64 msgID = -1);
+
 
 signals:
     void SearchFriednErrorSignals(QString error);

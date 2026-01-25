@@ -27,7 +27,6 @@ public:
     void ReloadFriendState(qint64 friend_uid, int state);
 
 
-
 signals:
     void signals_open_profile_page(const FriendInfo &fi);
 

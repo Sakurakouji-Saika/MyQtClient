@@ -15,7 +15,7 @@
 #include <QMessageBox>
 
 #include "../../src/widgets/avatar/avatarmanager.h"
-
+#include <QFileDevice>
 
 AvatarService::AvatarService(PacketProcessor *processor,QObject *parent)
     : QObject{parent},
@@ -41,7 +41,7 @@ void AvatarService::requestAvatarByFileId(QString file_avatarID,bool loadAvatarD
 
 }
 
-void AvatarService::RequestAvatarInfoByUserID(qint64 uid, bool loadAvatarDynamically)
+void AvatarService:: RequestAvatarInfoByUserID(qint64 uid, bool loadAvatarDynamically)
 {
     if(!m_pp){
         emit requestAvatarByIdFailed(QStringLiteral("AvatarService::RequestAvatarInfoByUserID:: 包处理器不存在"));
@@ -71,7 +71,6 @@ void AvatarService::RequestAvatarInfoByUserID(qint64 uid, bool loadAvatarDynamic
                 }else{
                     emit avatarNicknameFetched(user_id, file_id, fileName);
                 }
-
             } catch (const std::exception& e) {
                 throw; // 重新抛出
             }
@@ -220,11 +219,9 @@ void AvatarService::DownloadAvatarChunk(const QJsonObject &packet)
         }
 
         // 保存文件到磁盘并插入 files 表
-        if (!saveAvatarFile(fileId, filename, fileData, fileId, error)) {
+        if (!saveAvatarFile(owner_id,fileId, filename, fileData, fileId, error)) {
             return;
         }
-
-        // 下载头像完成后，更新头像文件到程序中。
 
         AvatarManager::instance().updateAvatar(owner_id,filename);
     }
@@ -243,8 +240,19 @@ void AvatarService::avatarUploadSucceeded(const QJsonObject &packet)
     qint64 file_id = packet.value("file_id").toString().toLongLong();
     QString file_name = packet.value("file_name").toString();
 
-    if (!QFile::rename(oldPath, newPath)) {
-        QMessageBox::information(nullptr,tr("提示"),tr("修改本地临时上传头像文件名失败！"));
+    QFile file(oldPath);
+    if (!file.rename(newPath)) {
+        if (!QFile::exists(newPath)) {
+            QString err = tr("修改本地临时上传头像文件名失败！\n\n"
+                             "原路径：%1\n"
+                             "目标路径：%2\n"
+                             "错误原因：%3")
+                              .arg(oldPath)
+                              .arg(newPath)
+                              .arg(file.errorString());
+
+            QMessageBox::critical(nullptr, tr("文件操作失败"), err);
+        }
     }
 
     qDebug() << "更新用户头像信息"
@@ -252,8 +260,8 @@ void AvatarService::avatarUploadSucceeded(const QJsonObject &packet)
              << "\t file_id" << file_id
              << "\t file_name" << file_name;
 
-    if(!DataBaseManage::instance()->updateUserAvatarById(uid,file_id,file_name)){
-        qDebug() << "sql faill::[DataBaseManage::instance()->updateUserAvatarById]::" << uid;
+    if(!DataBaseManage::instance()->UpdateFriendAvatarByAvatarID(uid,file_id,file_name)){
+        qDebug() << "sql faill::[DataBaseManage::instance()->UpdateFriendAvatarByAvatarID]::" << uid;
     }
 
     AvatarManager::instance().updateAvatar(uid,file_name);
@@ -268,10 +276,11 @@ void AvatarService::avatarUploadFailed(const QJsonObject &packet)
 }
 
 
-bool AvatarService::saveAvatarFile(qint64 fileid, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError)
+bool AvatarService::saveAvatarFile(qint64 owner_id,qint64 fileid, const QString &filename, const QByteArray &data, qint64 &outFileId, QString &outError)
 {
     // 获取存储目录
     QString dir = AppConfig::instance().imagesDirectory();
+
     QDir d;
     if (!d.exists(dir)) {
         if (!d.mkpath(dir)) {
@@ -296,7 +305,9 @@ bool AvatarService::saveAvatarFile(qint64 fileid, const QString &filename, const
     f.close();
 
     // 保存文件到数据库
-    DataBaseManage::instance()->UpdateFriendAvatarByAvatarID(fileid,filename);
+    bool ok = DataBaseManage::instance()->UpdateFriendAvatarByAvatarID(owner_id,fileid,filename);
+
+    qDebug() << "AvatarService::saveAvatarFile::下载完成头像,数据库保存的数据::" << fileid << "\t || " << filename << "\t || 是否保存成功::" << ok;
 
     return true;
 }

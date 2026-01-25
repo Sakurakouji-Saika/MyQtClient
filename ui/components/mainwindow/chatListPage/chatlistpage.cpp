@@ -67,7 +67,9 @@ void chatListPage::test()
 
         qDebug()  << "temp[i].peer_id" << temp[i].peer_id;
         Recent_Data t;
-        t.UnreadCount = temp[i].unread_count;
+
+
+        t.UnreadCount = (temp[i].unread_count>99 ? 99 : temp[i].unread_count);
 
         std::optional<FriendInfo> _temp_avatar_data = mgr->GetFriendAvatarById(temp[i].peer_id);
 
@@ -85,6 +87,7 @@ void chatListPage::test()
 
         qDebug() << "chatListPage::test()::t.avatarPath::" << t.avatarPath;
         qDebug() << "chatListPage::test()::t.avatarPath::用户ID：" << temp[i].peer_id;
+
         t.msg = temp[i].last_msg;
         t.msg_time = QDateTime::fromSecsSinceEpoch(temp[i].last_time);
         t.user_id = temp[i].peer_id;
