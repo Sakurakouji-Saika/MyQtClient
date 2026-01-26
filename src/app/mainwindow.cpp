@@ -518,7 +518,7 @@ void MainWindow::on_ReceiveNewMessageSignals(qint64 file_id, QString msgContent,
 
     if (unread > 99) unread = 99;
 
-    QString userName = DataBaseManage::instance()->getFreindNameByUID(sender_id);
+    QString userName = DataBaseManage::instance()->getDisplayNameByFriendId(sender_id);
 
     QDateTime now = QDateTime::currentDateTime();
     Recent_Data recent(

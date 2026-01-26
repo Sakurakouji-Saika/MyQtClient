@@ -109,7 +109,7 @@
              <property name="font">
               <font>
                <family>Microsoft YaHei UI</family>
-               <pointsize>16</pointsize>
+               <pointsize>14</pointsize>
                <bold>true</bold>
               </font>
              </property>
