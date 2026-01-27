@@ -614,3 +614,9 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     return QMainWindow::eventFilter(watched, event);
 }
 
+
+void MainWindow::on_closeBtn_clicked()
+{
+    QTimer::singleShot(500, this, &MainWindow::SltQuitApp);
+}
+
