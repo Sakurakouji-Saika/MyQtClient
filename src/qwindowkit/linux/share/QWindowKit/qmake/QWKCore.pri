@@ -20,5 +20,5 @@
         LIBS = $$QMAKE_QWK_LINK_PATH -lQWKCore $$LIBS
     }
 
-    DEFINES += QWK_CORE_STATIC
+    
 }

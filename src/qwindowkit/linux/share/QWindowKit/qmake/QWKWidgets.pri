@@ -9,5 +9,5 @@
         LIBS = $$QMAKE_QWK_LINK_PATH -lQWKWidgets $$LIBS
     }
 
-    DEFINES += QWK_WIDGETS_STATIC
+    
 }

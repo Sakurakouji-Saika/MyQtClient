@@ -9,5 +9,5 @@
         LIBS = $$QMAKE_QWK_LINK_PATH -lQWKQuick $$LIBS
     }
 
-    DEFINES += QWK_QUICK_STATIC
+    
 }

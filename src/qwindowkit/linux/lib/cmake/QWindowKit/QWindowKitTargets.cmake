@@ -56,23 +56,21 @@ if(_IMPORT_PREFIX STREQUAL "/")
 endif()
 
 # Create imported target QWindowKit::Core
-add_library(QWindowKit::Core STATIC IMPORTED)
+add_library(QWindowKit::Core SHARED IMPORTED)
 
 set_target_properties(QWindowKit::Core PROPERTIES
-  INTERFACE_COMPILE_DEFINITIONS "QWK_CORE_STATIC"
   INTERFACE_COMPILE_FEATURES "cxx_std_17"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/QWindowKit"
-  INTERFACE_LINK_LIBRARIES "Qt6::Core;Qt6::Gui;\$<LINK_ONLY:Qt6::CorePrivate>;\$<LINK_ONLY:Qt6::GuiPrivate>"
+  INTERFACE_LINK_LIBRARIES "Qt6::Core;Qt6::Gui"
 )
 
 # Create imported target QWindowKit::Widgets
-add_library(QWindowKit::Widgets STATIC IMPORTED)
+add_library(QWindowKit::Widgets SHARED IMPORTED)
 
 set_target_properties(QWindowKit::Widgets PROPERTIES
-  INTERFACE_COMPILE_DEFINITIONS "QWK_WIDGETS_STATIC"
   INTERFACE_COMPILE_FEATURES "cxx_std_17"
   INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/QWindowKit"
-  INTERFACE_LINK_LIBRARIES "QWindowKit::Core;Qt6::Core;Qt6::Gui;Qt6::Widgets;\$<LINK_ONLY:Qt6::CorePrivate>;\$<LINK_ONLY:Qt6::GuiPrivate>;\$<LINK_ONLY:Qt6::WidgetsPrivate>"
+  INTERFACE_LINK_LIBRARIES "QWindowKit::Core;Qt6::Core;Qt6::Gui;Qt6::Widgets"
 )
 
 # Load information for each installed configuration.
