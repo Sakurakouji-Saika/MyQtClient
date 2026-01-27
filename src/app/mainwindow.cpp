@@ -19,15 +19,17 @@
 
 #include <QGuiApplication>
 #include <QWindow>
+#include <QScreen>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    auto agent = new QWK::WidgetWindowAgent(this);
-    agent->setup(this);
-
     ui->setupUi(this);
+
+    // auto agent = new QWK::WidgetWindowAgent(this);
+    // agent->setup(this);
+
 
     // 过滤器注册
     ui->avatar->installEventFilter(this);
@@ -570,9 +572,21 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         switch (event->type()) {
         case QEvent::MouseButtonPress:
             if (e->button() == Qt::LeftButton) {
+
+
+                // 如果移动前，窗口是最大化
+                if (this->isMaximized()) {
+                    showNormal();
+                    return true;
+                }
+
+
+
+
                 // 检测当前平台是否为 Wayland（大小写不敏感匹配）
                 const QString platform = QGuiApplication::platformName();
                 bool isWayland = platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive);
+
 
                 // 如果是 Wayland，调用 QWindow::startSystemMove() 请求合成器开始移动
                 // 注意：windowHandle() 可能为 nullptr（未 show 时），通常在窗口已显示后才有
@@ -617,6 +631,19 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 
 void MainWindow::on_closeBtn_clicked()
 {
-    QTimer::singleShot(500, this, &MainWindow::SltQuitApp);
+    QTimer::singleShot(250, this, &MainWindow::SltQuitApp);
+}
+
+
+
+
+
+void MainWindow::on_MaxBtn_clicked()
+{
+    if (this->isMaximized()) {
+        showNormal();
+    } else {
+        showMaximized();
+    }
 }
 

@@ -39,11 +39,12 @@ Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LoginPage)
 {
+    ui->setupUi(this);
+
 
     auto agent = new QWK::WidgetWindowAgent(this);
     agent->setup(this);
 
-    ui->setupUi(this);
 
 
     // 验证资源文件是否存在
@@ -440,6 +441,8 @@ void Widget::setNetwork(ServiceManager *_sm)
 
         m_mw = new MainWindow();
         m_mw->setAttribute(Qt::WA_DeleteOnClose);
+        auto agent = new QWK::WidgetWindowAgent(m_mw);
+        agent->setup(m_mw);
 
         this->hide();
         m_mw->show();

@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QMouseEvent>
 #include <QMainWindow>
+#include <QPropertyAnimation>
 #include <hoverbutton.h>
 #include <QSystemTrayIcon>
 #include <QGraphicsDropShadowEffect>
@@ -66,6 +67,11 @@ private slots:
     void on_ReceiveNewMsgSuccessSignals(qint64 msgID);
 
 
+    void on_closeBtn_clicked();
+
+
+    void on_MaxBtn_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -90,10 +96,16 @@ private:
     bool m_dragging = false;
     QPoint m_dragPosition;
 
+    QRect m_restoreGeometry;               // 保存恢复到正常状态时的 geometry
+    QPropertyAnimation *m_restoreAnimation = nullptr;
+
 
     // QObject interface
 public:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
+
 };
+
+
 
 #endif // MAINWINDOW_H
