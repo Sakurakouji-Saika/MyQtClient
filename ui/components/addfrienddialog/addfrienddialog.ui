@@ -60,7 +60,7 @@
          <string/>
         </property>
         <property name="placeholderText">
-         <string>请收入你要搜索的账号</string>
+         <string>收入要搜索的账号（ID数字）</string>
         </property>
        </widget>
       </item>

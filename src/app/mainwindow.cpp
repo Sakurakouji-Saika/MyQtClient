@@ -7,6 +7,7 @@
 #include <QPainterPath>
 #include <QButtonGroup>
 #include <QFileInfo>
+#include <QDesktopServices>
 
 #include <QThread>
 #include <QJsonArray>
@@ -644,6 +645,25 @@ void MainWindow::on_MaxBtn_clicked()
         showNormal();
     } else {
         showMaximized();
+    }
+}
+
+
+void MainWindow::on_fileManagerButton_clicked()
+{
+    QString filePath = AppConfig::instance().dataDirectory();
+
+    QFileInfo fileInfo(filePath);
+    if (!fileInfo.exists()) {
+        qDebug() << "文件不存在:" << filePath;
+        return;
+    }
+
+    // 转换为URL格式
+    QUrl url = QUrl::fromLocalFile(fileInfo.absoluteFilePath());
+
+    if (!QDesktopServices::openUrl(url)) {
+        qDebug() << "无法打开文件:" << filePath;
     }
 }
 

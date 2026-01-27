@@ -72,6 +72,8 @@ private slots:
 
     void on_MaxBtn_clicked();
 
+    void on_fileManagerButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 

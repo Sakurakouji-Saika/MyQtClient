@@ -74,17 +74,13 @@ set(COMMON_SOURCES
     ui/components/mainwindow/friendListPage/friendlistpage.cpp
     ui/components/mainwindow/friendListPage/friendlistpage.ui
 
-    ui/components/mainwindow/userInfoPage/userinfopage.h
-    ui/components/mainwindow/userInfoPage/userinfopage.cpp
-    ui/components/mainwindow/userInfoPage/userinfopage.ui
+
 
     ui/components/mainwindow/addFriendPage/addfriendpage.h
     ui/components/mainwindow/addFriendPage/addfriendpage.cpp
     ui/components/mainwindow/addFriendPage/addfriendpage.ui
 
-    ui/components/mainwindow/placeholderPage/placeholderpage.h
-    ui/components/mainwindow/placeholderPage/placeholderpage.cpp
-    ui/components/mainwindow/placeholderPage/placeholderpage.ui
+
 
     src/utils/comapi/myapp.cpp
     src/utils/comapi/myapp.h
@@ -131,9 +127,12 @@ set(COMMON_SOURCES
 
     ui/components/FriendNotify/FNPData.h
 
-    ui/components/FriendSearchWidget/friendsearchwidget.h
-    ui/components/FriendSearchWidget/friendsearchwidget.cpp
-    ui/components/FriendSearchWidget/friendsearchwidget.ui
+
+
+
+
+
+
 
     ui/components/mainwindow/chatListPage/recent_chats/rc_line.h
     ui/components/mainwindow/chatListPage/recent_chats/rc_line.cpp
@@ -192,6 +191,7 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network Sql Core)
 if (QT_VERSION_MAJOR GREATER_EQUAL 6)
     find_package(Qt6 REQUIRED COMPONENTS Widgets Network Sql Core)
     find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core)
 
     qt_add_executable(MyClient
         MANUAL_FINALIZATION
@@ -199,6 +199,8 @@ if (QT_VERSION_MAJOR GREATER_EQUAL 6)
         src/Network/Service/friendservice.h src/Network/Service/friendservice.cpp
         src/Network/models/userinfo.h
         src/Network/Handlers/appeventbus.h src/Network/Handlers/appeventbus.cpp
+        ui/components/SettingsPage/settingspage.h ui/components/SettingsPage/settingspage.cpp ui/components/SettingsPage/settingspage.ui
+
     )
 
     # 如果有 .qrc，推荐使用 qt_add_resources（Qt6）
@@ -262,6 +264,7 @@ endif()
 
 find_package(QWindowKit REQUIRED COMPONENTS Core Widgets HINTS "${_QWK_DIR}")
 target_link_libraries(MyClient PRIVATE QWindowKit::Widgets)
+target_link_libraries(MyClient PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 
 
 

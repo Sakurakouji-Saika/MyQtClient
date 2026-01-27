@@ -15,7 +15,7 @@ AppConfig& AppConfig::instance() {
 AppConfig::AppConfig()
     : host("192.168.3.201"),
     port(9000),
-    userID(3),
+    userID(-1),
     FileHost("192.168.3.201"),
     FilePort(9000),
     initialized(false),
@@ -118,7 +118,6 @@ bool AppConfig::save() const
     s.setValue("network/port", port);
     s.setValue("network/fileHost", FileHost);
     s.setValue("network/filePort", FilePort);
-    s.setValue("user/user_id", userID);
 
     s.setValue("database/initialized", dbInitialized);
 
@@ -143,7 +142,6 @@ bool AppConfig::load()
     port = s.value("network/port", port).toInt();
     FileHost = s.value("network/fileHost",FileHost).toString();
     FilePort = s.value("network/filePort",FilePort).toInt();
-    userID = s.value("user/user_id", userID).toInt();
 
     return true;
 }
