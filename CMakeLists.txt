@@ -235,11 +235,25 @@ endif()
 target_include_directories(MyClient PRIVATE ${PROJECT_INCLUDE_DIRS})
 
 
-set(QWindowKit_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/lib/cmake/QWindowKit")
-find_package(QWindowKit COMPONENTS Core Widgets Quick REQUIRED)
+
+
+if (WIN32)
+    set(_qwk_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/win/lib/cmake/QWindowKit")
+elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(_qwk_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/linux/lib/cmake/QWindowKit")
+else()
+    set(_qwk_dir "")  # 或者为其他平台设置路径
+endif()
+
+find_package(QWindowKit COMPONENTS Core Widgets Quick REQUIRED HINTS "${_qwk_dir}")
+
 if (TARGET QWindowKit::Widgets)
     target_link_libraries(MyClient PRIVATE QWindowKit::Widgets)
+else()
+    message(FATAL_ERROR "QWindowKit::Widgets not available")
 endif()
+
+
 
 
 
