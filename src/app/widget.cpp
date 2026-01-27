@@ -31,6 +31,8 @@
 #include "../widgets/avatar/avatarmanager.h"
 #include "../Network/Service/friendservice.h"
 #include <QWKWidgets/widgetwindowagent.h>
+#include <QGuiApplication>
+#include <QWindow>
 
 
 Widget::Widget(QWidget *parent)
@@ -485,16 +487,25 @@ void Widget::on_forgotPasswordBtn_clicked()
 
 bool Widget::eventFilter(QObject *obj, QEvent *event)
 {
+
     if (obj == ui->widget) {
-
         QMouseEvent *e = static_cast<QMouseEvent*>(event);
-
         switch (event->type()) {
         case QEvent::MouseButtonPress:
             if (e->button() == Qt::LeftButton) {
+
+                const QString platform = QGuiApplication::platformName();
+                bool isWayland = platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive);
+                QWindow *wh = window()->windowHandle();
+                if (isWayland && wh) {
+                    // startSystemMove() 会把拖动交给合成器（Wayland），不需要手工 move()
+                    wh->startSystemMove();
+                    return true;
+                }
+
                 m_dragging = true;
                 m_dragPosition = e->globalPos() - this->frameGeometry().topLeft();
-                return true;   // 吃掉事件
+                return true;
             }
             break;
 
@@ -513,6 +524,7 @@ bool Widget::eventFilter(QObject *obj, QEvent *event)
             break;
         }
     }
+
     return QWidget::eventFilter(obj, event);
 }
 
