@@ -54,5 +54,13 @@ private:
     ServiceManager *m_sm;
 
     MainWindow *m_mw = nullptr;
+
+
+    bool m_dragging = false;
+    QPoint m_dragPosition;
+
+    // QObject interface
+public:
+    virtual bool eventFilter(QObject *watched, QEvent *event) override;
 };
 #endif // WIDGET_H

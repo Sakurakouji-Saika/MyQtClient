@@ -233,6 +233,16 @@ endif()
 
 # 公共 target 设置
 target_include_directories(MyClient PRIVATE ${PROJECT_INCLUDE_DIRS})
+
+
+set(QWindowKit_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/lib/cmake/QWindowKit")
+find_package(QWindowKit COMPONENTS Core Widgets Quick REQUIRED)
+if (TARGET QWindowKit::Widgets)
+    target_link_libraries(MyClient PRIVATE QWindowKit::Widgets)
+endif()
+
+
+
 target_compile_features(MyClient PRIVATE cxx_std_17)
 
 # mac/win 打包属性（保留）

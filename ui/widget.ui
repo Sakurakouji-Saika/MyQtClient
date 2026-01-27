@@ -267,7 +267,7 @@
                </size>
               </property>
               <property name="text">
-               <string>alice</string>
+               <string>lu_jingshen</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>

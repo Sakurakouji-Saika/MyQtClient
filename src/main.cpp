@@ -20,6 +20,8 @@ void test(){
 
 int main(int argc, char *argv[])
 {
+    QGuiApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+
     QApplication a(argc, argv);
 
     AppConfig::instance();

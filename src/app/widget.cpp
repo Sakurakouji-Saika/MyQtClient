@@ -30,13 +30,19 @@
 
 #include "../widgets/avatar/avatarmanager.h"
 #include "../Network/Service/friendservice.h"
+#include <QWKWidgets/widgetwindowagent.h>
+
 
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::LoginPage)
 {
 
+    auto agent = new QWK::WidgetWindowAgent(this);
+    agent->setup(this);
+
     ui->setupUi(this);
+
 
     // 验证资源文件是否存在
     QString qssPath = ":/styles/loginPage.css";
@@ -48,6 +54,8 @@ Widget::Widget(QWidget *parent)
     loadStyleCloseBtn();        // 这里是加载关闭窗口按钮图标
     otherStyle();               // 其他样式
     addWidget_IPInput();
+
+    ui->widget->installEventFilter(this);
 
 
 }
@@ -471,5 +479,38 @@ void Widget::on_forgotPasswordBtn_clicked()
     // 获取登录头像
     m_sm->avatar()->requestAvatarByFileId("1");
 
+}
+
+bool Widget::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == ui->widget) {
+
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+
+        switch (event->type()) {
+        case QEvent::MouseButtonPress:
+            if (e->button() == Qt::LeftButton) {
+                m_dragging = true;
+                m_dragPosition = e->globalPos() - this->frameGeometry().topLeft();
+                return true;   // 吃掉事件
+            }
+            break;
+
+        case QEvent::MouseMove:
+            if (m_dragging && (e->buttons() & Qt::LeftButton)) {
+                move(e->globalPos() - m_dragPosition);
+                return true;
+            }
+            break;
+
+        case QEvent::MouseButtonRelease:
+            m_dragging = false;
+            return true;
+
+        default:
+            break;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
 }
 
