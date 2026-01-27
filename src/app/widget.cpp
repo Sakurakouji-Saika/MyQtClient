@@ -287,9 +287,7 @@ void Widget::setNetwork(ServiceManager *_sm)
             qDebug() << "upsterFriend 更新数据失败" << uid;
         }
 
-        // 获取离线消息
-        qint64 userId = AppConfig::instance().getUserID();
-        m_sm->auth()->GetOfflineMessage(userId,5000);
+
 
         // 其余 UI 流程
         QMessageBox::information(this, QStringLiteral("登录成功"),
@@ -410,14 +408,9 @@ void Widget::setNetwork(ServiceManager *_sm)
 
 
 
-
-
-        m_mw = new MainWindow();
-        m_mw->setAttribute(Qt::WA_DeleteOnClose);
-
-        this->hide();
-        m_mw->show();
-        m_mw->setNetWork(m_sm);
+        // 获取离线消息
+        qint64 userId = AppConfig::instance().getUserID();
+        m_sm->auth()->GetOfflineMessage(userId,5000);
 
     });
 
@@ -441,6 +434,15 @@ void Widget::setNetwork(ServiceManager *_sm)
                 qDebug() << "&AuthService::GetOfflineMessageSucceeded::for(const QJsonValue &val : list)";
             }
         }
+
+
+        m_mw = new MainWindow();
+        m_mw->setAttribute(Qt::WA_DeleteOnClose);
+
+        this->hide();
+        m_mw->show();
+        m_mw->setNetWork(m_sm);
+
     });
 
 

@@ -86,6 +86,10 @@ private:
     // 主动退出操作时不进行断线匹配
     bool            m_bQuit;
 
+    // 移动窗口相关函数
+    bool m_dragging = false;
+    QPoint m_dragPosition;
+
 
     // QObject interface
 public:

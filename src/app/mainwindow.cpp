@@ -15,16 +15,23 @@
 #include "../widgets/avatar/avatarmanager.h"
 #include "../DataBaseManage/ViewModel/FriendAvatarDTO.h"
 #include "../Network/Handlers/appeventbus.h"
+#include <QWKWidgets/widgetwindowagent.h>
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+    auto agent = new QWK::WidgetWindowAgent(this);
+    agent->setup(this);
+
     ui->setupUi(this);
 
     // 过滤器注册
     ui->avatar->installEventFilter(this);
+    ui->widget_2->installEventFilter(this);
+    ui->groupBox->installEventFilter(this);
+    ui->pageNav->installEventFilter(this);
 
     // 设计两页分栏
     QList<int> sizes;
@@ -553,6 +560,40 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         }
         // 不是左键则不处理，交给父类/其它处理器
     }
+
+
+    // 注册移动窗口相关的事件
+    if (watched == ui->widget_2 || watched == ui->groupBox || watched == ui->pageNav) {
+
+        QMouseEvent *e = static_cast<QMouseEvent*>(event);
+        switch (event->type()) {
+        case QEvent::MouseButtonPress:
+            if (e->button() == Qt::LeftButton) {
+                m_dragging = true;
+                m_dragPosition = e->globalPos() - this->frameGeometry().topLeft();
+                return true;   // 吃掉事件
+            }
+            break;
+
+        case QEvent::MouseMove:
+            if (m_dragging && (e->buttons() & Qt::LeftButton)) {
+                move(e->globalPos() - m_dragPosition);
+                return true;
+            }
+            break;
+
+        case QEvent::MouseButtonRelease:
+            m_dragging = false;
+            return true;
+
+        default:
+            break;
+        }
+    }
+
+
+
+
     return QMainWindow::eventFilter(watched, event);
 }
 

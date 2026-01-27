@@ -106,3 +106,8 @@ MainWindow#MainWindow QPushButton#MinBtn:pressed {
 }
 
 
+
+
+MainWindow#MainWindow #widget_4{
+    background-color: #f2f2f2;
+}
