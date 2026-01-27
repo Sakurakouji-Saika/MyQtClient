@@ -237,23 +237,31 @@ target_include_directories(MyClient PRIVATE ${PROJECT_INCLUDE_DIRS})
 
 
 
+# 把下面路径改成 QWindowKit 构建时用的 Qt 的 lib/cmake 路径
+list(APPEND CMAKE_PREFIX_PATH "/opt/Qt/6.10.1/gcc_64/lib/cmake")
+# 可选：也可直接设置 Qt6_DIR
+# set(Qt6_DIR "/opt/Qt/6.10.1/gcc_64/lib/cmake/Qt6")
+
+message(STATUS "CMAKE_PREFIX_PATH = ${CMAKE_PREFIX_PATH}")
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Quick)
+if (TARGET Qt6::CorePrivate)
+    message(STATUS "FOUND: Qt6::CorePrivate")
+else()
+    message(WARNING "MISSING: Qt6::CorePrivate (Qt/CMake mismatch likely)")
+endif()
+
+# 先找到 Qt（确保使用与你构建 QWindowKit 时相同的 Qt）
+find_package(Qt6 REQUIRED COMPONENTS Core Widgets Quick)
+
+# 指定 qwindowkit 的 install 路径（注意使用 HINTS）
 if (WIN32)
-    set(_qwk_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/win/lib/cmake/QWindowKit")
+    set(_QWK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/win/lib/cmake/QWindowKit")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    set(_qwk_dir "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/linux/lib/cmake/QWindowKit")
-else()
-    set(_qwk_dir "")  # 或者为其他平台设置路径
+    set(_QWK_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/qwindowkit/linux/lib/cmake/QWindowKit")
 endif()
 
-find_package(QWindowKit COMPONENTS Core Widgets Quick REQUIRED HINTS "${_qwk_dir}")
-
-if (TARGET QWindowKit::Widgets)
-    target_link_libraries(MyClient PRIVATE QWindowKit::Widgets)
-else()
-    message(FATAL_ERROR "QWindowKit::Widgets not available")
-endif()
-
-
+find_package(QWindowKit REQUIRED COMPONENTS Core Widgets HINTS "${_QWK_DIR}")
+target_link_libraries(MyClient PRIVATE QWindowKit::Widgets)
 
 
 

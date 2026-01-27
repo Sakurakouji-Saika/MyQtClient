@@ -17,6 +17,8 @@
 #include "../Network/Handlers/appeventbus.h"
 #include <QWKWidgets/widgetwindowagent.h>
 
+#include <QGuiApplication>
+#include <QWindow>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -562,20 +564,34 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     }
 
 
-    // 注册移动窗口相关的事件
+    // 需要拖动窗口的子控件
     if (watched == ui->widget_2 || watched == ui->groupBox || watched == ui->pageNav) {
-
         QMouseEvent *e = static_cast<QMouseEvent*>(event);
         switch (event->type()) {
         case QEvent::MouseButtonPress:
             if (e->button() == Qt::LeftButton) {
+                // 检测当前平台是否为 Wayland（大小写不敏感匹配）
+                const QString platform = QGuiApplication::platformName();
+                bool isWayland = platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive);
+
+                // 如果是 Wayland，调用 QWindow::startSystemMove() 请求合成器开始移动
+                // 注意：windowHandle() 可能为 nullptr（未 show 时），通常在窗口已显示后才有
+                QWindow *wh = window()->windowHandle();
+                if (isWayland && wh) {
+                    // startSystemMove() 会把拖动交给合成器（Wayland），不需要手工 move()
+                    wh->startSystemMove();
+                    return true;
+                }
+
+                // 非 Wayland 平台回退到原来的手动拖动实现（适用于 X11 / Windows）
                 m_dragging = true;
                 m_dragPosition = e->globalPos() - this->frameGeometry().topLeft();
-                return true;   // 吃掉事件
+                return true;
             }
             break;
 
         case QEvent::MouseMove:
+            // 仅在非-Wayland 且我们处于手工拖动模式时才移动
             if (m_dragging && (e->buttons() & Qt::LeftButton)) {
                 move(e->globalPos() - m_dragPosition);
                 return true;
@@ -583,6 +599,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
             break;
 
         case QEvent::MouseButtonRelease:
+            // 释放时结束手工拖动（Wayland 情况下不会进入手工拖动分支）
             m_dragging = false;
             return true;
 
