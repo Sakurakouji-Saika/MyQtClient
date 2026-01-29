@@ -12,6 +12,10 @@ Registration_Page::Registration_Page(QWidget *parent)
     ui->setupUi(this);
 
     StyleLoader::loadWidgetStyle(this, ":/styles/registration_page.css");
+
+
+
+
 }
 
 Registration_Page::~Registration_Page()

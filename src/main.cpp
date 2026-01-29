@@ -10,12 +10,8 @@
 #include "../src/Network/Handlers/handlerregistry.h"
 
 
+
 class Widget;
-
-void test(){
-
-}
-
 
 
 int main(int argc, char *argv[])
@@ -24,14 +20,13 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    AppConfig::instance();
+    AppConfig::instance().initialize();
 
-    StyleLoader::setDebugEnabled(false);
+    StyleLoader::setDebugEnabled(true);
     StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
     // StyleLoader::setDebugResourceRoot("C:\\Users\\Moe\\Desktop\\MyClient\\src\\resources");
 
 
-    AppConfig::instance().initialize();
 
     ServiceManager *services = new ServiceManager();
 

@@ -49,5 +49,6 @@
         <file>picture/avatar/7.jpg</file>
         <file>picture/avatar/9.jpg</file>
         <file>styles/registration_page.css</file>
+        <file>styles/SettingsPage.css</file>
     </qresource>
 </RCC>

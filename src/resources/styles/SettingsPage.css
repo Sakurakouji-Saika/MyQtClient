@@ -1,0 +1,107 @@
+/* ---------- 左侧切换区 ---------- */
+#box_page_switching {
+    border: none;
+    padding: 10px;
+    background-color: #fff;
+    min-width: 150px;
+    max-width: 150px;
+    border-top: 1px solid #c5c5c5;
+}
+
+/* 按钮（默认）*/
+#btn_Other_Page,
+#btn_About_Page {
+    width: 100%;
+    padding: 6px 30px;
+    margin-bottom: 5px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f0f0f0;   /* 默认 */
+    font-size: 16px;
+    font-family: "Microsoft YaHei", "Segoe UI", "Noto Sans", Arial, sans-serif;
+}
+
+/* 悬停 / 选中 */
+#btn_Other_Page:hover,
+#btn_About_Page:hover {
+    background-color: #e0e0e0;
+}
+
+/* ---------- 右侧详细显示区 ---------- */
+#detailed_display {
+    border: none;
+    border-left: 1px solid #c5c5c5;
+    border-top: 1px solid #c5c5c5;
+    padding: 10px;
+    background-color: #F5F6F7;
+}
+
+/* 标签 */
+#label, #label_2, #label_3, #label_6 {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* 分组框 */
+#groupBox_3, #groupBox_4, #groupBox_5, #groupBox {
+    border: none;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 6px;
+}
+
+/* 文本输入框样式 */
+#lineEdit {
+    border: 1px solid #c5c5c5;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+/* 按钮（主要操作） */
+#pushButton {
+    border: none;
+    border-radius: 6px;
+    background-color: #4CAF50; /* 绿色 */
+    color: white;
+    padding: 5px 16px;
+    font-size: 14px;
+    width: 100px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+/* 按钮（次要/删除） */
+#pushButton_2 {
+    border: none;
+    border-radius: 6px;
+    background-color: #f44336; /* 红色 */
+    color: white;
+    font-size: 14px;
+    padding: 5px 15px;
+}
+
+/* groupBox_5 特殊内边距 */
+#groupBox_5 {
+    padding-left: 20px;
+}
+
+/* 悬停样式（即时切换） */
+#pushButton:hover {
+    background-color: #43a047;
+}
+
+#pushButton_2:hover {
+    background-color: #e53935;
+}
+
+/* 按下 / 选中 样式（注意：QSS 支持 :pressed 和 :checked） */
+QPushButton#pushButton:pressed,
+QPushButton#pushButton:checked {
+    background-color: #388e3c;
+}
+
+QPushButton#pushButton_2:pressed,
+QPushButton#pushButton_2:checked {
+    background-color: #d32f2f;
+}

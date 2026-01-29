@@ -269,3 +269,32 @@ void FriendService::SendMessageReadReceipt(qint64 friendID, qint64 userID, qint6
         }
     });
 }
+
+void FriendService::SendUpdateUserInfo(qint64 uid, QString NewNickName)
+{
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::SendMessage:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::UpdateUserInfo);
+    request["uid"] = uid;
+    request["newNickeName"] = NewNickName;
+
+
+    m_pp->sendRequest(request,[this](const QJsonObject &resp){
+        qDebug() << "FriendService::SendUpdateUserInfo::" << resp;
+        bool ok = resp.value("ok").toBool();
+        QString error = resp.value("error").toString();
+        if(!ok){
+            qDebug()<< "FriendService::SendUpdateUserInfo::修改用户名称失败！::" + error;
+        }else{
+            QMessageBox::information(
+                nullptr,
+                tr("修改用户网名"),
+                tr("修改成功,下次登录/重新登录 即可刷新")
+                );
+        }
+    });
+}

@@ -2,7 +2,9 @@
 #define SETTINGSPAGE_H
 
 #include <QWidget>
+#include "../../src/utils/styleLoader.h"
 
+#include <QString>
 namespace Ui {
 class SettingsPage;
 }
@@ -14,6 +16,17 @@ class SettingsPage : public QWidget
 public:
     explicit SettingsPage(QWidget *parent = nullptr);
     ~SettingsPage();
+    void setNikeName(QString name);
+
+signals:
+    void newNickNameSignals(QString &newNickName);
+    void insertTestSignals();
+
+
+private slots:
+    void on_pushButton_clicked();
+
+    void on_pushButton_2_clicked();
 
 private:
     Ui::SettingsPage *ui;

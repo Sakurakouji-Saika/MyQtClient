@@ -29,6 +29,8 @@ public:
 
     void SendMessageReadReceipt(qint64 friendID, qint64 userID, qint64 msgID = -1);
 
+    void SendUpdateUserInfo(qint64 uid, QString NewNickName);
+
 
 signals:
     void SearchFriednErrorSignals(QString error);

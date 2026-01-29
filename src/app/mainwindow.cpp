@@ -80,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+
     ui->chatDetailStack->addWidget(m_friendNotify); // index 3
 
     // 初始显示空白页
@@ -665,5 +666,56 @@ void MainWindow::on_fileManagerButton_clicked()
     if (!QDesktopServices::openUrl(url)) {
         qDebug() << "无法打开文件:" << filePath;
     }
+}
+
+
+void MainWindow::on_moreButton_clicked()
+{
+
+
+    if(m_settingsPage == nullptr){
+        m_settingsPage = new SettingsPage();
+
+        m_settingsPage->setAttribute(Qt::WA_DeleteOnClose);  // 关闭时自动 delete
+        m_settingsPage->setNikeName(DataBaseManage::instance()->getDisplayNameByFriendId(AppConfig::instance().getUserID()));
+
+        // 当窗口被 delete 时，自动把指针置空，避免悬空指针
+        connect(m_settingsPage,&SettingsPage::destroyed,this,[this]{
+            m_settingsPage = nullptr;
+        });
+
+        connect(m_settingsPage,&SettingsPage::newNickNameSignals,this,[=](QString &newNickName){
+            m_sm->friendApi()->SendUpdateUserInfo(AppConfig::instance().getUserID(),newNickName);
+
+        });
+
+        connect(m_settingsPage,&SettingsPage::insertTestSignals,this,[=](){
+
+        });
+
+
+        // 去掉最大化按钮
+        m_settingsPage->setWindowFlags(
+            Qt::Window
+            | Qt::WindowTitleHint
+            | Qt::WindowSystemMenuHint
+            | Qt::WindowMinimizeButtonHint
+            | Qt::WindowCloseButtonHint
+            );
+
+
+        m_settingsPage->show();
+
+    }else{
+
+        // 已存在就复用：如果被最小化则还原，若被隐藏则显示，最后置顶并激活
+        if (m_settingsPage->isMinimized())
+            m_settingsPage->showNormal();
+
+        m_settingsPage->show();            // 确保可见
+        m_settingsPage->raise();           // 置于顶层
+        m_settingsPage->activateWindow();  // 激活窗口（获取焦点）
+    }
+
 }
 

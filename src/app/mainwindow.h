@@ -22,7 +22,7 @@
 #include "../../ui/components/Change_Avatar_Page/change_avatar_page.h"
 #include "../../src/DataBaseManage/model/ChatRecord.h"
 #include "../../src/Network/Service/servicemanager.h"
-
+#include "../../ui/components/SettingsPage/settingspage.h"
 
 
 namespace Ui {
@@ -74,6 +74,8 @@ private slots:
 
     void on_fileManagerButton_clicked();
 
+    void on_moreButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 
@@ -86,6 +88,7 @@ private:
     FriendNotify_Page *m_friendNotify;          // 同意添加好友通知页面
     addfrienddialog * m_addfriend = nullptr;    // 搜索添加好友页面
     Change_Avatar_Page * m_CAvatarPG = nullptr; // 修改头像页面
+    SettingsPage * m_settingsPage = nullptr;    // 设置页面
 
     ServiceManager * m_sm = nullptr;
 
