@@ -14,6 +14,7 @@ public:
     ~IPLineEdit();
 
     QString text();
+    void setIP(QString ip);
 
 private:
     QLineEdit *m_lineEdit[IP_INPUT_SIZE];

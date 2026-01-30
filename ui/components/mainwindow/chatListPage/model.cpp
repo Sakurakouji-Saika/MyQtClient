@@ -108,3 +108,15 @@ void Model::addItemFront(const Recent_Data &data)
     endInsertRows();
 }
 
+void Model::addItems(const QList<Recent_Data> &list)
+{
+    if (list.isEmpty()) return;
+    const int oldSize = m_list_data.size();
+    const int addCount = list.size();
+
+    beginInsertRows(QModelIndex(), oldSize, oldSize + addCount - 1);
+    m_list_data.reserve(oldSize + addCount);
+    m_list_data.append(list);
+    endInsertRows();
+}
+

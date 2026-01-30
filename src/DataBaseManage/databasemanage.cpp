@@ -861,7 +861,9 @@ bool DataBaseManage::addChatMessageAndUpdateRecent(const QString &msgId,
         VALUES (:peer, :msg, :time, :unread, :dir)
         ON CONFLICT(peer_id) DO UPDATE SET
             unread_count = unread_count + excluded.unread_count,
-            last_time = excluded.last_time
+            last_time = CASE WHEN excluded.last_time > last_time THEN excluded.last_time ELSE last_time END,
+            last_msg = CASE WHEN excluded.last_time >= last_time THEN excluded.last_msg ELSE last_msg END,
+            direction = CASE WHEN excluded.last_time >= last_time THEN excluded.direction ELSE direction END
     )");
     q2.bindValue(":peer", QString::number(peerId));
     q2.bindValue(":msg", lastMsg);

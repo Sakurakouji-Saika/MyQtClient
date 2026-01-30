@@ -27,6 +27,8 @@ public:
     void SetNetWork(ServiceManager *_sm);
     int getUserID(){ return m_user_id;}
 
+    void Test_Data_Display(const int quantity);
+
 
 signals:
     void MY_SeedMsg(const ChatRecord &msg);

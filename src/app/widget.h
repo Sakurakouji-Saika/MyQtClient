@@ -14,6 +14,9 @@
 
 
 QT_BEGIN_NAMESPACE
+
+
+class IPLineEdit;
 namespace Ui {
 class LoginPage;
 }
@@ -46,6 +49,10 @@ private slots:
 
     void on_forgotPasswordBtn_clicked();
 
+    void LinkSignalList();
+
+    void on_config_cancel_Btn_clicked();
+
 private:
 
     Ui::LoginPage *ui;
@@ -58,6 +65,8 @@ private:
 
     bool m_dragging = false;
     QPoint m_dragPosition;
+
+    IPLineEdit *ip = nullptr;
 
     // QObject interface
 public:

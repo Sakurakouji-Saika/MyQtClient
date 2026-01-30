@@ -191,6 +191,12 @@ void chatListPage::receiveMessage(const Recent_Data &msg)
                               Q_ARG(Recent_Data, msg));
 }
 
+void chatListPage::receiveMessages(const QList<Recent_Data> &list)
+{
+    if (list.isEmpty()) return;
+    m_model->addItems(list);
+}
+
 
 void chatListPage::deleteItemWidgetByUid(qint64 uid)
 {

@@ -4,7 +4,8 @@
 #include <QUuid>
 #include <QDir>
 #include <QVBoxLayout>
-
+#include <QThreadPool>
+#include <QMetaObject>
 #include "../../../src/Network/Service/servicemanager.h"
 #include "../../../src/Network/Service/friendservice.h"
 
@@ -40,6 +41,12 @@ chatList_Main::~chatList_Main()
 
 void chatList_Main::openChatPage(const int _id)
 {
+
+    if(_id == -99){
+        Test_Data_Display(AppConfig::instance().getNumberBubbles());
+    }
+
+
     // 1.打开聊天对话框就要清理最近聊天未读记录，同时发送网络请求表示 已读
 
     DataBaseManage::instance()->setUnreadCountToZeroByUid(_id);
@@ -80,7 +87,6 @@ void chatList_Main::openChatPage(const int _id)
 
         } else {
             QString m_avatar_url = safeAvatarPath(_id);
-
             addChatLeft(false, m_avatar_url, m_list[i].content);
         }
     }
@@ -101,6 +107,56 @@ void chatList_Main::MsgALLClear()
 void chatList_Main::SetNetWork(ServiceManager *_sm)
 {
     m_sm = _sm;
+}
+
+void chatList_Main::Test_Data_Display(const int quantity)
+{
+
+    auto safeAvatarPath = [&](qint64 uid)->QString {
+
+        auto opt = DataBaseManage::instance()->GetFriendAvatarById(uid);
+
+        if (opt.has_value() && !opt->avatar.isEmpty()) {
+            return AppConfig::instance().imagesDirectory() + QDir::separator() + opt->avatar;
+        }
+
+        qDebug();
+        return QString();
+
+    };
+
+
+    QString my_avatar = safeAvatarPath(AppConfig::instance().getUserID());
+
+
+    QThreadPool::globalInstance() -> start([this, my_avatar, quantity]() {
+
+        QList < MessageData > m_messages;
+        for (size_t i = 0; i < quantity; i++) {
+            MessageData item;
+            item.avatar_url = my_avatar;
+            item.isSelf = true;
+            item.text = "测试一万条数据::" + QString::number(i);
+            m_messages.append(item);
+        }
+
+
+        int chunk = 500;
+        for (int i = 0; i < m_messages.size(); i += chunk) {
+            QList<MessageData> slice = m_messages.mid(i, chunk);
+            QMetaObject::invokeMethod(this,
+                                      [this, batch = std::move(slice)]() mutable {
+                                            chat -> addMessages(batch);
+                                      },
+                                      Qt::QueuedConnection);
+            QThread::msleep(200); // 或用 QTimer 分帧插入，避免阻塞主线程太久
+        }
+
+
+    });
+
+
+
 }
 
 void chatList_Main::on_btn_pushMsg_clicked()

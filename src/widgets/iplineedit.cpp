@@ -84,6 +84,14 @@ QString IPLineEdit::text()
     return ip;
 }
 
+void IPLineEdit::setIP(QString ip)
+{
+    QStringList data = ip.split(".");
+    for(int i =0; i < IP_INPUT_SIZE; i++){
+        m_lineEdit[i]->setText(data[i]);
+    }
+}
+
 int IPLineEdit::getIndex(QLineEdit *pLineEdit)
 {
     int index = -1;
@@ -132,17 +140,6 @@ bool IPLineEdit::eventFilter(QObject *obj, QEvent *event)
                 return true;
             }
         }
-
-
-
-
-
-
-
-
-
-
-
 
         switch(keyEvent->key()){
             case Qt::Key_0:

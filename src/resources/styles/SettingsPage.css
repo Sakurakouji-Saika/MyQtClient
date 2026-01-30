@@ -52,7 +52,7 @@
 }
 
 /* 文本输入框样式 */
-#lineEdit {
+#lineEdit,#lineEdit_2 {
     border: 1px solid #c5c5c5;
     border-radius: 4px;
     padding: 4px;

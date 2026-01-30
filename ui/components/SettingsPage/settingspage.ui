@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>816</width>
-    <height>537</height>
+    <width>656</width>
+    <height>487</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -152,7 +152,7 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>测试1万条数据</string>
+         <string>测试对话数据(默认一万条，最大10w条)</string>
         </property>
        </widget>
       </item>
@@ -162,6 +162,19 @@
          <string/>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLineEdit" name="lineEdit_2">
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>10000</string>
+           </property>
+          </widget>
+         </item>
          <item>
           <widget class="QPushButton" name="pushButton_2">
            <property name="text">

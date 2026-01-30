@@ -1,6 +1,7 @@
 #include "settingspage.h"
 #include "ui_settingspage.h"
 #include "../../src/utils/appconfig.h"
+#include <QIntValidator>
 
 SettingsPage::SettingsPage(QWidget *parent)
     : QWidget(parent)
@@ -8,6 +9,10 @@ SettingsPage::SettingsPage(QWidget *parent)
 {
     ui->setupUi(this);
 
+
+    ui->lineEdit_2->setValidator(
+        new QIntValidator(0, 100000, ui->lineEdit_2)
+        );
 
     StyleLoader::loadWidgetStyle(this, ":/styles/SettingsPage.css");
 
@@ -40,6 +45,9 @@ void SettingsPage::on_pushButton_clicked()
 
 void SettingsPage::on_pushButton_2_clicked()
 {
+    int num = ui->lineEdit_2->text().toInt(0);
+
+    AppConfig::instance().setNumberBubbles(num);
     emit insertTestSignals();
 }
 

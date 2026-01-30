@@ -79,12 +79,30 @@ bool ServiceManager::start()
 
 void ServiceManager::stop()
 {
-    if (!m_socket) return;
-    m_socket->closeConnection(true);
-    m_started = false;
+    if (!m_socket && !m_processor && !m_auth && !m_as && !m_fs && !m_aeb) return;
 
-    if (m_processor) m_processor->clearPending();
+        m_started = false;
+
+    if (m_socket) {
+        QObject::disconnect(m_socket, nullptr, this, nullptr);
+        m_socket->closeConnection(false);
+    }
+
+    if (m_processor) {
+        m_processor->clearPending();
+    }
+
+    if (m_auth) { m_auth->deleteLater(); m_auth = nullptr;}
+    if (m_as) { m_as->deleteLater(); m_as = nullptr; }
+    if (m_fs) { m_fs->deleteLater(); m_fs = nullptr; }
+    if (m_processor) { m_processor->deleteLater(); m_processor = nullptr; }
+    if (m_socket) { m_socket->deleteLater(); m_socket = nullptr; }
+    if (m_aeb) { delete m_aeb; m_aeb = nullptr; }
+
+    qDebug() << "ServiceManager::stop() 已清理资源";
 }
+
+
 
 bool ServiceManager::isStarted() const
 {

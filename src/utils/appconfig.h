@@ -20,6 +20,7 @@ public:
     int getUserID() const;
     QString getFileHost() const;
     int getFilePort() const;
+    int getNumberBubbles() const;
 
 
     void setHost(const QString &h);
@@ -27,6 +28,7 @@ public:
     void setUserID(const int &id);
     void setFileHost(const QString &host);
     void setFilePort(int p);
+    void setNumberBubbles(int num);
 
 
     bool isDatabaseInitialized() const;
@@ -67,6 +69,9 @@ private:
 
     bool initialized;       // 是否已初始化
     bool dbInitialized;     // 数据库是否初始化
+
+    int NumberBubbles = 0;  // 用于测试对话数量的变量
+
 };
 
 #endif // APPCONFIG_H

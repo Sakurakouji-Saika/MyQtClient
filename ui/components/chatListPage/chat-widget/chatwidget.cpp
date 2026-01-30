@@ -107,6 +107,11 @@ void ChatWidget::addMessage(bool isSelf,QString avatar_url,const QString &text) 
     m_model->addMessage(text, isSelf,avatar_url);
 }
 
+void ChatWidget::addMessages(const QList<MessageData> &data)
+{
+    m_model->addMessages(data);
+}
+
 void ChatWidget::clearAllMsg()
 {
     m_model->clear();

@@ -59,6 +59,10 @@ Widget::Widget(QWidget *parent)
     addWidget_IPInput();
 
     ui->widget->installEventFilter(this);
+    ui->widget_4->installEventFilter(this);
+
+    ui->Msg_Port_Line->setText(QString::number(AppConfig::instance().getPort()));
+    ui->File_Prot_Line->setText(QString::number(AppConfig::instance().getFilePort()));
 
 
 }
@@ -166,7 +170,7 @@ void Widget::addWidget_IPInput()
     auto *lay = qobject_cast<QVBoxLayout*>(ui->widget_5->layout());
 
     // 2) 创建你的 IPLineEdit
-    auto *ip = new IPLineEdit(this);
+    ip = new IPLineEdit(this);
     ip->setObjectName("IP_Input");
 
     // 3) 找到 IP_Title_Label 在布局中的索引
@@ -174,6 +178,7 @@ void Widget::addWidget_IPInput()
 
     // 4) 把 IPLineEdit 插到它下面一行（所以是 idx+1）
     lay->insertWidget(idx + 1, ip);
+    ip->setIP(AppConfig::instance().getHost());
 
 }
 
@@ -197,6 +202,15 @@ void Widget::on_config_Ok_Btn_clicked()
     } else {
         qDebug() << "IP_Input not found!";
     }
+
+    AppConfig::instance().setHost(ipWidget->text());
+
+    m_sm->stop();
+    m_sm->start();
+
+    LinkSignalList();
+
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 
@@ -238,7 +252,43 @@ void Widget::InitDataBaseMange()
 void Widget::setNetwork(ServiceManager *_sm)
 {
     m_sm = _sm;
+    LinkSignalList();
+}
 
+void Widget::on_registerBtn_clicked()
+{
+
+    if (m_registrationPage== nullptr) {
+        m_registrationPage = new Registration_Page();
+        m_registrationPage->setAttribute(Qt::WA_DeleteOnClose);
+        m_registrationPage->setNetwork(m_sm);
+
+        connect(m_registrationPage, &Registration_Page::destroyed, this, [this](){
+            m_registrationPage = nullptr;
+        });
+
+    }
+    m_registrationPage->show();
+    m_registrationPage->raise();
+    m_registrationPage->activateWindow();
+}
+
+
+void Widget::on_forgotPasswordBtn_clicked()
+{
+
+    // 这里 是测试 一些接口忘记改了，对应的按钮是忘记密码的按钮。
+    // 获取登录头像信息
+    m_sm->avatar()->RequestAvatarInfoByUserID(1);
+
+
+    // 获取登录头像
+    m_sm->avatar()->requestAvatarByFileId("1");
+
+}
+
+void Widget::LinkSignalList()
+{
     AuthService* auth = m_sm->auth();
     AvatarService * m_avatarService = m_sm->avatar();
 
@@ -310,21 +360,21 @@ void Widget::setNetwork(ServiceManager *_sm)
     connect(m_avatarService,&AvatarService::loadAvatarDynamicallySignals, this,
             [this](const qint64 user_id, const qint64 file_id, const QString fileName) {
 
-            // 查看本地是否存在文件
-            QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
-            QFileInfo fileInfo(localFileName);
-            bool isFileExist = fileInfo.exists() && fileInfo.isFile();
+                // 查看本地是否存在文件
+                QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
+                QFileInfo fileInfo(localFileName);
+                bool isFileExist = fileInfo.exists() && fileInfo.isFile();
 
-            if(isFileExist){
-                AvatarManager::instance().updateAvatar(user_id, fileName);
-            }else{
+                if(isFileExist){
+                    AvatarManager::instance().updateAvatar(user_id, fileName);
+                }else{
 
-                qDebug() << "loadAvatarDynamicallySignals::首次动态加载头像,需要下载文件:: " << fileName;
-                m_sm->avatar()->requestAvatarByFileId(QString::number(file_id),true);
-            }
+                    qDebug() << "loadAvatarDynamicallySignals::首次动态加载头像,需要下载文件:: " << fileName;
+                    m_sm->avatar()->requestAvatarByFileId(QString::number(file_id),true);
+                }
 
 
-        });
+            });
 
 
     // 为登录用户设置头像
@@ -333,34 +383,34 @@ void Widget::setNetwork(ServiceManager *_sm)
     connect(m_avatarService, &AvatarService::avatarNicknameFetched, this,
             [this](const qint64 user_id, const qint64 file_id, const QString fileName) {
 
-        // 查看本地是否存在文件
-        QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
-        QFileInfo fileInfo(localFileName);
-        bool isFileExist = fileInfo.exists() && fileInfo.isFile();
+                // 查看本地是否存在文件
+                QString localFileName = AppConfig::instance().imagesDirectory() + QDir::separator() + fileName;
+                QFileInfo fileInfo(localFileName);
+                bool isFileExist = fileInfo.exists() && fileInfo.isFile();
 
 
-        std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
+                std::optional<FriendInfo> info = DataBaseManage::instance()->GetFriendAvatarById(user_id);
 
-        // 决定是否需要下载的逻辑：
-        // 1. 如果文件不存在，肯定需要下载
-        // 2. 如果数据库中没有记录，需要下载
-        // 3. 如果有记录但信息不匹配，也需要下载
+                // 决定是否需要下载的逻辑：
+                // 1. 如果文件不存在，肯定需要下载
+                // 2. 如果数据库中没有记录，需要下载
+                // 3. 如果有记录但信息不匹配，也需要下载
 
-        bool needDownload = !isFileExist ||
-                            !info ||
-                            (info && (info->avatarFileId.toLongLong() != file_id ||
-                                      info->avatar != fileName));
+                bool needDownload = !isFileExist ||
+                                    !info ||
+                                    (info && (info->avatarFileId.toLongLong() != file_id ||
+                                              info->avatar != fileName));
 
-        if (needDownload) {
-            qDebug() << "需要下载头像:: user_id:" << user_id << ", file_id:" << file_id << ", fileName:" << fileName << ", 文件存在:" << isFileExist << ", 数据库有记录:" << (info ? "是" : "否");
-            m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
+                if (needDownload) {
+                    qDebug() << "需要下载头像:: user_id:" << user_id << ", file_id:" << file_id << ", fileName:" << fileName << ", 文件存在:" << isFileExist << ", 数据库有记录:" << (info ? "是" : "否");
+                    m_sm->avatar()->requestAvatarByFileId(QString::number(file_id));
 
-        } else {
-            qDebug() << "头像已存在且信息匹配，无需下载";
-            AvatarManager::instance().updateAvatar(user_id, fileName);
-        }
+                } else {
+                    qDebug() << "头像已存在且信息匹配，无需下载";
+                    AvatarManager::instance().updateAvatar(user_id, fileName);
+                }
 
-    });
+            });
 
 
     connect(m_avatarService,&AvatarService::avatarNicknameFetchFailed,this,[this](QString error){
@@ -450,48 +500,12 @@ void Widget::setNetwork(ServiceManager *_sm)
 
     });
 
-
-
-}
-
-void Widget::on_registerBtn_clicked()
-{
-
-    if (m_registrationPage== nullptr) {
-        m_registrationPage = new Registration_Page();
-        m_registrationPage->setAttribute(Qt::WA_DeleteOnClose);
-        m_registrationPage->setNetwork(m_sm);
-
-        connect(m_registrationPage, &Registration_Page::destroyed, this, [this](){
-            m_registrationPage = nullptr;
-        });
-
-    }
-    m_registrationPage->show();
-    m_registrationPage->raise();
-    m_registrationPage->activateWindow();
-}
-
-
-void Widget::on_forgotPasswordBtn_clicked()
-{
-
-    // 这里 是测试 一些接口忘记改了，对应的按钮是忘记密码的按钮。
-
-
-    // 获取登录头像信息
-    m_sm->avatar()->RequestAvatarInfoByUserID(1);
-
-
-    // 获取登录头像
-    m_sm->avatar()->requestAvatarByFileId("1");
-
 }
 
 bool Widget::eventFilter(QObject *obj, QEvent *event)
 {
 
-    if (obj == ui->widget) {
+    if (obj == ui->widget || obj == ui->widget_4) {
         QMouseEvent *e = static_cast<QMouseEvent*>(event);
         switch (event->type()) {
         case QEvent::MouseButtonPress:
@@ -529,5 +543,12 @@ bool Widget::eventFilter(QObject *obj, QEvent *event)
     }
 
     return QWidget::eventFilter(obj, event);
+}
+
+
+void Widget::on_config_cancel_Btn_clicked()
+{
+    ip->setIP(AppConfig::instance().getHost());
+    ui->stackedWidget->setCurrentIndex(0);
 }
 

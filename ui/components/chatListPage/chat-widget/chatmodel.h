@@ -27,6 +27,8 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     void addMessage(const QString &text, bool isSelf,QString avatar_url);
+    void addMessages(const QList<MessageData> &data);
+
     void clear();
 
 private:

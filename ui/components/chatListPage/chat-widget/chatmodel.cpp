@@ -36,6 +36,20 @@ void ChatModel::addMessage(const QString &text, bool isSelf,QString avatar_url) 
     endInsertRows();
 }
 
+void ChatModel::addMessages(const QList<MessageData> &data)
+{
+    if(data.isEmpty()) return;
+
+    const int oldSize = m_messages.size();
+    const int addCount = data.size();
+
+    beginInsertRows(QModelIndex(), oldSize, oldSize + addCount -1 );
+    m_messages.reserve(oldSize + addCount);
+    m_messages.append(data);
+    endInsertRows();
+
+}
+
 void ChatModel::clear() {
     beginResetModel();
     m_messages.clear();

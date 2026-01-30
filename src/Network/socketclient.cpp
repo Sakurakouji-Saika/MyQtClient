@@ -118,8 +118,6 @@ void SocketClient::closeConnection(bool graceful)
     m_socket->deleteLater();
     m_socket = nullptr;
 
-
-
 }
 
 void SocketClient::onConnected()

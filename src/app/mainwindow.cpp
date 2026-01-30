@@ -12,6 +12,8 @@
 #include <QThread>
 #include <QJsonArray>
 
+#include <QtConcurrent/QtConcurrent>
+
 #include "../Network/Service/avatarservice.h"
 #include "../widgets/avatar/avatarmanager.h"
 #include "../DataBaseManage/ViewModel/FriendAvatarDTO.h"
@@ -557,14 +559,12 @@ void MainWindow::on_ReceiveNewMsgSuccessSignals(qint64 msgID)
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event)
 {
-    // 过滤器 处理关于点击主页面头像 弹出 设置头像页面
     if (watched == ui->avatar && event->type() == QEvent::MouseButtonPress) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
         if (mouseEvent->button() == Qt::LeftButton) {
             Open_Edit_Avatar_Page();
             return true; // 事件已处理（仅左键）
         }
-        // 不是左键则不处理，交给父类/其它处理器
     }
 
 
@@ -575,31 +575,20 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         case QEvent::MouseButtonPress:
             if (e->button() == Qt::LeftButton) {
 
-
-                // 如果移动前，窗口是最大化
                 if (this->isMaximized()) {
                     showNormal();
                     return true;
                 }
 
-
-
-
-                // 检测当前平台是否为 Wayland（大小写不敏感匹配）
                 const QString platform = QGuiApplication::platformName();
                 bool isWayland = platform.contains(QStringLiteral("wayland"), Qt::CaseInsensitive);
 
-
-                // 如果是 Wayland，调用 QWindow::startSystemMove() 请求合成器开始移动
-                // 注意：windowHandle() 可能为 nullptr（未 show 时），通常在窗口已显示后才有
                 QWindow *wh = window()->windowHandle();
                 if (isWayland && wh) {
-                    // startSystemMove() 会把拖动交给合成器（Wayland），不需要手工 move()
                     wh->startSystemMove();
                     return true;
                 }
 
-                // 非 Wayland 平台回退到原来的手动拖动实现（适用于 X11 / Windows）
                 m_dragging = true;
                 m_dragPosition = e->globalPos() - this->frameGeometry().topLeft();
                 return true;
@@ -691,6 +680,19 @@ void MainWindow::on_moreButton_clicked()
 
         connect(m_settingsPage,&SettingsPage::insertTestSignals,this,[=](){
 
+
+            QDateTime now = QDateTime::currentDateTime();
+            Recent_Data recent(
+                "",
+                "对话数据插入测试",
+                -99,
+                "对话数据插入测试",
+                now,
+                now.toMSecsSinceEpoch(),
+                99
+            );
+
+            chatList->receiveMessage(recent);
         });
 
 

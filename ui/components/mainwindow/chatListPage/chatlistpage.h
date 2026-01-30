@@ -33,7 +33,9 @@ public:
     void populateRecentList(const QList<Recent_Data> &recentList);
     void on_showListContextMenu(const QPoint &pos);
 
+
     void receiveMessage(const Recent_Data &msg);
+    void receiveMessages(const QList<Recent_Data>& list);
 
     void deleteItemWidgetByUid(qint64 uid);
 

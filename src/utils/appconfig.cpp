@@ -237,3 +237,13 @@ QString AppConfig::resourcesDirectory() const
 {
     return Resources;
 }
+
+void AppConfig::setNumberBubbles(int num)
+{
+    NumberBubbles = num;
+}
+
+int AppConfig::getNumberBubbles() const
+{
+    return NumberBubbles;
+}
