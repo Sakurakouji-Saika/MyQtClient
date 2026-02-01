@@ -298,3 +298,18 @@ void FriendService::SendUpdateUserInfo(qint64 uid, QString NewNickName)
         }
     });
 }
+
+void FriendService::SendGetOfflineMessage()
+{
+
+    qDebug() <<"FriendService::SendGetOfflineMessage()::触发123";
+    if(!m_pp){
+        emit AddFriendErrorSignals(QStringLiteral("FriendService::SendGetOfflineMessage:: 包处理器不存在"));
+        return;
+    }
+
+    QJsonObject request;
+    request["type"] = static_cast<int>(Protocol::MessageType::RelationDeleteEven);
+
+    m_pp->sendJson(request);
+}

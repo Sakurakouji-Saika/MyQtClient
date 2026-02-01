@@ -31,6 +31,8 @@ public:
 
     void SendUpdateUserInfo(qint64 uid, QString NewNickName);
 
+    void SendGetOfflineMessage();
+
 
 signals:
     void SearchFriednErrorSignals(QString error);

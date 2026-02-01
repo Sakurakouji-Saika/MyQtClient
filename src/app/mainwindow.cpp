@@ -334,12 +334,19 @@ void MainWindow::setNetWork(ServiceManager *_sm)
     m_profile_main_page->setNetWork(m_sm);
     m_chatlist_page->SetNetWork(m_sm);
 
+
+
     connect(m_sm->broadcastAPI(),&AppEventBus::Friend_OnlineSignal,         this, &MainWindow::on_Friend_OnlineSignal);
     connect(m_sm->broadcastAPI(),&AppEventBus::UpdateAvatarSignal,          this, &MainWindow::on_UpdateAvatarSignal);
     connect(m_sm->broadcastAPI(),&AppEventBus::RemovedByFriendSignal,       this, &MainWindow::on_RemovedByFriendSignal);
     connect(m_sm->broadcastAPI(),&AppEventBus::friendAddedSignal,           this, &MainWindow::on_friendAddedSignal);
     connect(m_sm->broadcastAPI(),&AppEventBus::ReceiveNewMessageSignals,    this, &MainWindow::on_ReceiveNewMessageSignals);
     connect(m_sm->broadcastAPI(),&AppEventBus::ReceiveNewMsgSuccessSignals, this, &MainWindow::on_ReceiveNewMsgSuccessSignals);
+
+
+
+    m_sm->friendApi()->SendGetOfflineMessage();
+
 }
 
 

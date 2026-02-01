@@ -326,12 +326,11 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse & resp) {
 
             qInsertFriend.bindValue(":avatar", avatar);
             qInsertFriend.bindValue(":created_at", nowSec);
-            qUpdateFriend.bindValue(":avatar_file_id", avatar_file_id);
+            qInsertFriend.bindValue(":avatar_file_id", avatar_file_id);
 
             qInsertFriend.bindValue(":updated_at", nowSec);
 
             qInsertFriend.bindValue(":status", status);
-
 
             if (!qInsertFriend.exec()) {
                 qWarning() << "INSERT friend_info failed for" << friendId << ":" << qInsertFriend.lastError().text();
@@ -339,15 +338,16 @@ bool DataBaseManage::saveFriendListToDb(const FriendsResponse & resp) {
                 return false;
             }
         }
-        // 提交事务
-        if (!m_db.commit()) {
-            qWarning() << "DB commit failed:" << m_db.lastError().text();
-            m_db.rollback();
-            return false;
-        }
-
-        return true;
     }
+
+    // 所有好友处理完成后再提交事务
+    if (!m_db.commit()) {
+        qWarning() << "DB commit failed:" << m_db.lastError().text();
+        m_db.rollback();
+        return false;
+    }
+
+    return true;
 }
 
 std::optional<FriendInfo> DataBaseManage::GetFriendAvatarById(qint64 uid)
