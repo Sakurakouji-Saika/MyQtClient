@@ -267,7 +267,7 @@
                </size>
               </property>
               <property name="text">
-               <string>lu_jingshen</string>
+               <string/>
               </property>
               <property name="alignment">
                <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -322,7 +322,7 @@
                </size>
               </property>
               <property name="text">
-               <string>pbkdf2$1000$salta$hash1</string>
+               <string/>
               </property>
               <property name="echoMode">
                <enum>QLineEdit::EchoMode::Password</enum>

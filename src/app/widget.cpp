@@ -26,6 +26,8 @@
 #include "../utils/utils.h"
 
 #include "../Network/Service/avatarservice.h"
+#include "../Network/Handlers/handlerregistry.h"
+
 #include "../widgets/hoverbutton.h"
 
 #include "../widgets/avatar/avatarmanager.h"
@@ -64,7 +66,7 @@ Widget::Widget(QWidget *parent)
     ui->Msg_Port_Line->setText(QString::number(AppConfig::instance().getPort()));
     ui->File_Prot_Line->setText(QString::number(AppConfig::instance().getFilePort()));
 
-
+    setNetwork();
 }
 
 Widget::~Widget()
@@ -134,10 +136,6 @@ void Widget::otherStyle()
     connect(ui->passwordEdit, &QLineEdit::textChanged,
             this, &Widget::updateLoginBtnStyle);
 
-
-
-    // IP 输入框样式
-
 }
 
 void Widget::updateLoginBtnStyle()
@@ -204,11 +202,19 @@ void Widget::on_config_Ok_Btn_clicked()
     }
 
     AppConfig::instance().setHost(ipWidget->text());
+    AppConfig::instance().setPort(ui->Msg_Port_Line->text().toLongLong());
+    AppConfig::instance().setFilePort(ui->File_Prot_Line->text().toLongLong());
+
 
     m_sm->stop();
     m_sm->start();
 
+    hr->setServiceManager(m_sm);
+    hr->registerAll();
+
     LinkSignalList();
+
+
 
     ui->stackedWidget->setCurrentIndex(0);
 }
@@ -249,10 +255,21 @@ void Widget::InitDataBaseMange()
     }
 }
 
-void Widget::setNetwork(ServiceManager *_sm)
+void Widget::setNetwork()
 {
-    m_sm = _sm;
+
+    m_sm = new ServiceManager();
+
+    m_sm->init();
+    m_sm->start();
+
+    hr = new handlerregistry();
+    hr->setServiceManager(m_sm);
+    hr->registerAll();
+
     LinkSignalList();
+
+
 }
 
 void Widget::on_registerBtn_clicked()
@@ -374,7 +391,7 @@ void Widget::LinkSignalList()
                 }
 
 
-            });
+    });
 
 
     // 为登录用户设置头像

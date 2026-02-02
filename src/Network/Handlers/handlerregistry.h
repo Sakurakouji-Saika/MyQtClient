@@ -13,8 +13,9 @@ class handlerregistry : public QObject
 {
     Q_OBJECT
 public:
-    explicit handlerregistry(ServiceManager *_sm);
+    explicit handlerregistry();
 
+    void setServiceManager(ServiceManager *_sm);
 
     void registerAll();
 

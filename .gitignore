@@ -3,3 +3,6 @@ CMakeLists.txt.user
 .qtcreator/
 /data/
 /data/*
+deploy_qt6.bat
+dist.zip
+/dist

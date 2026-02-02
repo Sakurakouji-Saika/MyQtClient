@@ -28,16 +28,10 @@ int main(int argc, char *argv[])
 
 
 
-    ServiceManager *services = new ServiceManager();
 
-    services->init();
-    services->start();
 
-    handlerregistry hr(services);
-    hr.registerAll();
 
-    Widget w; // 注入
-    w.setNetwork(services);
+    Widget w;
     w.show();
 
     return a.exec();

@@ -22,6 +22,8 @@ class LoginPage;
 }
 QT_END_NAMESPACE
 
+class handlerregistry;
+
 class Widget : public QWidget
 {
     Q_OBJECT
@@ -33,7 +35,7 @@ public:
     void updateLoginBtnStyle();
     void addWidget_IPInput();
     void InitDataBaseMange();
-    void setNetwork(ServiceManager *_sm);
+    void setNetwork();
 
 public:
     Widget(QWidget *parent = nullptr);
@@ -59,6 +61,7 @@ private:
 
     Registration_Page *m_registrationPage = nullptr;  //注册变量
     ServiceManager *m_sm;
+    handlerregistry * hr;
 
     MainWindow *m_mw = nullptr;
 

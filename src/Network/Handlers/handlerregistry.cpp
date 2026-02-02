@@ -8,9 +8,14 @@
 #include "../../src/utils/comapi/Protocol.h"
 #include "appeventbus.h"
 
-handlerregistry::handlerregistry(ServiceManager *_sm)
-    :m_sm{_sm}
+handlerregistry::handlerregistry()
 {
+
+}
+
+void handlerregistry::setServiceManager(ServiceManager *_sm)
+{
+    m_sm = _sm;
 }
 
 void handlerregistry::registerAll()
