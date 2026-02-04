@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
+#include <QStandardPaths>
 
 // ===== 单例实例 =====
 AppConfig& AppConfig::instance() {
@@ -32,7 +33,20 @@ void AppConfig::initialize(const QString &iniFilePath)
     }
 
     // 程序目录
-    QString appDir  = QCoreApplication::applicationDirPath();
+
+    // QString appDir  = QCoreApplication::applicationDirPath();
+    QString appDir;
+
+    if (qEnvironmentVariableIsSet("APPIMAGE")) {
+        // 运行在 AppImage 内
+        appDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    } else {
+        // 非 AppImage，保持原逻辑
+        appDir = QDir::currentPath() + "/data";
+    }
+
+
+    QDir().mkpath(appDir); // 创建目录
 
     dataDir         = QDir(appDir).filePath("data");
     databaseDir     = QDir(dataDir).filePath("database");
