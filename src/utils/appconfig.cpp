@@ -13,10 +13,10 @@ AppConfig& AppConfig::instance() {
 
 // ===== 构造函数 =====
 AppConfig::AppConfig()
-    : host("192.168.222.129"),
+    : host("127.0.0.1"),
     port(9000),
     userID(-1),
-    FileHost("192.168.222.129"),
+    FileHost("127.0.0.1"),
     FilePort(9000),
     initialized(false),
     dbInitialized(false)
