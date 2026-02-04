@@ -20,16 +20,17 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
+    QCoreApplication::setOrganizationName("Liu"); 
+    QCoreApplication::setOrganizationDomain("Liu.dev");
+    QCoreApplication::setApplicationName("1to1Chat-Portfolio");
+    QCoreApplication::setApplicationVersion("0.1.0");
+
+
     AppConfig::instance().initialize();
 
     StyleLoader::setDebugEnabled(false);
     StyleLoader::setDebugResourceRoot(AppConfig::instance().resourcesDirectory());
     // StyleLoader::setDebugResourceRoot("C:\\Users\\Moe\\Desktop\\MyClient\\src\\resources");
-
-
-
-
-
 
     Widget w;
     w.show();
