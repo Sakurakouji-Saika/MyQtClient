@@ -245,7 +245,7 @@ void Widget::InitDataBaseMange()
 {
     int accountId = AppConfig::instance().getUserID();
 
-    QString basePath = QCoreApplication::applicationDirPath() + "/data";
+    QString basePath = AppConfig::instance().databaseDirectory();
 
     // QString basePath =  "C:\\Users\\Moe\\Desktop\\MyClient\\datz`a\\";
 
