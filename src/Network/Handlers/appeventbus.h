@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QJsonObject>
 
-// 广播事件（好友上线，下线，发送消息，更新头像） 就写这里吧
+// 应用内事件总线，用于接收服务端数据并转换为内部信号,（好友上线，下线，发送消息，更新头像） 就写这里吧
 class AppEventBus : public QObject
 {
     Q_OBJECT

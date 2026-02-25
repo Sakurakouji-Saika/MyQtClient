@@ -121,6 +121,7 @@ qint64 PacketProcessor::sendRequest(const QJsonObject &obj, ResponseCallback cb,
         QMutexLocker locker(&m_mutex);
         filtersCopy = m_outgoingFilters;
     }
+
     for (auto it = filtersCopy.begin(); it != filtersCopy.end(); ++it) {
         try { it.value()(copy); } catch(...) { qDebug() << "PacketProcessor: outgoing filter threw"; }
     }
