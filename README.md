@@ -26,21 +26,7 @@ MyClient 是一个基于 Qt 6.9.0 的跨平台桌面客户端，主要用于即�
 - **utils/**：工具库、配置管理、滚动条等辅助功能
 - **widgets/**：自定义控件（如头像、按钮、输入框等）
 
-## 源码目录结构（简要）
 
-- src/
-  - app/           # 主窗口与界面逻辑
-  - DataBaseManage/ # 数据库与数据模型
-  - Network/        # 网络通信与服务
-  - qwindowkit/     # 跨平台窗口管理（Qt 6.9.0）
-  - resources/      # 图片、样式、配置等资源
-  - utils/          # 工具类与通用功能
-  - widgets/        # 自定义控件
-
-其它目录：
-- build/   # 构建产物
-- docs/    # 文档说明
-- ui/      # Qt Designer UI 文件
 
 ## 环境与依赖
 
