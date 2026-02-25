@@ -56,7 +56,7 @@ MyClient 是一个基于 Qt 6.9.0 的跨平台桌面客户端，主要用于即�
   - 答：qwindowkit 与部分模块已使用 Qt 6.9.0 编译，使用不同 Qt 主版本通常会产生 ABI 不兼容，出现编译或运行时错误。请务必使用 6.9.0。
 - 问：找不到 qwindowkit 的库或头文件？
   - 答：检查 `src/qwindowkit/win` 或 `src/qwindowkit/linux` 下的 include/lib 是否存在，确保 CMakeLists.txt 中指向正确路径，或将其安装到系统 Qt 路径中。
-  
+
 
 ## 在 Qt Creator 中打开（推荐）
 
@@ -77,11 +77,6 @@ MyClient 是一个基于 Qt 6.9.0 的跨平台桌面客户端，主要用于即�
    ```
 
 5. 或用 Qt Creator 打开 CMakeLists.txt，选择 Desktop Qt 6.9.0 MinGW 64-bit Kit，配置并编译。
-
-## 常见问题
-
-- Qt 版本不一致会导致 qwindowkit 相关模块无法编译或运行。
-- 若找不到 qwindowkit 库或头文件，请检查 src/qwindowkit 路径及 CMake 配置。
 
 ## 贡献方式
 
