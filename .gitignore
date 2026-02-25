@@ -6,3 +6,4 @@ CMakeLists.txt.user
 deploy_qt6.bat
 dist.zip
 /dist
+/docs

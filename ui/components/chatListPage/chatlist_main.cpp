@@ -141,7 +141,7 @@ void chatList_Main::Test_Data_Display(const int quantity)
         }
 
 
-        int chunk = 500;
+        int chunk = 1000;
         for (int i = 0; i < m_messages.size(); i += chunk) {
             QList<MessageData> slice = m_messages.mid(i, chunk);
             QMetaObject::invokeMethod(this,
@@ -149,7 +149,7 @@ void chatList_Main::Test_Data_Display(const int quantity)
                                             chat -> addMessages(batch);
                                       },
                                       Qt::QueuedConnection);
-            QThread::msleep(200); // 或用 QTimer 分帧插入，避免阻塞主线程太久
+            QThread::msleep(1); // 或用 QTimer 分帧插入，避免阻塞主线程太久
         }
 
 
