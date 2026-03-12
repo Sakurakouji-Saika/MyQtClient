@@ -11,6 +11,11 @@
 
 [哔哩哔哩视频](https://www.bilibili.com/video/BV1C2f8BzEFM)
 
+## 📦 下载程序
+
+MyQtClient v1.0：
+
+[点击下载](https://github.com/Sakurakouji-Saika/MyQtClient/releases/tag/1.0)
 
 ## 项目简介
 
