@@ -5,6 +5,13 @@
 
 ![image](./dec3dcc8fc9ad6dc047c2559ee0d8060.png)
 
+## 视频演示
+
+点击观看：
+
+[哔哩哔哩视频](https://www.bilibili.com/video/BV1C2f8BzEFM)
+
+
 ## 项目简介
 
 MyClient 是一个基于 Qt 6.9.0 的跨平台桌面客户端，主要用于即时通讯、用户管理等场景。项目采用模块化设计，便于扩展和维护。
